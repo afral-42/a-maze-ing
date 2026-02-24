@@ -66,9 +66,11 @@
 * **Areas for improvement:** [List what could have been handled better.]
 
 ### Tools Used
-- Package and project manager: [uv](https://docs.astral.sh/uv/)
-- Specification for writing structured commit messages: [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
+
 [List any specific tools used for version control, debugging, task management, etc.]
+
+- [uv](https://docs.astral.sh/uv/): package and project manager
+- [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/): Specification for writing structured commit messages
 
 ---
 
