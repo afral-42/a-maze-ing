@@ -69,8 +69,8 @@
 
 [List any specific tools used for version control, debugging, task management, etc.]
 
-- [uv](https://docs.astral.sh/uv/): package and project manager
-- [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/): Specification for writing structured commit messages
+- [uv](https://docs.astral.sh/uv/) - package and project manager
+- [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) - Specification for writing structured commit messages
 
 ---
 
