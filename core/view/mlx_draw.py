@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from core.view.mlx_color import Color
+from core.view.mlx_color import Color, MazeColors
 
 if TYPE_CHECKING:
     from core.view.mlx_manager import MlxImage
@@ -23,3 +23,11 @@ class MlxDraw:
         for i in range(y, y + side + 1):
             for j in range(x, x + side + 1):
                 MlxDraw.draw_pixel(image, j, i, Color(a=255, r=255, g=0, b=0))
+
+    @staticmethod
+    def rectangle(
+        image: MlxImage, x: int, y: int, width: int, height: int, color: Color
+    ) -> None:
+        for i in range(y, y + height + 1):
+            for j in range(x, x + width + 1):
+                MlxDraw.draw_pixel(image, j, i, color)
