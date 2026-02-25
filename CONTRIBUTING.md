@@ -36,7 +36,7 @@ We follow the **Conventional Commits** specification. Messages should be concise
 - `fix(api): resolve 500 error on auth endpoint`
 
 See [https://www.conventionalcommits.org/](https://www.conventionalcommits.org/) for full specification.
-
+o
 ---
 
 ## 🛠 Golden Rules

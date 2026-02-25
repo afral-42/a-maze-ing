@@ -1,6 +1,5 @@
+from core.view.mlx_draw import MlxDraw
 from core.view.mlx_engine import mlx_engine
-from collections import namedtuple
-import time
 
 
 class MlxError(Exception):
@@ -9,6 +8,8 @@ class MlxError(Exception):
 
 class MlxImage:
     def __init__(self, mlx_ptr: int, width: int, height: int) -> None:
+        self.width = width
+        self.height = height
         self.img_ptr: int = mlx_engine.mlx_new_image(mlx_ptr, width, height)
         if not self.img_ptr:
             raise MlxError("Error initializing the MLX image")
@@ -37,24 +38,26 @@ class MlxWindow:
 
 
 class MlxManager:
-    def __init__(self):
+    def __init__(self) -> None:
         self.mlx_ptr: int = mlx_engine.mlx_init()
         if not self.mlx_ptr:
             raise MlxError("Error initializing the MLX instance")
 
         self.images: dict[str, MlxImage] = {}
-        self.window = None
+        self.window: MlxWindow | None = None
 
     def init_window(self, width: int, height: int, title: str) -> None:
         if not self.window:
-            self.window: int = MlxWindow(self.mlx_ptr, width, height, title)
+            self.window = MlxWindow(self.mlx_ptr, width, height, title)
 
     def add_image(self, name: str, width: int, height: int) -> None:
         self.images[name] = MlxImage(self.mlx_ptr, width, height)
 
     def push_image(self, name: str, x: int, y: int) -> None:
         if not self.window:
-            raise MlxError("No window initialized, please instanciate an image")
+            raise MlxError(
+                "No window initialized, please instanciate an image"
+            )
         try:
             image = self.images[name]
         except KeyError:
@@ -63,19 +66,19 @@ class MlxManager:
             self.mlx_ptr, self.window.win_ptr, image.img_ptr, x, y
         )
 
+    def draw_square(self, name: str, x: int, y: int, side: int) -> None:
+        if name not in self.images:
+            raise MlxError(f"Image '{name}' not found")
+
+        MlxDraw.square(self.images[name], x, y, side)
+
 
 def main() -> None:
     mlx_manager = MlxManager()
     mlx_manager.add_image("maze", 500, 500)
+    mlx_manager.draw_square("maze", 100, 100, 200)
     mlx_manager.init_window(1000, 1000, "A-Math-Ing")
-    for i in range(0, 100000, 4):
-        mlx_manager.images['maze'].data_addr[i] = 0
-        mlx_manager.images['maze'].data_addr[i+1] = 0xFF
-        mlx_manager.images['maze'].data_addr[i+2] = 0
-        mlx_manager.images['maze'].data_addr[i+3] = 0
-
     mlx_manager.push_image("maze", 0, 0)
-    #mlx_engine.mlx_pixel_put(mlx_manager.mlx_ptr, mlx_manager.window.win_ptr, 1000, 1000, 0xff0000)
     mlx_engine.mlx_loop(mlx_manager.mlx_ptr)
 
 
