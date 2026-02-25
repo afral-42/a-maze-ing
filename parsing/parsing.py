@@ -84,7 +84,7 @@ def main() -> None:
         config = compute_config_model(raw_config)
         print(config)
     except ParsingError:
-        print("Parsing error catched")
+        print("Parsing error caught")
 
 
 if __name__ == "__main__":
