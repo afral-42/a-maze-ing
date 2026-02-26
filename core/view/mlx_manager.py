@@ -1,10 +1,9 @@
 from core.controller.menu import MenuDraw
 from core.model.recursive_backtracking import RecursiveBacktrackingGenerator
 from core.view.colors import Color, Theme
-from core.view.mlx_draw import MlxDraw, Rectangle
+from core.view.mlx_draw import MlxDraw
 from core.view.mlx_engine import mlx_engine
 from parsing.parsing import (
-    MazeSettings,
     compute_config_model,
     parse_config_file,
 )
@@ -131,9 +130,7 @@ class MlxManager:
 
 
 def main() -> None:
-    import time
 
-    import numpy as np
 
     from core.model.maze import Maze
     from core.view.maze_renderer import MazeMlxRenderer
