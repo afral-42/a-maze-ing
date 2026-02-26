@@ -1,11 +1,12 @@
 from typing import TYPE_CHECKING
 
-from core.view.colors import Color
+from core.view.colors import Color, color_to_int
 
 if TYPE_CHECKING:
     from core.view.mlx_manager import MlxImage
 
 from dataclasses import dataclass
+from core.view.mlx_engine import mlx_engine
 
 
 @dataclass
@@ -27,6 +28,18 @@ class MlxDraw:
         image.data_addr[offset + 1] = color.g
         image.data_addr[offset + 2] = color.r
         image.data_addr[offset + 3] = color.a
+
+    @staticmethod
+    def draw_text(
+        mlx_ptr: int,
+        win_ptr: int,
+        string: str,
+        x: int,
+        y: int,
+        color: Color
+    ) -> None:
+        color_number: int = color_to_int(color)
+        mlx_engine.mlx_string_put(mlx_ptr, win_ptr, x, y, color_number, string)
 
     @staticmethod
     def square(image: MlxImage, x: int, y: int, side: int) -> None:
