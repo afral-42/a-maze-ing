@@ -50,3 +50,6 @@ class Maze:
 
     def has_wall(self, x: int, y: int, direction: Direction) -> bool:
         return bool(self.source[y][x] & direction)
+
+    def is_forty_two(self, x: int, y: int) -> bool:
+        return self.source[y][x] == -1

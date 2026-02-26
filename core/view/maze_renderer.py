@@ -88,6 +88,7 @@ class MazeMlxRenderer:
             for x in range(cols):
                 self._render_cell(image, x, y)
                 self._render_cell_corners(image, x, y)
+                self._render_42_cell(image, x, y)
         self._render_outer_walls(image)
         self._render_start_cell(image)
         self._render_end_cell(image)
@@ -122,3 +123,10 @@ class MazeMlxRenderer:
             x, y, self._maze.theme.end
         )
         MlxDraw.rectangle(image, rect)
+
+    def _render_42_cell(self, image: MlxImage, x: int, y: int) -> None:
+        if self._maze.is_forty_two(x, y):
+            rect = self._maze_builder.build_cell_background(
+                x, y, self._maze.theme.forty_two
+            )
+            MlxDraw.rectangle(image, rect)

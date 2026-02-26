@@ -15,6 +15,7 @@ class MazeTheme:
     background: Color
     start: Color
     end: Color
+    forty_two: Color
 
 
 class Palette:
@@ -31,12 +32,14 @@ class Theme:
         background=Palette.BLACK,
         start=Palette.GREEN,
         end=Palette.BLUE,
+        forty_two=Palette.RED,
     )
     CLASSIC = MazeTheme(
         wall=Palette.WHITE,
         background=Palette.BLACK,
         start=Palette.GREEN,
         end=Palette.BLUE,
+        forty_two=Palette.WHITE,
     )
 
 

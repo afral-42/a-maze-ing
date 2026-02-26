@@ -1,12 +1,10 @@
 from core.controller.menu import MenuDraw
+from core.model.maze_initializer import MazeInitializer
 from core.model.recursive_backtracking import RecursiveBacktrackingGenerator
 from core.view.colors import Color, Theme
 from core.view.mlx_draw import MlxDraw
 from core.view.mlx_engine import mlx_engine
-from parsing.parsing import (
-    compute_config_model,
-    parse_config_file,
-)
+from parsing.parsing import compute_config_model, parse_config_file
 
 
 class MlxError(Exception):
@@ -131,13 +129,13 @@ class MlxManager:
 
 def main() -> None:
 
-
     from core.model.maze import Maze
     from core.view.maze_renderer import MazeMlxRenderer
 
     raw_config = parse_config_file("config.txt")
     config = compute_config_model(raw_config)
-    test_maze = RecursiveBacktrackingGenerator(config).generate()
+    initializer = MazeInitializer(config)
+    test_maze = RecursiveBacktrackingGenerator(config, initializer).generate()
 
     maze = Maze(test_maze, 602, 602, 2, Theme.CLASSIC, config)
     renderer = MazeMlxRenderer(maze)

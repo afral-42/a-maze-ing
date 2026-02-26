@@ -4,17 +4,21 @@ import numpy as np
 from numpy.typing import NDArray
 
 from core.model.direction import DX, DY, OPPOSITE, Direction
+from core.model.maze_initializer import MazeInitializer
 from parsing.parsing import MazeSettings
 
 
 class RecursiveBacktrackingGenerator:
-    def __init__(self, settings: MazeSettings) -> None:
+    def __init__(
+        self, settings: MazeSettings, initializer: MazeInitializer
+    ) -> None:
         self._settings = settings
+        self._initializer = initializer
 
-    def generate(self) -> NDArray[np.int8]:
-        grid = np.full(
-            (self._settings.height, self._settings.width), 15, dtype=np.int8
-        )
+    def generate(self, seed: int | None = None) -> NDArray[np.int8]:
+        if seed:
+            random.seed(seed)
+        grid = self._initializer.init_maze()
         self._carve_passages_from(
             self._settings.entry[0], self._settings.entry[1], grid
         )
