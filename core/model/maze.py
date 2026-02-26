@@ -1,0 +1,50 @@
+from dataclasses import dataclass
+
+import numpy as np
+from numpy.typing import NDArray
+
+from core.model.direction import Direction
+from core.view.colors import Color, MazeTheme
+
+
+@dataclass
+class Maze:
+    source: NDArray[np.int8]
+    image_width: int
+    image_height: int
+    wall_thickness: int
+    theme: MazeTheme
+
+    @property
+    def cell_size(self):
+        return min(
+            (self.image_width - 2 * self.wall_thickness) // self.cols,
+            (self.image_height - 2 * self.wall_thickness) // self.lines,
+        )
+
+    @property
+    def width(self):
+        return self.cols * self.cell_size + 2 * self.wall_thickness
+
+    @property
+    def height(self):
+        return self.lines * self.cell_size + 2 * self.wall_thickness
+
+    @property
+    def shape(self) -> tuple[int, int]:
+        return self.source.shape
+
+    @property
+    def lines(self) -> int:
+        return self.source.shape[0]
+
+    @property
+    def cols(self) -> int:
+        return self.source.shape[1]
+
+    @property
+    def wall_color(self) -> Color:
+        return self.theme.wall
+
+    def has_wall(self, x: int, y: int, direction: Direction) -> bool:
+        return bool(self.source[y][x] & direction)

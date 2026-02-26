@@ -1,3 +1,4 @@
+from core.view.colors import Theme
 from core.view.mlx_draw import MlxDraw
 from core.view.mlx_engine import mlx_engine
 
@@ -74,9 +75,28 @@ class MlxManager:
 
 
 def main() -> None:
+    import numpy as np
+
+    from core.model.maze import Maze
+    from core.view.maze_renderer import MazeMlxRenderer
+
+    test_maze = np.array(
+        [
+            [9, 5, 1],
+            [14, 11, 10],
+            [9, 6, 10],
+            [12, 3, 10],
+            [9, 6, 8],
+        ],
+        np.int8,
+    )
+    maze = Maze(test_maze, 500, 500, 5, Theme.DEBUG)
+    renderer = MazeMlxRenderer(maze)
+
     mlx_manager = MlxManager()
     mlx_manager.add_image("maze", 500, 500)
-    mlx_manager.draw_square("maze", 100, 100, 200)
+    mlx_manager.init_window(1000, 1000, "A-Math-Ing")
+    renderer.render(mlx_manager.images["maze"])
     mlx_manager.init_window(1000, 1000, "A-Math-Ing")
     mlx_manager.push_image("maze", 0, 0)
     mlx_engine.mlx_loop(mlx_manager.mlx_ptr)

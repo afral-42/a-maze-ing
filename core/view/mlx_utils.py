@@ -1,5 +1,4 @@
 class MlxUtils:
-
     @staticmethod
     def get_color_value(r: int, g: int, b: int) -> int:
         color = b
