@@ -62,6 +62,7 @@ class MazeBuilder:
         height = self._maze.height
         t = self._maze.wall_thickness
         c = self._maze.wall_color
+        c = Color(255, 0, 0)
         return {
             Direction.NORTH: Rectangle(0, 0, width, t, c),
             Direction.SOUTH: Rectangle(0, height - t, width, t, c),

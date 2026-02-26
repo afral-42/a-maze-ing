@@ -26,11 +26,11 @@ class Maze:
 
     @property
     def width(self) -> int:
-        return self.cols * self.cell_size + 2 * self.wall_thickness + 1
+        return self.cols * self.cell_size + 2 * self.wall_thickness
 
     @property
     def height(self) -> int:
-        return self.lines * self.cell_size + 2 * self.wall_thickness + 1
+        return self.lines * self.cell_size + 2 * self.wall_thickness
 
     @property
     def shape(self) -> tuple[int, int]:
