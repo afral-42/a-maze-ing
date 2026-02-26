@@ -22,6 +22,7 @@ class Palette:
     BLACK = Color(0, 0, 0)
     GREEN = Color(0, 255, 0)
     BLUE = Color(0, 0, 255)
+    WHITE = Color(255, 255, 255)
 
 
 class Theme:
@@ -31,3 +32,15 @@ class Theme:
         start=Palette.GREEN,
         end=Palette.BLUE,
     )
+    CLASSIC = MazeTheme(
+        wall=Palette.WHITE,
+        background=Palette.BLACK,
+        start=Palette.GREEN,
+        end=Palette.BLUE,
+    )
+
+
+def color_to_int(color: Color) -> int:
+    result = (color.b << 16) | (color.g << 8) | (color.r << 4) | color.a
+
+    return result

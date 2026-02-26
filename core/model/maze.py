@@ -18,19 +18,19 @@ class Maze:
     settings: MazeSettings
 
     @property
-    def cell_size(self):
+    def cell_size(self) -> int:
         return min(
             (self.image_width - 2 * self.wall_thickness) // self.cols,
             (self.image_height - 2 * self.wall_thickness) // self.lines,
         )
 
     @property
-    def width(self):
-        return self.cols * self.cell_size + 2 * self.wall_thickness
+    def width(self) -> int:
+        return self.cols * self.cell_size + 2 * self.wall_thickness + 1
 
     @property
-    def height(self):
-        return self.lines * self.cell_size + 2 * self.wall_thickness
+    def height(self) -> int:
+        return self.lines * self.cell_size + 2 * self.wall_thickness + 1
 
     @property
     def shape(self) -> tuple[int, int]:
@@ -38,11 +38,11 @@ class Maze:
 
     @property
     def lines(self) -> int:
-        return self.source.shape[0]
+        return int(self.source.shape[0])
 
     @property
     def cols(self) -> int:
-        return self.source.shape[1]
+        return int(self.source.shape[1])
 
     @property
     def wall_color(self) -> Color:
