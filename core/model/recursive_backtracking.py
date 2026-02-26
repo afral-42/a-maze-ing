@@ -3,7 +3,7 @@ import random
 import numpy as np
 from numpy.typing import NDArray
 
-from core.model.direction import Direction
+from core.model.direction import DX, DY, OPPOSITE, Direction
 
 
 class RecursiveBacktrackingGenerator:
@@ -19,24 +19,6 @@ class RecursiveBacktrackingGenerator:
     def _carve_passages_from(
         self, x: int, y: int, grid: NDArray[np.int8]
     ) -> None:
-        DX = {
-            Direction.WEST: -1,
-            Direction.EAST: 1,
-            Direction.NORTH: 0,
-            Direction.SOUTH: 0,
-        }
-        DY = {
-            Direction.NORTH: -1,
-            Direction.SOUTH: 1,
-            Direction.EAST: 0,
-            Direction.WEST: 0,
-        }
-        OPPOSITE = {
-            Direction.NORTH: Direction.SOUTH,
-            Direction.SOUTH: Direction.NORTH,
-            Direction.WEST: Direction.EAST,
-            Direction.EAST: Direction.WEST,
-        }
         directions = random.sample(list(Direction), k=len(Direction))
         for d in directions:
             nx, ny = x + DX[d], y + DY[d]
