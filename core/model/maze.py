@@ -5,6 +5,7 @@ from numpy.typing import NDArray
 
 from core.model.direction import Direction
 from core.view.colors import Color, MazeTheme
+from parsing.parsing import MazeSettings
 
 
 @dataclass
@@ -14,6 +15,7 @@ class Maze:
     image_height: int
     wall_thickness: int
     theme: MazeTheme
+    settings: MazeSettings
 
     @property
     def cell_size(self):
