@@ -1,7 +1,10 @@
+from typing import TYPE_CHECKING
+
 import numpy as np
 from numpy.typing import NDArray
 
-from parsing.parsing import MazeSettings
+if TYPE_CHECKING:
+    from parsing.parsing import MazeSettings
 
 
 class MazeInitializer:
@@ -29,16 +32,29 @@ class MazeInitializer:
     def __init__(self, settings: MazeSettings) -> None:
         self._settings = settings
 
+    @staticmethod
+    def can_insert_42(width, height):
+        return width >= 11 and height >= 9
+
+    @classmethod
+    def calculate_42_coordinates(
+        cls, width: int, height: int
+    ) -> list[tuple[int, int]]:
+        origin_x = width // 2 - 3
+        origin_y = height // 2 - 2
+        return [(origin_x + x, origin_y + y) for x, y in cls.FORTY_TWO]
+
     def init_maze(self) -> NDArray[np.int8]:
         maze = np.full(
             (self._settings.height, self._settings.width), 15, dtype=np.int8
         )
-        self._set_42(maze)
+        if self.can_insert_42(self._settings.width, self._settings.height):
+            self._set_42(maze)
         return maze
 
     def _set_42(self, maze: NDArray[np.int8]) -> None:
-        # TODO: what to do if exit is inside 42 ???
-        origin_x = self._settings.width // 2 - 4
-        origin_y = self._settings.height // 2 - 2
-        for x, y in self.FORTY_TWO:
-            maze[origin_y + y][origin_x + x] = -1
+        coordinates = self.calculate_42_coordinates(
+            self._settings.width, self._settings.height
+        )
+        for x, y in coordinates:
+            maze[y][x] = -1

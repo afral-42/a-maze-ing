@@ -14,10 +14,10 @@ class RecursiveBacktrackingGenerator:
     ) -> None:
         self._settings = settings
         self._initializer = initializer
+        if self._settings.seed:
+            random.seed(self._settings.seed)
 
-    def generate(self, seed: int | None = None) -> NDArray[np.int8]:
-        if seed:
-            random.seed(seed)
+    def generate(self) -> NDArray[np.int8]:
         grid = self._initializer.init_maze()
         self._carve_passages_from(
             self._settings.entry[0], self._settings.entry[1], grid
