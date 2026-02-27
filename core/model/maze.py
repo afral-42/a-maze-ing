@@ -52,7 +52,7 @@ class Maze:
         return bool(self.source[y][x] & direction)
 
     def is_forty_two(self, x: int, y: int) -> bool:
-        return self.source[y][x] == -1
+        return bool(self.source[y][x] == -1)
 
     def generate_str_repr(self) -> str:
         return "\n".join(
