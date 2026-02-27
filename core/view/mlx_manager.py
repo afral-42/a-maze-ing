@@ -1,10 +1,6 @@
-from core.controller.menu import MenuDraw
-from core.model.maze_initializer import MazeInitializer
-from core.model.recursive_backtracking import RecursiveBacktrackingGenerator
-from core.view.colors import Color, Theme
+from core.view.colors import Color
 from core.view.mlx_draw import MlxDraw
 from core.view.mlx_engine import mlx_engine
-from parsing.parsing import compute_config_model, parse_config_file
 
 
 class MlxError(Exception):
@@ -107,6 +103,12 @@ class MlxManager:
             )
         return self.window
 
+    def get_image(self, name: str) -> MlxImage:
+        try:
+            return self.images[name]
+        except KeyError:
+            raise MlxError(f"Image '{name}' not found")
+
     def draw_text(self, x: int, y: int, string: str, color: Color) -> None:
         if not self.window:
             raise MlxError(
@@ -123,42 +125,5 @@ class MlxManager:
             raise MlxError(
                 "No window initialized, please instanciate an image"
             )
-        x = self.window.width // 2 - (len(string) * 11) // 2
+        x = self.window.width // 2 - (len(string) * 9) // 2
         self.draw_text(x, y, string, color)
-
-
-def main() -> None:
-
-    from core.model.maze import Maze
-    from core.view.maze_renderer import MazeMlxRenderer
-
-    raw_config = parse_config_file("config.txt")
-    config = compute_config_model(raw_config)
-    initializer = MazeInitializer(config)
-    test_maze = RecursiveBacktrackingGenerator(config, initializer).generate()
-
-    maze = Maze(test_maze, 602, 602, 2, Theme.CLASSIC, config)
-    renderer = MazeMlxRenderer(maze)
-
-    mlx_manager = MlxManager()
-
-    mlx_manager.add_image("maze", maze.width, maze.height)
-    mlx_manager.init_window(1000, 1000, "A-Math-Ing")
-    renderer.render(mlx_manager.images["maze"])
-    mlx_manager.push_image_centered_on_region("maze", 0, 30, 1000, 800)
-    MenuDraw.render_menu(800, mlx_manager)
-
-    mlx_manager.add_image("bg", 1000, 1000)
-
-    def display(a: str) -> None:
-        mlx_manager.push_image("bg", 0, 0)
-        mlx_manager.push_image_centered_on_region("maze", 0, 30, 1000, 800)
-
-    mlx_engine.mlx_loop_hook(mlx_manager.mlx_ptr, display, "lol")
-    MenuDraw.render_menu(800, mlx_manager)
-
-    mlx_engine.mlx_loop(mlx_manager.mlx_ptr)
-
-
-if __name__ == "__main__":
-    main()
