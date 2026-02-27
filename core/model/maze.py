@@ -53,3 +53,8 @@ class Maze:
 
     def is_forty_two(self, x: int, y: int) -> bool:
         return self.source[y][x] == -1
+
+    def generate_str_repr(self) -> str:
+        return "\n".join(
+            "".join(f"{c & 0xF:X}" for c in row) for row in self.source
+        )
