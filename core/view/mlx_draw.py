@@ -48,3 +48,13 @@ class MlxDraw:
         for i in range(r.y, r.y + r.height):
             for j in range(r.x, r.x + r.width):
                 MlxDraw.draw_pixel(image, j, i, r.color)
+
+    @staticmethod
+    def clear_image(image: MlxImage) -> None:
+        black_pixel = b'\x00\x00\x00\xff'
+        line_bytes = black_pixel * image.width
+        padding = image.size_line - len(line_bytes)
+        if padding > 0:
+            line_bytes += b'\x00' * padding
+        full_image_bytes = line_bytes * image.height
+        image.data_addr.cast('B')[:] = full_image_bytes

@@ -1,6 +1,7 @@
 from core.view.colors import Color
 from core.view.mlx_draw import MlxDraw
 from core.view.mlx_engine import mlx_engine
+from typing import Callable
 
 
 class MlxError(Exception):
@@ -48,6 +49,7 @@ class MlxManager:
 
         self.images: dict[str, MlxImage] = {}
         self.window: MlxWindow | None = None
+        self.images_historic: dict[str, tuple[int, int]] = {}
 
     def init_window(self, width: int, height: int, title: str) -> None:
         if not self.window:
@@ -68,6 +70,7 @@ class MlxManager:
         mlx_engine.mlx_put_image_to_window(
             self.mlx_ptr, self.window.win_ptr, image.img_ptr, x, y
         )
+        self.images_historic[name] = (x, y)
 
     def draw_square(self, name: str, x: int, y: int, side: int) -> None:
         if name not in self.images:
@@ -127,3 +130,17 @@ class MlxManager:
             )
         x = self.window.width // 2 - (len(string) * 9) // 2
         self.draw_text(x, y, string, color)
+
+    def add_key_hook(self, func: Callable[[int, None], None]) -> None:
+        if not self.window:
+            raise MlxError(
+                "No window initialized, please instanciate an image"
+            )
+        mlx_engine.mlx_key_hook(self.window.win_ptr, func, None)
+
+    def refresh_image(self, name: str) -> None:
+        try:
+            x, y = self.images_historic[name]
+        except KeyError:
+            raise MlxError("Can't find image in image historic")
+        self.push_image(name, x, y)

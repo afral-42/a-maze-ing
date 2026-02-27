@@ -37,7 +37,7 @@ def main() -> None:
 
     menu.render_menu(1102)
     mlx_manager.push_image_centered_on_region("maze", 0, 30, 1402, 1002)
-
+    mlx_manager.add_key_hook(menu.key_hook)
     mlx_engine.mlx_loop(mlx_manager.mlx_ptr)
 
 

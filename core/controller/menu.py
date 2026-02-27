@@ -7,6 +7,7 @@ from core.model.maze_initializer import MazeInitializer
 from core.view.colors import Theme
 from core.view.mlx_manager import MlxImage
 from core.view.mlx_manager import MlxManager
+from core.view.mlx_draw import MlxDraw
 
 
 class Menu:
@@ -24,7 +25,12 @@ class Menu:
         self.maze_generator = generator
         self.maze_image = image
 
-    def regenerate_maze_hook(self, param: None) -> None:
+    def key_hook(self, keycode: int, params: None) -> None:
+        if keycode == 49:
+            self._regenerate_maze()
+            self.mlx_manager.refresh_image("maze")
+
+    def _regenerate_maze(self) -> None:
         new_maze = self.maze_generator.generate()
 
         maze = Maze(
@@ -35,6 +41,7 @@ class Menu:
             Theme.CLASSIC,
             self.maze_config
         )
+        MlxDraw.clear_image(self.maze_image)
         renderer = MazeMlxRenderer(maze)
         renderer.render(self.maze_image)
 
