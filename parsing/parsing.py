@@ -1,11 +1,10 @@
-from typing import Annotated, Any, Self
+from typing import Annotated
 
 from pydantic import (
     BaseModel,
     ConfigDict,
     Field,
     ValidationError,
-    field_validator,
     model_validator,
 )
 
@@ -75,7 +74,7 @@ def parse_config_file(filename: str) -> dict[str, str | tuple[str, ...]]:
                 else:
                     config[key.lower()] = value.strip()
 
-    except ValueError as e:
+    except ValueError:
         print(f"Invalid line in config file: {line}")
         raise ParsingError
     except Exception as e:

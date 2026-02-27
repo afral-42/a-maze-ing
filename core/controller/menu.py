@@ -1,17 +1,12 @@
 from core.view.colors import Color
-from typing import TYPE_CHECKING
 from core.model.maze import Maze
 from core.model.maze_generator import MazeGenerator
 from core.view.maze_renderer import MazeMlxRenderer
-from core.model.maze import Maze
 from parsing.parsing import MazeSettings
 from core.model.maze_initializer import MazeInitializer
 from core.view.colors import Theme
 from core.view.mlx_manager import MlxImage
 from core.view.mlx_manager import MlxManager
-
-if TYPE_CHECKING:
-    from core.view.mlx_manager import MlxManager
 
 
 class Menu:

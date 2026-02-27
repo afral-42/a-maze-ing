@@ -8,7 +8,6 @@ from core.view.mlx_engine import mlx_engine
 from core.view.maze_renderer import MazeMlxRenderer
 from core.view.mlx_manager import MlxManager
 from core.controller.menu import Menu
-import time
 
 
 def main() -> None:
@@ -40,7 +39,7 @@ def main() -> None:
     mlx_manager.push_image_centered_on_region("maze", 0, 30, 1402, 1002)
 
     mlx_engine.mlx_loop(mlx_manager.mlx_ptr)
-    
+
 
 if __name__ == "__main__":
     main()
