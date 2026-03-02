@@ -4,7 +4,7 @@ from core.model.maze import Maze
 from core.model.maze_generator import MazeGenerator
 from core.model.maze_initializer import MazeInitializer
 from core.view.colors import Color, Theme
-from core.view.maze_renderer import MazeMlxRenderer
+from core.view.maze_renderer import MazeMlxRenderer, MlxSimpleMazeBuilder
 from core.view.mlx_draw import MlxDraw
 from core.view.mlx_manager import MlxImage, MlxManager
 from parsing.parsing import MazeSettings
@@ -45,7 +45,8 @@ class Menu:
             self.maze_config,
         )
         MlxDraw.clear_image(self.maze_image)
-        renderer = MazeMlxRenderer(maze, self.maze_image)
+        builder = MlxSimpleMazeBuilder(maze)
+        renderer = MazeMlxRenderer(builder, self.maze_image)
         renderer.render()
 
     def render_menu(self, y: int) -> None:

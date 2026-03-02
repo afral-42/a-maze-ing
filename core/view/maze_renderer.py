@@ -96,11 +96,9 @@ class MlxSimpleMazeBuilder:
 
 
 class MazeMlxRenderer:
-
     def __init__(
-        self, maze: Maze, maze_builder: MlxSimpleMazeBuilder, image: MlxImage
+        self, maze_builder: MlxSimpleMazeBuilder, image: MlxImage
     ) -> None:
-        self._maze = maze
         self._maze_builder = maze_builder
         self._image = image
 
