@@ -1,5 +1,6 @@
-from core.view.colors import Color
 from typing import TYPE_CHECKING
+
+from core.view.colors import Color
 
 if TYPE_CHECKING:
     from core.view.mlx_manager import MlxManager

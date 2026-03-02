@@ -33,7 +33,7 @@ class MazeInitializer:
         self._settings = settings
 
     @staticmethod
-    def can_insert_42(width, height):
+    def can_insert_42(width: int, height: int) -> bool:
         return width >= 11 and height >= 9
 
     @classmethod
