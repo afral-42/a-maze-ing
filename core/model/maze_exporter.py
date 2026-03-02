@@ -8,7 +8,7 @@ class MazeExporter:
     def __init__(self, maze: Maze) -> None:
         self._maze = maze
 
-    def export(self):
+    def export(self) -> None:
         text = "\n".join(
             [
                 self._maze.generate_str_repr(),

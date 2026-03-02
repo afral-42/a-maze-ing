@@ -1,7 +1,8 @@
+from typing import Callable
+
 from core.view.colors import Color
 from core.view.mlx_draw import MlxDraw
 from core.view.mlx_engine import mlx_engine
-from typing import Callable
 
 
 class MlxError(Exception):

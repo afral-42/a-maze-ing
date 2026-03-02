@@ -58,3 +58,14 @@ class Maze:
         return "\n".join(
             "".join(f"{c & 0xF:X}" for c in row) for row in self.source
         )
+
+    def get_cell_background_color(self, x: int, y: int) -> Color | None:
+        pos = (x, y)
+
+        if pos == self.settings.entry:
+            return self.theme.start
+        if pos == self.settings.exit:
+            return self.theme.end
+        if self.is_forty_two(*pos):
+            return self.theme.forty_two
+        return None
