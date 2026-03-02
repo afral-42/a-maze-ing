@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import TYPE_CHECKING
 
 from core.model.maze import Maze
@@ -11,6 +12,10 @@ from parsing.parsing import MazeSettings
 
 if TYPE_CHECKING:
     from core.view.mlx_manager import MlxManager
+
+
+class KeyCode(Enum):
+    ONE = 49
 
 
 class Menu:
@@ -29,7 +34,7 @@ class Menu:
         self.maze_image = image
 
     def key_hook(self, keycode: int, params: None) -> None:
-        if keycode == 49:
+        if keycode == KeyCode.ONE.value:
             self._regenerate_maze()
             self.mlx_manager.refresh_image("maze")
 
