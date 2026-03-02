@@ -4,9 +4,9 @@ import numpy as np
 from numpy.typing import NDArray
 
 from core.model.direction import DX, DY, OPPOSITE, Direction
+from core.model.maze_generator import MazeGenerator
 from core.model.maze_initializer import MazeInitializer
 from parsing.parsing import MazeSettings
-from core.model.maze_generator import MazeGenerator
 
 
 class RecursiveBacktrackingGenerator(MazeGenerator):

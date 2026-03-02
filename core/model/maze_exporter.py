@@ -4,7 +4,6 @@ from core.model.maze import Maze
 
 
 class MazeExporter:
-
     def __init__(self, maze: Maze) -> None:
         self._maze = maze
 

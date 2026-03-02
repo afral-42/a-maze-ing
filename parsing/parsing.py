@@ -43,7 +43,7 @@ class MazeSettings(BaseModel):
                 )
             if self._is_point_inside_42(coordinates):
                 raise ValueError(
-                    f"Invalid coordinates {coordinates}:" "collides with 42"
+                    f"Invalid coordinates {coordinates}:collides with 42"
                 )
         return self
 
