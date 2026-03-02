@@ -52,9 +52,20 @@ class Maze:
         return bool(self.source[y][x] & direction)
 
     def is_forty_two(self, x: int, y: int) -> bool:
-        return self.source[y][x] == -1
+        return bool(self.source[y][x] == -1)
 
     def generate_str_repr(self) -> str:
         return "\n".join(
             "".join(f"{c & 0xF:X}" for c in row) for row in self.source
         )
+
+    def get_cell_background_color(self, x: int, y: int) -> Color | None:
+        pos = (x, y)
+
+        if pos == self.settings.entry:
+            return self.theme.start
+        if pos == self.settings.exit:
+            return self.theme.end
+        if self.is_forty_two(*pos):
+            return self.theme.forty_two
+        return None

@@ -1,4 +1,5 @@
 from core.controller.menu import MenuDraw
+from core.model.maze_exporter import MazeExporter
 from core.model.maze_initializer import MazeInitializer
 from core.model.recursive_backtracking import RecursiveBacktrackingGenerator
 from core.view.colors import Color, Theme
@@ -130,7 +131,7 @@ class MlxManager:
 def main() -> None:
 
     from core.model.maze import Maze
-    from core.view.maze_renderer import MazeMlxRenderer
+    from core.view.maze_renderer import MazeMlxRenderer, MlxSimpleMazeBuilder
 
     raw_config = parse_config_file("config.txt")
     config = compute_config_model(raw_config)
@@ -138,13 +139,16 @@ def main() -> None:
     test_maze = RecursiveBacktrackingGenerator(config, initializer).generate()
 
     maze = Maze(test_maze, 602, 602, 2, Theme.CLASSIC, config)
-    renderer = MazeMlxRenderer(maze)
+    MazeExporter(maze).export()
 
     mlx_manager = MlxManager()
 
     mlx_manager.add_image("maze", maze.width, maze.height)
+    renderer = MazeMlxRenderer(
+        maze, MlxSimpleMazeBuilder(maze), mlx_manager.images["maze"]
+    )
     mlx_manager.init_window(1000, 1000, "A-Math-Ing")
-    renderer.render(mlx_manager.images["maze"])
+    renderer.render()
     mlx_manager.push_image_centered_on_region("maze", 0, 30, 1000, 800)
     MenuDraw.render_menu(800, mlx_manager)
 
