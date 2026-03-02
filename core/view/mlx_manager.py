@@ -139,6 +139,18 @@ class MlxManager:
             )
         mlx_engine.mlx_key_hook(self.window.win_ptr, func, None)
 
+    def add_loop_hook(self, func) -> None:
+        mlx_engine.mlx_loop_hook(self.mlx_ptr, func, None)
+
+    def add_reactive_key_hook(self, key_press_func, key_release_func) -> None:
+        if not self.window:
+            raise MlxError(
+                "No window initialized, please instanciate an image"
+            )
+        mlx_engine.mlx_do_key_autorepeatoff(self.mlx_ptr)
+        mlx_engine.mlx_hook(self.window.win_ptr, 2, 1, key_press_func, None)
+        mlx_engine.mlx_hook(self.window.win_ptr, 3, 2, key_release_func, None)
+
     def refresh_image(self, name: str) -> None:
         try:
             x, y = self.images_historic[name]

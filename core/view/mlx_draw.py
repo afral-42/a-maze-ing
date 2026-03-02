@@ -45,9 +45,19 @@ class MlxDraw:
 
     @staticmethod
     def rectangle(image: MlxImage, r: Rectangle) -> None:
-        for i in range(r.y, r.y + r.height):
-            for j in range(r.x, r.x + r.width):
-                MlxDraw.draw_pixel(image, j, i, r.color)
+        if r.x < 0:
+            x = 0
+        elif r.x >= image.width:
+            return
+        else:
+            x = r.x
+        width = min(r.width, image.width - x)
+        start = r.y * image.size_line + x * image.bits_per_pixel // 8
+        color = bytearray(r.color.to_tuple())
+        line = color * width
+        for i in range(r.height):
+            offset = start + i * image.size_line
+            image.data_addr[offset : offset + len(line)] = line
 
     @staticmethod
     def clear_image(image: MlxImage) -> None:

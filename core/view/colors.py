@@ -8,6 +8,9 @@ class Color:
     b: int
     a: int = 255
 
+    def to_tuple(self) -> tuple[int, ...]:
+        return (self.b, self.g, self.r, self.a)
+
 
 @dataclass
 class MazeTheme:
