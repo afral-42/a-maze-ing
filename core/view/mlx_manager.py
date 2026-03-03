@@ -107,6 +107,13 @@ class MlxManager:
             )
         return self.window
 
+    def destroy_window(self) -> None:
+        if not self.window:
+            raise MlxError(
+                "No window initialized, please instanciate an image"
+            )
+        mlx_engine.mlx_destroy_window(self.mlx_ptr, self.window.win_ptr)
+
     def get_image(self, name: str) -> MlxImage:
         try:
             return self.images[name]
@@ -142,6 +149,9 @@ class MlxManager:
     def add_loop_hook(self, func) -> None:
         mlx_engine.mlx_loop_hook(self.mlx_ptr, func, None)
 
+    def exit_loop(self) -> None:
+        mlx_engine.mlx_loop_exit(self.mlx_ptr)
+
     def add_reactive_key_hook(self, key_press_func, key_release_func) -> None:
         if not self.window:
             raise MlxError(
@@ -150,6 +160,12 @@ class MlxManager:
         mlx_engine.mlx_do_key_autorepeatoff(self.mlx_ptr)
         mlx_engine.mlx_hook(self.window.win_ptr, 2, 1, key_press_func, None)
         mlx_engine.mlx_hook(self.window.win_ptr, 3, 2, key_release_func, None)
+
+    def destroy_image(self, name: str) -> None:
+        if name in self.images:
+            mlx_engine.mlx_destroy_image(
+                self.mlx_ptr, self.images[name].img_ptr
+            )
 
     def refresh_image(self, name: str) -> None:
         try:

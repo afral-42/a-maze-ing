@@ -35,6 +35,7 @@ def main() -> None:
         initializer,
         generator,
         mlx_manager.get_image("maze"),
+        maze,
     )
 
     menu.render_menu(1102)
