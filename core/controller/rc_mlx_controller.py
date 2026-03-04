@@ -43,7 +43,7 @@ class RayCastingMlxController:
     def check_events(self) -> None:
         new_frame_time = time.perf_counter()
         delta_time = new_frame_time - self.last_frame_time
-        print("fps:", 1 / delta_time)
+        # print("fps:", 1 / delta_time)
         self.last_frame_time = new_frame_time
         if self._keys_status["w"] == 1:
             self._player.move(1, delta_time)
@@ -56,7 +56,7 @@ class RayCastingMlxController:
 
     def update(self) -> None:
         walls = self._engine.generate_walls()
-        self._renderer.render_frame(walls, 200)
+        self._renderer.render_frame(walls)
 
     def draw(self) -> None:
         self._manager.refresh_image("rc_maze")

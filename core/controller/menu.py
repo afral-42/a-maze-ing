@@ -1,13 +1,13 @@
+import math
 from typing import TYPE_CHECKING
 
 from core.controller.rc_mlx_controller import RayCastingMlxController
-from core.model.direction import Direction
 from core.model.maze import Maze
 from core.model.maze_generator import MazeGenerator
 from core.model.maze_initializer import MazeInitializer
 from core.model.rc_engine import RayCastingConfig, RayCastingEngine
 from core.model.rc_player import Player
-from core.view.colors import Color, Theme
+from core.view.colors import Color, Palette, Theme
 from core.view.maze_renderer import MazeMlxRenderer, MlxSimpleMazeBuilder
 from core.view.mlx_draw import MlxDraw
 from core.view.mlx_manager import MlxImage, MlxManager
@@ -48,25 +48,29 @@ class Menu:
     def _run_ray_caster(self) -> None:
         if not self.maze:
             return
-        map = self.maze.convert_to_ray_casting_map()
-        ray_casting_conf = RayCastingConfig(840, 840, 30, 60, 168, 500, 840)
-        self.mlx_manager.add_image("rc_maze", 840, 840)
+        rc_maze = self.maze.convert_to_ray_casting_map()
+        screen_width = 1024
+        screen_height = 1024
+        ray_casting_conf = RayCastingConfig(
+            screen_width, screen_height, math.pi / 3, 10.0
+        )
+        self.mlx_manager.add_image("rc_maze", screen_width, screen_height)
         renderer_config = MlxRayCastingRendererConfiguration(
-            Color(120, 120, 120),
-            Color(0, 0, 255),
+            Color(80, 80, 80),
+            Palette.BLUE,
             Color(30, 30, 30),
-            Color(0, 250, 0),
-            Color(250, 0, 0),
+            Palette.GREEN,
+            Palette.RED,
         )
         renderer = MlxRayCastingRenderer(
             self.mlx_manager.images["rc_maze"],
             MlxDraw(),
             renderer_config,
         )
-        player = Player(*map.start, Direction.EAST, map)
-        rc_engine = RayCastingEngine(map, ray_casting_conf, player)
+        player = Player(rc_maze)
+        rc_engine = RayCastingEngine(rc_maze, ray_casting_conf, player)
         rc_controller = RayCastingMlxController(
-            player, map, rc_engine, renderer, self.mlx_manager
+            player, rc_maze, rc_engine, renderer, self.mlx_manager
         )
         MlxDraw.clear_image(self.mlx_manager.images["maze"])
         self.mlx_manager.push_image_centered_on_region(

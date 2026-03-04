@@ -1,3 +1,4 @@
+import math
 from enum import IntFlag, auto
 
 
@@ -25,4 +26,11 @@ OPPOSITE = {
     Direction.SOUTH: Direction.NORTH,
     Direction.WEST: Direction.EAST,
     Direction.EAST: Direction.WEST,
+}
+
+ANGLE = {
+    Direction.NORTH: 3 * math.pi / 2,
+    Direction.WEST: math.pi,
+    Direction.SOUTH: math.pi / 2,
+    Direction.EAST: 0.0,
 }
