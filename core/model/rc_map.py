@@ -11,10 +11,7 @@ class RayCastingMap:
     end: tuple[int, int]
 
     def is_wall(self, x: float | int, y: float | int) -> bool:
-        if y < 0 or x < 0:
-            return True
-        lines, cols = self.grid.shape
-        if y >= lines or x >= cols:
+        if not self.is_valid(x, y):
             return True
         return self.grid[int(y)][int(x)] == 1
 

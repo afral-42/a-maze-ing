@@ -14,17 +14,18 @@ class Player:
         self.angle = self._get_start_angle()
         self.speed = 3
         self.rot_speed = 3
-        self.size = 0.05
+        self.size = 0.15
 
     def move(self, direction: int, frame_time: float) -> None:
-        # TODO: implement collision according to player size
         dx = direction * self.speed * frame_time * math.cos(self.angle)
         dy = direction * self.speed * frame_time * math.sin(self.angle)
         new_x = self.x + dx
-        if not self._map.is_wall(new_x, self.y):
+        direction_x = 1 if dx >= 0 else -1
+        direction_y = 1 if dy >= 0 else -1
+        if not self._map.is_wall(new_x + direction_x * self.size, self.y):
             self.x = new_x
         new_y = self.y + dy
-        if not self._map.is_wall(self.x, new_y):
+        if not self._map.is_wall(self.x, new_y + direction_y * self.size):
             self.y += dy
 
     def rotate(self, direction: int, frame_time: float) -> None:
