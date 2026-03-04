@@ -13,7 +13,7 @@ class Player:
         self.x, self.y = self._get_start_position(*self._map.start)
         self.angle = self._get_start_angle()
         self.speed = 3
-        self.rot_speed = 5
+        self.rot_speed = 3
         self.size = 0.05
 
     def move(self, direction: int, frame_time: float) -> None:

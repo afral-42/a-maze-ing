@@ -10,12 +10,19 @@ class MlxError(Exception):
 
 
 class MlxImage:
-    def __init__(self, mlx_ptr: int, width: int, height: int) -> None:
+    def __init__(
+        self, mlx_ptr: int, width: int, height: int, img_ptr: int | None = None
+    ) -> None:
         self.width = width
         self.height = height
-        self.img_ptr: int = mlx_engine.mlx_new_image(mlx_ptr, width, height)
-        if not self.img_ptr:
-            raise MlxError("Error initializing the MLX image")
+        if img_ptr is None:
+            self.img_ptr: int = mlx_engine.mlx_new_image(
+                mlx_ptr, width, height
+            )
+            if not self.img_ptr:
+                raise MlxError("Error initializing the MLX image")
+        else:
+            self.img_ptr = img_ptr
 
         self.data_addr: memoryview
         self.bits_per_pixel: int
@@ -173,3 +180,14 @@ class MlxManager:
         except KeyError:
             raise MlxError("Can't find image in image historic")
         self.push_image(name, x, y)
+
+    def load_png_image(self, filename: str) -> MlxImage:
+        try:
+            image, width, height = mlx_engine.mlx_png_file_to_image(
+                self.mlx_ptr, f"./assets/{filename}"
+            )
+        except Exception as e:
+            raise MlxError(f"Failed to load image '{filename}': {e}")
+        if not image:
+            raise MlxError(f"Failed to load image '{filename}'")
+        return MlxImage(self.mlx_ptr, width, height, image)

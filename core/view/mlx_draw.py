@@ -68,3 +68,38 @@ class MlxDraw:
             line_bytes += b"\x00" * padding
         full_image_bytes = line_bytes * image.height
         image.data_addr.cast("B")[:] = full_image_bytes
+
+    @staticmethod
+    def copy_image(
+        dest: MlxImage, src: MlxImage, offset_x: int, offset_y: int
+    ) -> None:
+        if offset_x >= 0:
+            start_dest = (
+                offset_y * dest.size_line + offset_x * dest.bits_per_pixel // 8
+            )
+            height = min(dest.height - offset_y, src.height)
+            width = min(dest.width - offset_x, src.width)
+            if width == 0:
+                return
+            cpy_len = width * 4
+            for i in range(height):
+                offset_dest = start_dest + i * dest.size_line
+                offset_src = i * src.size_line
+                dest.data_addr[offset_dest : offset_dest + cpy_len] = (
+                    src.data_addr[offset_src : offset_src + cpy_len]
+                )
+        elif offset_x < 0:
+            start_src = (
+                offset_y * src.size_line - offset_x * src.bits_per_pixel // 8
+            )
+            height = min(dest.height - offset_y, src.height)
+            width = min(dest.width, src.width + offset_x)
+            if width == 0:
+                return
+            cpy_len = width * 4
+            for i in range(height):
+                offset_dest = i * dest.size_line
+                offset_src = start_src + i * src.size_line
+                dest.data_addr[offset_dest : offset_dest + cpy_len] = (
+                    src.data_addr[offset_src : offset_src + cpy_len]
+                )

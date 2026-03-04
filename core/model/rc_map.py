@@ -27,7 +27,6 @@ class RayCastingMap:
         return True
 
     def is_start(self, x: float | int, y: float | int) -> bool:
-        print(x, y)
         if not self.is_valid(x, y):
             return False
         return self.grid[int(y)][int(x)] == 2

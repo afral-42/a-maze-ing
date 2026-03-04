@@ -4,6 +4,7 @@ from enum import Enum
 from functools import cached_property
 from typing import TYPE_CHECKING
 
+from core.model.direction import Direction
 from core.model.rc_map import RayCastingMap
 from core.model.rc_player import Player
 
@@ -27,7 +28,7 @@ class RayCastingWallUnit:
     height: int
     depth_factor: float
     type: WallType
-    orientation: WallOrientation
+    direction: Direction
 
 
 @dataclass
@@ -39,7 +40,7 @@ class RayCastingConfig:
 
     @cached_property
     def wall_height(self) -> int:
-        return self.screen_height
+        return int(self.screen_height * 0.8)
 
     @cached_property
     def rays_qty(self) -> int:
@@ -65,7 +66,7 @@ class RayCastingEngine:
         self._config = config
         self._player = player
 
-    def get_depth_vertical(
+    def _get_depth_vertical(
         self, cos_a: float, tan_a: float
     ) -> tuple[float, WallType]:
         i = 0
@@ -88,7 +89,7 @@ class RayCastingEngine:
                 )
             i += 1
 
-    def get_depth_horizontal(
+    def _get_depth_horizontal(
         self, sin_a: float, tan_a: float
     ) -> tuple[float, WallType]:
         i = 0
@@ -145,20 +146,20 @@ class RayCastingEngine:
             cos_a = math.cos(angle)
             sin_a = math.sin(angle)
             tan_a = math.tan(angle)
-            depth_vertical, wall_type_vert = self.get_depth_vertical(
+            depth_vertical, wall_type_vert = self._get_depth_vertical(
                 cos_a, tan_a
             )
-            depth_horizontal, wall_type_hor = self.get_depth_horizontal(
+            depth_horizontal, wall_type_hor = self._get_depth_horizontal(
                 sin_a, tan_a
             )
             if depth_vertical < depth_horizontal:
-                wall_orientation = WallOrientation.VERTICAL
                 depth = depth_vertical
                 wall_type = wall_type_vert
+                direction = Direction.EAST if cos_a >= 0 else Direction.WEST
             else:
-                wall_orientation = WallOrientation.HORIZONTAL
                 depth = depth_horizontal
                 wall_type = wall_type_hor
+                direction = Direction.NORTH if sin_a < 0 else Direction.SOUTH
             wall_height = min(
                 int(
                     self._config.wall_height
@@ -169,7 +170,10 @@ class RayCastingEngine:
             depth_factor = depth / self._config.max_depth
             walls.append(
                 RayCastingWallUnit(
-                    wall_height, depth_factor, wall_type, wall_orientation
+                    wall_height,
+                    depth_factor,
+                    wall_type,
+                    direction,
                 )
             )
         return walls

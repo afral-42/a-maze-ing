@@ -49,16 +49,16 @@ class Menu:
         if not self.maze:
             return
         rc_maze = self.maze.convert_to_ray_casting_map()
-        screen_width = 1024
-        screen_height = 1024
+        screen_width = 1200
+        screen_height = 900
         ray_casting_conf = RayCastingConfig(
             screen_width, screen_height, math.pi / 3, 10.0
         )
         self.mlx_manager.add_image("rc_maze", screen_width, screen_height)
         renderer_config = MlxRayCastingRendererConfiguration(
-            Color(80, 80, 80),
+            Color(90, 90, 90),
             Palette.BLUE,
-            Color(30, 30, 30),
+            Color(89, 96, 165),
             Palette.GREEN,
             Palette.RED,
         )
@@ -66,6 +66,7 @@ class Menu:
             self.mlx_manager.images["rc_maze"],
             MlxDraw(),
             renderer_config,
+            self.mlx_manager.load_png_image("day_sky.png"),
         )
         player = Player(rc_maze)
         rc_engine = RayCastingEngine(rc_maze, ray_casting_conf, player)

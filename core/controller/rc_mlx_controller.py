@@ -56,7 +56,7 @@ class RayCastingMlxController:
 
     def update(self) -> None:
         walls = self._engine.generate_walls()
-        self._renderer.render_frame(walls)
+        self._renderer.render_frame(walls, self._player.angle)
 
     def draw(self) -> None:
         self._manager.refresh_image("rc_maze")
