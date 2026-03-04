@@ -73,6 +73,7 @@ class MlxDraw:
     def copy_image(
         dest: MlxImage, src: MlxImage, offset_x: int, offset_y: int
     ) -> None:
+        # TODO: refactor this function and implement y offset
         if offset_x >= 0:
             start_dest = (
                 offset_y * dest.size_line + offset_x * dest.bits_per_pixel // 8

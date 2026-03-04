@@ -17,6 +17,7 @@ class Player:
         self.size = 0.05
 
     def move(self, direction: int, frame_time: float) -> None:
+        # TODO: implement collision according to player size
         dx = direction * self.speed * frame_time * math.cos(self.angle)
         dy = direction * self.speed * frame_time * math.sin(self.angle)
         new_x = self.x + dx
