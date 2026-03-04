@@ -5,9 +5,10 @@ from core.model.maze import Maze
 from core.model.maze_initializer import MazeInitializer
 from core.model.recursive_backtracking import RecursiveBacktrackingGenerator
 from core.view.colors import Theme
-from core.view.maze_renderer import MazeMlxRenderer, MlxSimpleMazeBuilder
+from core.view.fonts.font import font as default_font
+from core.view.mlx_draw import MlxDraw
 from core.view.mlx_engine import mlx_engine
-from core.view.mlx_manager import MlxManager
+from core.view.mlx_manager import MlxFont, MlxManager
 from parsing.parsing import compute_config_model, parse_config_file
 
 
@@ -20,13 +21,14 @@ def main() -> None:
     test_maze = generator.generate()
 
     maze = Maze(test_maze, 1002, 1002, 2, Theme.CLASSIC, config)
-
+    mlx_font = MlxFont(10, 20, 2, 4, 1140)
+    mlx_font.parse_font(default_font)
     mlx_manager = MlxManager()
 
     mlx_manager.add_image("maze", maze.width, maze.height)
-    maze_builder = MlxSimpleMazeBuilder(maze)
-    renderer = MazeMlxRenderer(maze_builder, mlx_manager.images["maze"])
-    renderer.render()
+    # maze_builder = MlxSimpleMazeBuilder(maze)
+    # renderer = MazeMlxRenderer(maze_builder, mlx_manager.images["maze"])
+    # renderer.render()
 
     mlx_manager.init_window(1400, 1400, "A-Math-Ing")
     menu = Menu(
@@ -37,7 +39,14 @@ def main() -> None:
         mlx_manager.get_image("maze"),
     )
 
-    menu.render_menu(1102)
+    # menu.render_menu(1102)
+    MlxDraw.putstr(
+        300,
+        300,
+        "Bienvenue dans A Maze Ing",
+        mlx_manager.get_image("maze"),
+        mlx_font,
+    )
     mlx_manager.push_image_centered_on_region("maze", 0, 30, 1402, 1002)
     mlx_manager.add_key_hook(menu.key_hook)
     mlx_engine.mlx_loop(mlx_manager.mlx_ptr)
