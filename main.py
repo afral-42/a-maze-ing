@@ -5,7 +5,7 @@ from core.model.maze import Maze
 from core.model.maze_initializer import MazeInitializer
 from core.model.recursive_backtracking import RecursiveBacktrackingGenerator
 from core.view.colors import Theme
-from core.view.fonts.font import font as default_font
+from core.view.fonts.roboto_mono_48 import font as font_roboto_mono_48
 from core.view.mlx_draw import MlxDraw
 from core.view.mlx_engine import mlx_engine
 from core.view.mlx_manager import MlxFont, MlxManager
@@ -21,8 +21,8 @@ def main() -> None:
     test_maze = generator.generate()
 
     maze = Maze(test_maze, 1002, 1002, 2, Theme.CLASSIC, config)
-    mlx_font = MlxFont(10, 20, 2, 4, 1140)
-    mlx_font.parse_font(default_font)
+    mlx_font = MlxFont(32, 60, 8, 4, 3800)
+    mlx_font.parse_font(font_roboto_mono_48)
     mlx_manager = MlxManager()
 
     mlx_manager.add_image("maze", maze.width, maze.height)
@@ -41,9 +41,9 @@ def main() -> None:
     )
 
     # menu.render_menu(1102)
-    MlxDraw.putstr(
-        300,
-        300,
+    MlxDraw.putstr_scaled(
+        500,
+        500,
         "Bienvenue dans A Maze Ing",
         mlx_manager.get_image("maze"),
         mlx_font,
