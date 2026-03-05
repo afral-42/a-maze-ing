@@ -1,5 +1,6 @@
 import sys
 
+import core.view.fonts as fonts
 from core.controller.menu import Menu
 from core.model.maze import Maze
 from core.model.maze_initializer import MazeInitializer
@@ -8,7 +9,6 @@ from core.view.colors import Theme
 from core.view.mlx_draw import MlxDraw
 from core.view.mlx_engine import mlx_engine
 from core.view.mlx_manager import MlxManager
-from core.view.project_fonts import ProjectFonts
 from parsing.parsing import compute_config_model, parse_config_file
 
 
@@ -44,42 +44,42 @@ def main() -> None:
         200,
         "Bienvenue dans A Maze Ing",
         mlx_manager.get_image("maze"),
-        ProjectFonts.PRESS_START_2P_16,
+        fonts.press_start_2p_16,
     )
     MlxDraw.putstr_scaled(
         0,
         250,
         "Bienvenue dans A Maze Ing",
         mlx_manager.get_image("maze"),
-        ProjectFonts.PRESS_START_2P_24,
+        fonts.press_start_2p_24,
     )
     MlxDraw.putstr_scaled(
         0,
         300,
         "Bienvenue dans A Maze Ing",
         mlx_manager.get_image("maze"),
-        ProjectFonts.PRESS_START_2P_36,
+        fonts.press_start_2p_32,
     )
     MlxDraw.putstr_scaled(
         0,
         350,
         "Bienvenue dans A Maze Ing",
         mlx_manager.get_image("maze"),
-        ProjectFonts.INCONSOLATA_16,
+        fonts.inconsolata_16,
     )
     MlxDraw.putstr_scaled(
         0,
         400,
         "Bienvenue dans A Maze Ing",
         mlx_manager.get_image("maze"),
-        ProjectFonts.INCONSOLATA_24,
+        fonts.inconsolata_24,
     )
     MlxDraw.putstr_scaled(
         0,
         450,
         "Bienvenue dans A Maze Ing",
         mlx_manager.get_image("maze"),
-        ProjectFonts.INCONSOLATA_32,
+        fonts.inconsolata_32,
     )
     mlx_manager.push_image_centered_on_region("maze", 0, 30, 1402, 1002)
     mlx_manager.add_key_hook(menu.key_hook)
