@@ -5,10 +5,10 @@ from core.model.maze import Maze
 from core.model.maze_initializer import MazeInitializer
 from core.model.recursive_backtracking import RecursiveBacktrackingGenerator
 from core.view.colors import Theme
-from core.view.fonts.roboto_mono_48 import font as font_roboto_mono_48
 from core.view.mlx_draw import MlxDraw
 from core.view.mlx_engine import mlx_engine
-from core.view.mlx_manager import MlxFont, MlxManager
+from core.view.mlx_manager import MlxManager
+from core.view.project_fonts import ProjectFonts
 from parsing.parsing import compute_config_model, parse_config_file
 
 
@@ -21,8 +21,6 @@ def main() -> None:
     test_maze = generator.generate()
 
     maze = Maze(test_maze, 1002, 1002, 2, Theme.CLASSIC, config)
-    mlx_font = MlxFont(32, 60, 8, 4, 3800)
-    mlx_font.parse_font(font_roboto_mono_48)
     mlx_manager = MlxManager()
 
     mlx_manager.add_image("maze", maze.width, maze.height)
@@ -41,11 +39,46 @@ def main() -> None:
 
     # menu.render_menu(1102)
     MlxDraw.putstr_scaled(
-        500,
-        500,
+        0,
+        200,
         "Bienvenue dans A Maze Ing",
         mlx_manager.get_image("maze"),
-        mlx_font,
+        ProjectFonts.PRESS_START_2P_16,
+    )
+    MlxDraw.putstr_scaled(
+        0,
+        250,
+        "Bienvenue dans A Maze Ing",
+        mlx_manager.get_image("maze"),
+        ProjectFonts.PRESS_START_2P_24,
+    )
+    MlxDraw.putstr_scaled(
+        0,
+        300,
+        "Bienvenue dans A Maze Ing",
+        mlx_manager.get_image("maze"),
+        ProjectFonts.PRESS_START_2P_36,
+    )
+    MlxDraw.putstr_scaled(
+        0,
+        350,
+        "Bienvenue dans A Maze Ing",
+        mlx_manager.get_image("maze"),
+        ProjectFonts.INCONSOLATA_16,
+    )
+    MlxDraw.putstr_scaled(
+        0,
+        400,
+        "Bienvenue dans A Maze Ing",
+        mlx_manager.get_image("maze"),
+        ProjectFonts.INCONSOLATA_24,
+    )
+    MlxDraw.putstr_scaled(
+        0,
+        450,
+        "Bienvenue dans A Maze Ing",
+        mlx_manager.get_image("maze"),
+        ProjectFonts.INCONSOLATA_32,
     )
     mlx_manager.push_image_centered_on_region("maze", 0, 30, 1402, 1002)
     mlx_manager.add_key_hook(menu.key_hook)
