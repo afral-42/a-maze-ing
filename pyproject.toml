@@ -1,14 +1,36 @@
 [project]
-name = "a-maze-ing"
+name = "mazegen"
 version = "0.1.0"
-description = "Add your description here"
+authors = [
+    { name="abounoua", email="abounoua@students.42lyon.fr"},
+    { name="arebilla", email="arebilla@students.42lyon.fr"},
+]
+description = "Maze generator"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
-    "mlx",
     "numpy>=2.4.2",
     "pydantic>=2.12.5",
 ]
+
+[project.scripts]
+a-maze-ing = "a_maze_ing.main:main"
+
+[dependency-groups]
+a-maze-ing = [
+    "mlx>=2.2",
+]
+
+dev = [
+    "flake8>=7.3.0",
+    "mypy>=1.19.1",
+    "pre-commit>=4.5.1",
+    "pytest>=9.0.2",
+    "ruff>=0.15.2",
+]
+
+[tool.uv]
+default-groups = "all"
 
 [tool.uv.sources]
 mlx = { path = "mlx/mlx-2.2-py3-none-any.whl" }
@@ -30,11 +52,6 @@ select = [
     #"D101", "D102", "D103"
 ]
 
-[dependency-groups]
-dev = [
-    "flake8>=7.3.0",
-    "mypy>=1.19.1",
-    "pre-commit>=4.5.1",
-    "pytest>=9.0.2",
-    "ruff>=0.15.2",
-]
+[build-system]
+requires = ["uv_build >= 0.10.7, <0.11.0"]
+build-backend = "uv_build"

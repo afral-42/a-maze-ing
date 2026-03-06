@@ -1,17 +1,14 @@
 from enum import Enum
-from typing import TYPE_CHECKING
 
-from core.model.maze import Maze
-from core.model.maze_generator import MazeGenerator
-from core.model.maze_initializer import MazeInitializer
-from core.view.colors import Color, Theme
-from core.view.maze_renderer import MazeMlxRenderer, MlxSimpleMazeBuilder
-from core.view.mlx_draw import MlxDraw
-from core.view.mlx_manager import MlxImage, MlxManager
-from parsing.parsing import MazeSettings
-
-if TYPE_CHECKING:
-    from core.view.mlx_manager import MlxManager
+from a_maze_ing.core.view.colors import Color, Theme
+from a_maze_ing.core.view.maze_renderer import (
+    MazeMlxRenderer,
+    MlxSimpleMazeBuilder,
+)
+from a_maze_ing.core.view.maze_view import MazeView
+from a_maze_ing.core.view.mlx_draw import MlxDraw
+from a_maze_ing.core.view.mlx_manager import MlxImage
+from mazegen import Maze, MazeGenerator, MazeInitializer, MazeSettings
 
 
 class KeyCode(Enum):
@@ -21,7 +18,7 @@ class KeyCode(Enum):
 class Menu:
     def __init__(
         self,
-        manager: MlxManager,
+        manager,
         config: MazeSettings,
         initializer: MazeInitializer,
         generator: MazeGenerator,
@@ -43,14 +40,17 @@ class Menu:
 
         maze = Maze(
             new_maze,
-            self.maze_image.width,
-            self.maze_image.height,
-            2,
-            Theme.CLASSIC,
             self.maze_config,
         )
+        maze_view = MazeView(
+            maze,
+            Theme.CLASSIC,
+            2,
+            self.maze_image.width,
+            self.maze_image.height,
+        )
         MlxDraw.clear_image(self.maze_image)
-        builder = MlxSimpleMazeBuilder(maze)
+        builder = MlxSimpleMazeBuilder(maze_view)
         renderer = MazeMlxRenderer(builder, self.maze_image)
         renderer.render()
 

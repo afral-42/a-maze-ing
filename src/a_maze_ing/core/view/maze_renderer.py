@@ -3,10 +3,10 @@ from typing import Iterable
 
 import numpy as np
 
-from core.model.direction import Direction
-from core.model.maze import Maze
-from core.view.mlx_draw import MlxDraw, Rectangle
-from core.view.mlx_manager import MlxImage
+from a_maze_ing.core.view.maze_view import MazeView
+from a_maze_ing.core.view.mlx_draw import MlxDraw, Rectangle
+from a_maze_ing.core.view.mlx_manager import MlxImage
+from mazegen import Direction
 
 
 class MlxSimpleMazeBuilder:
@@ -16,20 +16,20 @@ class MlxSimpleMazeBuilder:
     of a maze cell.
     """
 
-    def __init__(self, maze: Maze) -> None:
-        self._maze = maze
+    def __init__(self, maze_view: MazeView) -> None:
+        self._maze_view = maze_view
 
     def _cell_origin(self, x: int, y: int) -> tuple[int, int]:
         return (
-            self._maze.wall_thickness + x * self._maze.cell_size,
-            self._maze.wall_thickness + y * self._maze.cell_size,
+            self._maze_view.wall_thickness + x * self._maze_view.cell_size,
+            self._maze_view.wall_thickness + y * self._maze_view.cell_size,
         )
 
     def _build_cell_walls(self, x: int, y: int) -> list[Rectangle]:
         cell_x, cell_y = self._cell_origin(x, y)
-        t = self._maze.wall_thickness
-        c = self._maze.wall_color
-        length = self._maze.cell_size - 2 * t
+        t = self._maze_view.wall_thickness
+        c = self._maze_view.wall_color
+        length = self._maze_view.cell_size - 2 * t
         wall_specs = {
             Direction.NORTH: (t, 0, length, t),
             Direction.SOUTH: (t, length + t, length, t),
@@ -39,24 +39,24 @@ class MlxSimpleMazeBuilder:
         return [
             Rectangle(cell_x + dx, cell_y + dy, w, h, c)
             for d, (dx, dy, w, h) in wall_specs.items()
-            if self._maze.has_wall(x, y, d)
+            if self._maze_view.maze.has_wall(x, y, d)
         ]
 
     def _build_cell_background(self, x: int, y: int) -> Rectangle | None:
-        color = self._maze.get_cell_background_color(x, y)
+        color = self._maze_view.get_cell_background_color(x, y)
         if not color:
             return None
 
         cell_x, cell_y = self._cell_origin(x, y)
-        t = self._maze.wall_thickness
-        size = self._maze.cell_size - 2 * t
+        t = self._maze_view.wall_thickness
+        size = self._maze_view.cell_size - 2 * t
 
         return Rectangle(cell_x + t, cell_y + t, size, size, color)
 
     def _build_cell_corners(self, x: int, y: int) -> list[Rectangle]:
-        size = self._maze.cell_size
-        t = self._maze.wall_thickness
-        c = self._maze.wall_color
+        size = self._maze_view.cell_size
+        t = self._maze_view.wall_thickness
+        c = self._maze_view.wall_color
         cell_x, cell_y = self._cell_origin(x, y)
         return [
             Rectangle(cell_x, cell_y, t, t, c),
@@ -66,10 +66,10 @@ class MlxSimpleMazeBuilder:
         ]
 
     def _build_outer_walls(self) -> list[Rectangle]:
-        width = self._maze.width
-        height = self._maze.height
-        t = self._maze.wall_thickness
-        c = self._maze.wall_color
+        width = self._maze_view.width
+        height = self._maze_view.height
+        t = self._maze_view.wall_thickness
+        c = self._maze_view.wall_color
         return [
             Rectangle(0, 0, width, t, c),
             Rectangle(0, height - t, width, t, c),
@@ -87,10 +87,11 @@ class MlxSimpleMazeBuilder:
 
     def build(self) -> Iterable[Rectangle]:
         elements = self._build_outer_walls()
-        for y, x in np.ndindex(self._maze.shape):
+        for y, x in np.ndindex(self._maze_view.shape):
             elements.extend(self._build_cell(x, y))
         cells_gen = (
-            self._build_cell(x, y) for y, x in np.ndindex(self._maze.shape)
+            self._build_cell(x, y)
+            for y, x in np.ndindex(self._maze_view.shape)
         )
         return chain(self._build_outer_walls(), *cells_gen)
 
