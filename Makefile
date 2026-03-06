@@ -41,19 +41,19 @@ install:
 	@echo "$(E_OK) Project installed!"
 
 run:
-	@echo "$(E_OK) Running main.py..."
-	@uv run main.py
+	@echo "$(E_OK) Running a-maze-ing..."
+	@uv run a-maze-ing
 
 debug:
 	@echo "$(E_WAIT) Entering debug mode..."
-	@uv run -m pdb main.py
+	@uv run -m pdb -m a_maze_ing.main
 
 clean:
 	@echo "$(E_WAIT) Cleaning up..."
 	@printf "$(C_GREY)";\
 		find . \( -path "$(VENV_DIR)" -o -path ".git" \) -prune -o \
 		\( -name "__pycache__" -o -name ".mypy_cache" -o -name ".ruff_cache" \) \
-		-type d -exec rm -rfv {} +; \
+		-type d -exec rm -rf {} +; \
 		printf "$(C_RESET)"
 	@echo "$(E_OK) All clean!"
 
