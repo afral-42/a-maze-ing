@@ -1,13 +1,13 @@
 from typing import TYPE_CHECKING
 
-from core.view.colors import Color, color_to_int
+from a_maze_ing.core.view.colors import Color, color_to_int
 
 if TYPE_CHECKING:
-    from core.view.mlx_manager import MlxImage
+    from a_maze_ing.core.view.mlx_manager import MlxImage
 
 from dataclasses import dataclass
 
-from core.view.mlx_engine import mlx_engine
+from a_maze_ing.core.view.mlx_engine import mlx_engine
 
 
 @dataclass

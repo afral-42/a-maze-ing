@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from core.model.maze import Maze
+from mazegen.models.maze import Maze
 
 
 class MazeExporter:
