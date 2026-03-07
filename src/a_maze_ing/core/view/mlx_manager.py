@@ -65,6 +65,7 @@ class MlxManager:
 
     def add_image(self, name: str, width: int, height: int) -> None:
         self.images[name] = MlxImage(self.mlx_ptr, width, height)
+        MlxDraw.clear_image(self.images[name])
 
     def push_image(self, name: str, x: int, y: int) -> None:
         if not self.window:

@@ -85,6 +85,15 @@ class MlxSimpleMazeBuilder:
             elements.append(rect)
         return elements
 
+    def _build_background(self) -> Rectangle:
+        return Rectangle(
+            0,
+            0,
+            self._maze_view.width,
+            self._maze_view.height,
+            self._maze_view.theme.background,
+        )
+
     def build(self) -> Iterable[Rectangle]:
         elements = self._build_outer_walls()
         for y, x in np.ndindex(self._maze_view.shape):
@@ -93,7 +102,9 @@ class MlxSimpleMazeBuilder:
             self._build_cell(x, y)
             for y, x in np.ndindex(self._maze_view.shape)
         )
-        return chain(self._build_outer_walls(), *cells_gen)
+        return chain(
+            (self._build_background(),), self._build_outer_walls(), *cells_gen
+        )
 
 
 class MazeMlxRenderer:

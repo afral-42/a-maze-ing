@@ -21,6 +21,8 @@ class Rectangle:
 
 
 class MlxDraw:
+    counter = 0
+
     @staticmethod
     def draw_pixel(image: MlxImage, x: int, y: int, color: Color) -> None:
         if x < 0 or y < 0 or x >= image.width or y >= image.height:
@@ -62,7 +64,11 @@ class MlxDraw:
 
     @staticmethod
     def clear_image(image: MlxImage) -> None:
-        black_pixel = b"\x00\x00\x00\xff"
+        MlxDraw.counter += 1
+        if MlxDraw.counter % 2 == 0:
+            black_pixel = b"\x00\xff\x00\x00"
+        else:
+            black_pixel = b"\x00\x00\xff\x00"
         line_bytes = black_pixel * image.width
         padding = image.size_line - len(line_bytes)
         if padding > 0:
@@ -159,7 +165,8 @@ class MlxDraw:
                 image.data_addr[dst_index] = letter[letter_idx]
                 image.data_addr[dst_index + 1] = letter[letter_idx + 1]
                 image.data_addr[dst_index + 2] = letter[letter_idx + 2]
-                image.data_addr[dst_index + 3] = letter[letter_idx + 3]
+                # image.data_addr[dst_index + 3] = letter[letter_idx + 3]
+                image.data_addr[dst_index + 3] = 0xFF
 
     @staticmethod
     def putstr_scaled(
