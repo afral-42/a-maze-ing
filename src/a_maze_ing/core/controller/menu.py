@@ -2,24 +2,32 @@ import math
 from enum import Enum
 from typing import TYPE_CHECKING
 
-from core.controller.rc_mlx_controller import RayCastingMlxController
-from core.model.maze import Maze
-from core.model.maze_generator import MazeGenerator
-from core.model.maze_initializer import MazeInitializer
-from core.model.rc_engine import RayCastingConfig, RayCastingEngine
-from core.model.rc_player import Player
-from core.view.colors import Color, Palette, Theme
-from core.view.maze_renderer import MazeMlxRenderer, MlxSimpleMazeBuilder
-from core.view.mlx_draw import MlxDraw
-from core.view.mlx_manager import MlxImage, MlxManager
-from core.view.rc_renderer import (
+from a_maze_ing.core.controller.rc_mlx_controller import (
+    RayCastingMlxController,
+)
+from a_maze_ing.core.model.rc_engine import RayCastingConfig, RayCastingEngine
+from a_maze_ing.core.model.rc_player import Player
+from a_maze_ing.core.view.colors import Color, Palette, Theme
+from a_maze_ing.core.view.maze_renderer import (
+    MazeMlxRenderer,
+    MlxSimpleMazeBuilder,
+)
+from a_maze_ing.core.view.mlx_draw import MlxDraw
+from a_maze_ing.core.view.mlx_manager import MlxImage
+from a_maze_ing.core.view.rc_renderer import (
     MlxRayCastingRenderer,
     MlxRayCastingRendererConfiguration,
 )
-from parsing.parsing import MazeSettings
+from mazegen import (
+    Maze,
+    MazeGenerator,
+    MazeInitializer,
+    MazeSettings,
+)
 
 if TYPE_CHECKING:
-    from core.view.mlx_manager import MlxManager
+    pass
+from a_maze_ing.core.view.maze_view import MazeView
 
 
 class KeyCode(Enum):
@@ -29,7 +37,7 @@ class KeyCode(Enum):
 class Menu:
     def __init__(
         self,
-        manager: MlxManager,
+        manager,
         config: MazeSettings,
         initializer: MazeInitializer,
         generator: MazeGenerator,
@@ -42,6 +50,7 @@ class Menu:
         self.maze_generator = generator
         self.maze_image = image
         self.maze = maze
+        self.maze_view = None
 
     def key_hook(self, keycode: int, params: None) -> None:
         if keycode == KeyCode.ONE.value:
@@ -51,9 +60,10 @@ class Menu:
             self._run_ray_caster()
 
     def _run_ray_caster(self) -> None:
-        if not self.maze:
+        if self.maze and self.maze_view is not None:
+            rc_maze = self.maze_view.convert_to_ray_casting_map()
+        else:
             return
-        rc_maze = self.maze.convert_to_ray_casting_map()
         screen_width = 1200
         screen_height = 900
         ray_casting_conf = RayCastingConfig(
@@ -92,14 +102,17 @@ class Menu:
 
         self.maze = Maze(
             new_maze,
-            self.maze_image.width,
-            self.maze_image.height,
-            2,
-            Theme.CLASSIC,
             self.maze_config,
         )
+        self.maze_view = MazeView(
+            self.maze,
+            Theme.CLASSIC,
+            2,
+            self.maze_image.width,
+            self.maze_image.height,
+        )
         MlxDraw.clear_image(self.maze_image)
-        builder = MlxSimpleMazeBuilder(self.maze)
+        builder = MlxSimpleMazeBuilder(self.maze_view)
         renderer = MazeMlxRenderer(builder, self.maze_image)
         renderer.render()
 
