@@ -44,7 +44,7 @@ class AppController:
         if not command.strip(" "):
             self._console.render()
             return
-        command_elts = command.split(" ")
+        command_elts = [e for e in command.split() if e]
         component = command_elts[0]
         options = command_elts[1:]
         if component == "maze":

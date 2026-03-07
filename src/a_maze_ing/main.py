@@ -20,7 +20,12 @@ def main():
     mlx_manager.add_image("maze", 1400, 1400)
     mlx_manager.add_image("console", 1400, 100)
     maze_component = MazeComponent(
-        config, initializer, mlx_manager, MlxDraw(), "maze", MazeExporter()
+        config,
+        initializer,
+        mlx_manager,
+        MlxDraw(),
+        "maze",
+        MazeExporter(),
     )
     console_component = ConsoleComponent(
         mlx_manager, MlxDraw(), "console", inconsolata_24

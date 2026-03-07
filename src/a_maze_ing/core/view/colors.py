@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from enum import Enum
 
 
 @dataclass
@@ -21,6 +22,12 @@ class MazeTheme:
     forty_two: Color
 
 
+@dataclass
+class ConsoleTheme:
+    background: Color
+    text: Color
+
+
 class Palette:
     RED = Color(255, 0, 0)
     BLACK = Color(0, 0, 0)
@@ -29,7 +36,24 @@ class Palette:
     WHITE = Color(255, 255, 255)
 
 
-class Theme:
+class CatppuccinMachiattoPalette:
+    BASE = Color(30, 32, 48)
+    LAVENDER = Color(183, 173, 244)
+    GREEN = Color(166, 218, 149)
+    RED = Color(237, 135, 150)
+    BLUE = Color(138, 173, 244)
+    SURFACE_0 = Color(54, 58, 79)
+    ROSEWATER = Color(244, 219, 214)
+
+
+class Theme(Enum):
+    CATPPUCCIN_MACCHIATO = MazeTheme(
+        wall=CatppuccinMachiattoPalette.LAVENDER,
+        background=CatppuccinMachiattoPalette.BASE,
+        start=CatppuccinMachiattoPalette.GREEN,
+        end=CatppuccinMachiattoPalette.RED,
+        forty_two=CatppuccinMachiattoPalette.ROSEWATER,
+    )
     DEBUG = MazeTheme(
         wall=Palette.RED,
         background=Palette.BLACK,

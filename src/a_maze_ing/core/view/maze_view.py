@@ -86,3 +86,6 @@ class MazeView(Maze):
     ) -> tuple[int, int]:
         x, y = p
         return (2 * x + 1, 2 * y + 1)
+
+    def set_theme(self, theme: MazeTheme) -> None:
+        self.theme = theme

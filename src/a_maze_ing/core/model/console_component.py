@@ -22,9 +22,12 @@ class ConsoleComponent:
         self._font = font
         self._input = bytearray()
         self._output = ""
+        self._cursor = "_"
         self._prompt = "a-maze-ing ~ "
         self._max_len = self._image.width // self._font.LETTER_WIDTH - 1
-        self._cmd_max_len = self._max_len - len(self._prompt)
+        self._cmd_max_len = (
+            self._max_len - len(self._prompt) - len(self._cursor)
+        )
 
     def handle_key_press(self, keycode: int) -> None:
         if (
@@ -48,7 +51,7 @@ class ConsoleComponent:
         self._drawer.putstr_scaled(
             10,
             0,
-            self._prompt + self._input.decode(),
+            self._prompt + self._input.decode() + self._cursor,
             self._image,
             self._font,
         )
