@@ -160,12 +160,15 @@ class MlxManager:
     def exit_loop(self) -> None:
         mlx_engine.mlx_loop_exit(self.mlx_ptr)
 
-    def add_reactive_key_hook(self, key_press_func, key_release_func) -> None:
+    def add_reactive_key_hook(
+        self, key_press_func, key_release_func, autorepeat=False
+    ) -> None:
         if not self.window:
             raise MlxError(
                 "No window initialized, please instanciate an image"
             )
-        mlx_engine.mlx_do_key_autorepeatoff(self.mlx_ptr)
+        if autorepeat:
+            mlx_engine.mlx_do_key_autorepeatoff(self.mlx_ptr)
         mlx_engine.mlx_hook(self.window.win_ptr, 2, 1, key_press_func, None)
         mlx_engine.mlx_hook(self.window.win_ptr, 3, 2, key_release_func, None)
 
@@ -192,3 +195,7 @@ class MlxManager:
         if not image:
             raise MlxError(f"Failed to load image '{filename}'")
         return MlxImage(self.mlx_ptr, width, height, image)
+
+    def destroy(self) -> None:
+        self.exit_loop()
+        self.destroy_window()

@@ -23,21 +23,27 @@ class MazeComponent:
         mlx_manager: MlxManager,
         drawer: MlxDraw,
         image_name: str,
+        area_width: int,
+        area_height: int,
         exporter: MazeExporter,
     ) -> None:
         self._algo = None
         self._refresh_display = False
         self._themes = [t.value for t in Theme]
+        self._area_width = area_width
+        self._area_width = area_height
         self._theme_id = 0
         self._mlx_manager = mlx_manager
         self._image_name = image_name
         self._drawer = drawer
-        self._image = self._mlx_manager.get_image(image_name)
         self._settings = settings
         self._initializer = initializer
         self._generator = self._select_generator()
         self._maze_view = self._generate()
         self._exporter = exporter
+
+    def get_maze_size(self) -> tuple[int, int]:
+        return self._maze_view.width, self._maze_view.height
 
     def _generate(self):
         test_maze = self._generator.generate()
@@ -46,8 +52,8 @@ class MazeComponent:
             maze,
             self._themes[self._theme_id],
             1,
-            self._image.width,
-            self._image.height,
+            self._area_width,
+            self._area_width,
         )
         self._refresh_display = True
         return maze_view
@@ -89,9 +95,12 @@ class MazeComponent:
         except Exception:
             return "maze: error, export failed!!!"
 
-    def handle_command(self, options: str) -> str | None:
+    def focus(self) -> None:
+        self.render()
+
+    def handle_command(self, options: list[str]) -> str | None:
         if not options:
-            self.render()
+            self.focus()
             return
         if len(options) > 1:
             return (

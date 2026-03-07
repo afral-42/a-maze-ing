@@ -1,10 +1,10 @@
 import time
 
-from core.model.rc_engine import RayCastingEngine
-from core.model.rc_map import RayCastingMap
-from core.model.rc_player import Player
-from core.view.mlx_manager import MlxManager
-from core.view.rc_renderer import RayCastingRenderer
+from a_maze_ing.core.model.rc_engine import RayCastingEngine
+from a_maze_ing.core.model.rc_map import RayCastingMap
+from a_maze_ing.core.model.rc_player import Player
+from a_maze_ing.core.view.mlx_manager import MlxManager
+from a_maze_ing.core.view.rc_renderer import RayCastingRenderer
 
 
 class RayCastingMlxController:
@@ -71,8 +71,7 @@ class RayCastingMlxController:
         if keycode == 100:
             self._keys_status["d"] = 1
         if keycode == 65307:
-            self._manager.exit_loop()
-            self._manager.destroy_window()
+            self._manager.destroy()
 
     def release_key_hook(self, keycode: int, params: None) -> None:
         if keycode == 119:

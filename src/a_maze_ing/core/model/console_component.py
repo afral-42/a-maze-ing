@@ -14,20 +14,26 @@ class ConsoleComponent:
         drawer: MlxDraw,
         image_name: str,
         font: MlxFont,
+        image_width: int,
+        image_height: int,
     ) -> None:
         self._mlx_manager = mlx_manager
         self._drawer = drawer
         self._image_name = image_name
-        self._image = self._mlx_manager.get_image(image_name)
+        self._image_width = image_width
+        self._image_height = image_height
         self._font = font
         self._input = bytearray()
         self._output = ""
         self._cursor = "_"
         self._prompt = "a-maze-ing ~ "
-        self._max_len = self._image.width // self._font.LETTER_WIDTH - 1
+        self._max_len = self._image_width // self._font.LETTER_WIDTH - 1
         self._cmd_max_len = (
             self._max_len - len(self._prompt) - len(self._cursor)
         )
+        self._first_line_y = (
+            self._image_height - 2 * self._font.LETTER_HEIGHT
+        ) // 2
 
     def handle_key_press(self, keycode: int) -> None:
         if (
@@ -42,24 +48,23 @@ class ConsoleComponent:
         self.render()
 
     def render(self):
+        image = self._mlx_manager.get_image(self._image_name)
         self._drawer.rectangle(
-            self._image,
-            Rectangle(
-                0, 0, self._image.width, self._image.height, Palette.BLACK
-            ),
+            image,
+            Rectangle(0, 0, image.width, image.height, Palette.BLACK),
         )
         self._drawer.putstr_scaled(
             10,
-            0,
+            self._first_line_y,
             self._prompt + self._input.decode() + self._cursor,
-            self._image,
+            image,
             self._font,
         )
         self._drawer.putstr_scaled(
             10,
-            self._font.LETTER_HEIGHT,
+            self._first_line_y + self._font.LETTER_HEIGHT,
             self._output,
-            self._image,
+            image,
             self._font,
         )
         self._mlx_manager.refresh_image(self._image_name)
@@ -72,9 +77,6 @@ class ConsoleComponent:
     def _reset_content(self) -> None:
         self._input = bytearray()
         self._output = ""
-
-    def handle_unknown_command(self, command) -> None:
-        self.print(command + ": command not found")
 
     def print(self, text: str) -> None:
         if len(text) < self._max_len:

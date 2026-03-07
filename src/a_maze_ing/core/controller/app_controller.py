@@ -1,16 +1,9 @@
-import sys
 from enum import Enum, auto
 
 from a_maze_ing.core.controller.mlx_keys import MlxKeys
 from a_maze_ing.core.model.console_component import ConsoleComponent
 from a_maze_ing.core.model.maze_component import MazeComponent
-from a_maze_ing.core.view.fonts import inconsolata_24
-from a_maze_ing.core.view.mlx_draw import MlxDraw
-from a_maze_ing.core.view.mlx_engine import mlx_engine
 from a_maze_ing.core.view.mlx_manager import MlxManager
-from a_maze_ing.parsing.parsing import compute_config_model, parse_config_file
-from mazegen.exporter.maze_exporter import MazeExporter
-from mazegen.generator.maze_initializer import MazeInitializer
 
 
 class AppFocus(Enum):
@@ -20,10 +13,23 @@ class AppFocus(Enum):
 
 
 class AppController:
-    def __init__(self, console: ConsoleComponent, maze: MazeComponent) -> None:
+    def __init__(
+        self,
+        console: ConsoleComponent,
+        maze: MazeComponent,
+        mlx_manager: MlxManager,
+    ) -> None:
         self._focus = AppFocus.CONSOLE
+        self._background = None
         self._console = console
         self._maze = maze
+        self._mlx_manager = mlx_manager
+
+    def press_key_hook(self, keycode: int, params: None) -> None:
+        self.key_hook(keycode, params)
+
+    def release_key_hook(self, keycode, params: None) -> None:
+        pass
 
     def key_hook(self, keycode: int, params: None) -> None:
         if keycode == MlxKeys.ENTER:
@@ -31,14 +37,25 @@ class AppController:
                 command = self._console.get_command()
                 self._handle_command(command)
             else:
-                self._focus = AppFocus.CONSOLE
+                self._set_focus(AppFocus.CONSOLE)
                 self._console.render()
+        elif keycode == MlxKeys.ESCAPE and self._focus == AppFocus.CONSOLE:
+            self._close_console()
         elif self._focus == AppFocus.CONSOLE:
             self._console.handle_key_press(keycode)
         elif self._focus == AppFocus.MAZE:
             self._maze.handle_key_press(keycode)
-        elif keycode == MlxKeys.ESCAPE:
-            self._exit_app()
+
+    def _close_console(self) -> None:
+        if self._background == AppFocus.MAZE:
+            self._set_focus(AppFocus.MAZE)
+            self._maze.focus()
+        elif self._background == AppFocus.RAYCASTER:
+            self._set_focus(AppFocus.RAYCASTER)
+
+    def _set_focus(self, new_focus: AppFocus) -> None:
+        self._background = self._focus
+        self._focus = new_focus
 
     def _handle_command(self, command: str):
         if not command.strip(" "):
@@ -47,40 +64,15 @@ class AppController:
         command_elts = [e for e in command.split() if e]
         component = command_elts[0]
         options = command_elts[1:]
-        if component == "maze":
-            self._focus = AppFocus.MAZE
+        if component == "help":
+            self._console.print("available commands: maze, raycaster, exit")
+        elif component == "exit":
+            self._mlx_manager.destroy()
+        elif component == "maze":
             message = self._maze.handle_command(options)
             if message is not None:
                 self._console.print(message)
+            else:
+                self._set_focus(AppFocus.MAZE)
         else:
-            self._console.handle_unknown_command(command)
-
-    def _exit_app(self):
-        pass
-
-
-def main():
-    sys.setrecursionlimit(8192)
-    raw_config = parse_config_file("config.txt")
-    config = compute_config_model(raw_config)
-    initializer = MazeInitializer(config)
-    mlx_manager = MlxManager()
-    mlx_manager.add_image("maze", 1400, 1400)
-    mlx_manager.add_image("console", 1400, 100)
-    maze_component = MazeComponent(
-        config, initializer, mlx_manager, MlxDraw(), "maze", MazeExporter()
-    )
-    console_component = ConsoleComponent(
-        mlx_manager, MlxDraw(), "console", inconsolata_24
-    )
-    app_controller = AppController(console_component, maze_component)
-    mlx_manager.init_window(1400, 1400, "A-Math-Ing")
-
-    mlx_manager.push_image_centered_on_region("maze", 0, 0, 1400, 1400)
-    mlx_manager.push_image_centered_on_region("console", 0, 1300, 1400, 100)
-    mlx_manager.add_key_hook(app_controller.key_hook)
-    mlx_engine.mlx_loop(mlx_manager.mlx_ptr)
-
-
-if __name__ == "__main__":
-    main()
+            self._console.print(command + ": command not found - try 'help'")
