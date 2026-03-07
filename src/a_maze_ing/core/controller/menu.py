@@ -99,7 +99,6 @@ class Menu:
 
     def _regenerate_maze(self) -> None:
         new_maze = self.maze_generator.generate()
-
         self.maze = Maze(
             new_maze,
             self.maze_config,

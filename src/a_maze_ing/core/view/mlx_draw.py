@@ -106,6 +106,7 @@ class MlxDraw:
                     src.data_addr[offset_src : offset_src + cpy_len]
                 )
 
+    @staticmethod
     def putchar(
         x: int,
         y: int,
