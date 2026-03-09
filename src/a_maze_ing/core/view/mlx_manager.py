@@ -1,6 +1,7 @@
-from typing import Callable
+from typing import TYPE_CHECKING, Callable
 
-from a_maze_ing.core.view.colors import Color
+if TYPE_CHECKING:
+    from a_maze_ing.core.view.colors import Color
 from a_maze_ing.core.view.mlx_draw import MlxDraw
 from a_maze_ing.core.view.mlx_engine import mlx_engine
 
