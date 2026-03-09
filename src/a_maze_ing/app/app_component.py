@@ -1,10 +1,10 @@
-from a_maze_ing.core.controller.app_controller import AppController
-from a_maze_ing.core.model.console_component import ConsoleComponent
-from a_maze_ing.core.model.maze_component import MazeComponent
-from a_maze_ing.core.view.mlx_draw import MlxDraw
-from a_maze_ing.core.view.mlx_engine import mlx_engine
-from a_maze_ing.core.view.mlx_manager import MlxManager
-from a_maze_ing.core.view.theme import AppTheme
+from a_maze_ing.app.app_controller import AppController
+from a_maze_ing.console.console_component import ConsoleComponent
+from a_maze_ing.maze.maze_component import MazeComponent
+from a_maze_ing.mlx.mlx_draw import MlxDraw
+from a_maze_ing.mlx.mlx_engine import mlx_engine
+from a_maze_ing.mlx.mlx_manager import MlxManager
+from a_maze_ing.theme.theme import AppTheme
 from mazegen import MazeExporter, MazeInitializer
 from mazegen.models.maze_settings import MazeSettings
 

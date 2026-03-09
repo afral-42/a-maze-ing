@@ -1,8 +1,8 @@
 import numpy as np
 
-from a_maze_ing.core.model.rc_map import RayCastingMap
-from a_maze_ing.core.view.colors import Color
-from a_maze_ing.core.view.theme import MazeTheme
+from a_maze_ing.raycaster.rc_map import RayCastingMap
+from a_maze_ing.theme.colors import Color
+from a_maze_ing.theme.theme import MazeTheme
 from mazegen import Maze
 from mazegen.models.direction import Direction
 

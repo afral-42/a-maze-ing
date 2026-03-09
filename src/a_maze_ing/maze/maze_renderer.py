@@ -3,9 +3,9 @@ from typing import Iterable
 
 import numpy as np
 
-from a_maze_ing.core.view.maze_view import MazeView
-from a_maze_ing.core.view.mlx_draw import MlxDraw, Rectangle
-from a_maze_ing.core.view.mlx_manager import MlxImage
+from a_maze_ing.maze.maze_view import MazeView
+from a_maze_ing.mlx.mlx_draw import MlxDraw, Rectangle
+from a_maze_ing.mlx.mlx_manager import MlxImage
 from mazegen import Direction
 
 

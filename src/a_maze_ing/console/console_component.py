@@ -1,10 +1,10 @@
 import string
 
-from a_maze_ing.core.controller.mlx_keys import MlxKeys
-from a_maze_ing.core.view.mlx_draw import MlxDraw, Rectangle
-from a_maze_ing.core.view.mlx_font import MlxFont
-from a_maze_ing.core.view.mlx_manager import MlxManager
-from a_maze_ing.core.view.theme import ConsoleTheme
+from a_maze_ing.mlx.mlx_draw import MlxDraw, Rectangle
+from a_maze_ing.mlx.mlx_font import MlxFont
+from a_maze_ing.mlx.mlx_keys import MlxKeys
+from a_maze_ing.mlx.mlx_manager import MlxManager
+from a_maze_ing.theme.theme import ConsoleTheme
 
 
 class ConsoleComponent:

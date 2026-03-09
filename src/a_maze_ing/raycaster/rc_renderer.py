@@ -4,9 +4,10 @@ from dataclasses import dataclass
 
 from core.model.direction import Direction
 from core.model.rc_engine import RayCastingWallUnit, WallType
-from core.view.colors import Color
 from core.view.mlx_draw import MlxDraw, Rectangle
 from core.view.mlx_manager import MlxImage
+
+from a_maze_ing.theme.colors import Color
 
 
 class RayCastingRenderer(ABC):

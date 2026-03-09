@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 from enum import Enum
 
-from a_maze_ing.core.view.colors import Color, Palette
-from a_maze_ing.core.view.fonts import inconsolata_24
-from a_maze_ing.core.view.mlx_font import MlxFont
+from a_maze_ing.mlx.mlx_font import MlxFont
+from a_maze_ing.theme.colors import Color, Palette
+from a_maze_ing.theme.fonts import inconsolata_24
 
 
 @dataclass

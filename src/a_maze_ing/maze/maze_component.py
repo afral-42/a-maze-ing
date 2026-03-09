@@ -1,11 +1,11 @@
-from a_maze_ing.core.view.maze_renderer import (
+from a_maze_ing.maze.maze_renderer import (
     MazeMlxRenderer,
     MlxSimpleMazeBuilder,
 )
-from a_maze_ing.core.view.maze_view import MazeView
-from a_maze_ing.core.view.mlx_draw import MlxDraw
-from a_maze_ing.core.view.mlx_manager import MlxManager
-from a_maze_ing.core.view.theme import MazeTheme
+from a_maze_ing.maze.maze_view import MazeView
+from a_maze_ing.mlx.mlx_draw import MlxDraw
+from a_maze_ing.mlx.mlx_manager import MlxManager
+from a_maze_ing.theme.theme import MazeTheme
 from mazegen.exporter.maze_exporter import MazeExporter
 from mazegen.generator.maze_initializer import MazeInitializer
 from mazegen.generator.recursive_backtracking import (

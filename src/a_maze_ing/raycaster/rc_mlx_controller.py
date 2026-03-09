@@ -3,8 +3,8 @@ import time
 from a_maze_ing.core.model.rc_engine import RayCastingEngine
 from a_maze_ing.core.model.rc_map import RayCastingMap
 from a_maze_ing.core.model.rc_player import Player
-from a_maze_ing.core.view.mlx_manager import MlxManager
-from a_maze_ing.core.view.rc_renderer import RayCastingRenderer
+from a_maze_ing.mlx.mlx_manager import MlxManager
+from a_maze_ing.raycaster.rc_renderer import RayCastingRenderer
 
 
 class RayCastingMlxController:
