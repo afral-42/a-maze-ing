@@ -1,21 +1,19 @@
+from abc import ABC
 from dataclasses import dataclass
 
 
-@dataclass(frozen=True)
+@dataclass
 class Color:
     r: int
     g: int
     b: int
     a: int = 255
 
+    def to_tuple(self) -> tuple[int, ...]:
+        return (self.b, self.g, self.r, self.a)
 
-@dataclass
-class MazeTheme:
-    wall: Color
-    background: Color
-    start: Color
-    end: Color
-    forty_two: Color
+    def to_int(self) -> int:
+        return (self.b << 16) | (self.g << 8) | (self.r << 4) | self.a
 
 
 class Palette:
@@ -25,25 +23,35 @@ class Palette:
     BLUE = Color(0, 0, 255)
     WHITE = Color(255, 255, 255)
 
+    class Catppuccin(ABC):
+        BASE: Color
+        LAVENDER: Color
+        GREEN: Color
+        RED: Color
+        BLUE: Color
+        SURFACE_0: Color
+        ROSEWATER: Color
+        TEXT: Color
+        OVERLAY_0: Color
 
-class Theme:
-    DEBUG = MazeTheme(
-        wall=Palette.RED,
-        background=Palette.BLACK,
-        start=Palette.GREEN,
-        end=Palette.BLUE,
-        forty_two=Palette.RED,
-    )
-    CLASSIC = MazeTheme(
-        wall=Palette.WHITE,
-        background=Palette.BLACK,
-        start=Palette.GREEN,
-        end=Palette.BLUE,
-        forty_two=Palette.WHITE,
-    )
+    class Macchiato(Catppuccin):
+        BASE = Color(30, 32, 48)
+        LAVENDER = Color(183, 173, 244)
+        GREEN = Color(166, 218, 149)
+        RED = Color(237, 135, 150)
+        BLUE = Color(138, 173, 244)
+        SURFACE_0 = Color(54, 58, 79)
+        ROSEWATER = Color(244, 219, 214)
+        TEXT = Color(205, 214, 244)
+        OVERLAY_0 = Color(108, 112, 134)
 
-
-def color_to_int(color: Color) -> int:
-    result = (color.b << 16) | (color.g << 8) | (color.r << 4) | color.a
-
-    return result
+    class Latte(Catppuccin):
+        BASE = Color(239, 241, 245)
+        LAVENDER = Color(114, 135, 243)
+        GREEN = Color(64, 160, 43)
+        RED = Color(210, 15, 57)
+        BLUE = Color(30, 102, 245)
+        SURFACE_0 = Color(204, 208, 218)
+        ROSEWATER = Color(220, 138, 120)
+        TEXT = Color(76, 79, 105)
+        OVERLAY_0 = Color(156, 160, 176)

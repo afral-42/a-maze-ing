@@ -1,3 +1,4 @@
+from .exporter.maze_exporter import MazeExporter
 from .generator.maze_generator import MazeGenerator
 from .generator.maze_initializer import MazeInitializer
 from .generator.recursive_backtracking import RecursiveBacktrackingGenerator
@@ -12,4 +13,5 @@ __all__ = [
     "RecursiveBacktrackingGenerator",
     "MazeGenerator",
     "Direction",
+    "MazeExporter",
 ]

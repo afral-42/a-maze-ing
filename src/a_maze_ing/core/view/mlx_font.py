@@ -1,4 +1,4 @@
-from core.view.mlx_manager import MlxError
+from a_maze_ing.core.view.mlx_manager import MlxError
 
 
 class MlxFont:

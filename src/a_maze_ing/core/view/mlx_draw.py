@@ -1,8 +1,7 @@
 from typing import TYPE_CHECKING
 
-from a_maze_ing.core.view.colors import Color, color_to_int
-
 if TYPE_CHECKING:
+    from a_maze_ing.core.view.colors import Color
     from a_maze_ing.core.view.mlx_font import MlxFont
     from a_maze_ing.core.view.mlx_manager import MlxImage
 
@@ -21,6 +20,8 @@ class Rectangle:
 
 
 class MlxDraw:
+    counter = 0
+
     @staticmethod
     def draw_pixel(image: MlxImage, x: int, y: int, color: Color) -> None:
         if x < 0 or y < 0 or x >= image.width or y >= image.height:
@@ -35,7 +36,7 @@ class MlxDraw:
     def draw_text(
         mlx_ptr: int, win_ptr: int, string: str, x: int, y: int, color: Color
     ) -> None:
-        color_number: int = color_to_int(color)
+        color_number: int = color.to_int()
         mlx_engine.mlx_string_put(mlx_ptr, win_ptr, x, y, color_number, string)
 
     @staticmethod
@@ -46,19 +47,69 @@ class MlxDraw:
 
     @staticmethod
     def rectangle(image: MlxImage, r: Rectangle) -> None:
-        for i in range(r.y, r.y + r.height):
-            for j in range(r.x, r.x + r.width):
-                MlxDraw.draw_pixel(image, j, i, r.color)
+        if r.x < 0:
+            x = 0
+        elif r.x >= image.width:
+            return
+        else:
+            x = r.x
+        width = min(r.width, image.width - x)
+        start = r.y * image.size_line + x * image.bits_per_pixel // 8
+        color = bytearray(r.color.to_tuple())
+        line = color * width
+        for i in range(r.height):
+            offset = start + i * image.size_line
+            image.data_addr[offset : offset + len(line)] = line
 
     @staticmethod
     def clear_image(image: MlxImage) -> None:
-        black_pixel = b"\x00\x00\x00\xff"
+        MlxDraw.counter += 1
+        if MlxDraw.counter % 2 == 0:
+            black_pixel = b"\x00\xff\x00\x00"
+        else:
+            black_pixel = b"\x00\x00\xff\x00"
         line_bytes = black_pixel * image.width
         padding = image.size_line - len(line_bytes)
         if padding > 0:
             line_bytes += b"\x00" * padding
         full_image_bytes = line_bytes * image.height
         image.data_addr.cast("B")[:] = full_image_bytes
+
+    @staticmethod
+    def copy_image(
+        dest: MlxImage, src: MlxImage, offset_x: int, offset_y: int
+    ) -> None:
+        # TODO: refactor this function and implement y offset
+        if offset_x >= 0:
+            start_dest = (
+                offset_y * dest.size_line + offset_x * dest.bits_per_pixel // 8
+            )
+            height = min(dest.height - offset_y, src.height)
+            width = min(dest.width - offset_x, src.width)
+            if width == 0:
+                return
+            cpy_len = width * 4
+            for i in range(height):
+                offset_dest = start_dest + i * dest.size_line
+                offset_src = i * src.size_line
+                dest.data_addr[offset_dest : offset_dest + cpy_len] = (
+                    src.data_addr[offset_src : offset_src + cpy_len]
+                )
+        elif offset_x < 0:
+            start_src = (
+                offset_y * src.size_line - offset_x * src.bits_per_pixel // 8
+            )
+            height = min(dest.height - offset_y, src.height)
+            width = min(dest.width, src.width + offset_x)
+            if width == 0:
+                return
+            cpy_len = width * 4
+            for i in range(height):
+                offset_dest = i * dest.size_line
+                offset_src = start_src + i * src.size_line
+                dest.data_addr[offset_dest : offset_dest + cpy_len] = (
+                    src.data_addr[offset_src : offset_src + cpy_len]
+                )
 
     @staticmethod
     def putchar(
@@ -89,7 +140,13 @@ class MlxDraw:
 
     @staticmethod
     def putchar_scaled(
-        x: int, y: int, char: str, image: MlxImage, font: MlxFont, scale: int
+        x: int,
+        y: int,
+        char: str,
+        image: MlxImage,
+        font: MlxFont,
+        color: Color,
+        scale: int,
     ) -> None:
         letter = font.get_char(char)
 
@@ -109,11 +166,15 @@ class MlxDraw:
                     dst_x * (image.bits_per_pixel // 8)
                     + dst_y * image.size_line
                 )
-
-                image.data_addr[dst_index] = letter[letter_idx]
-                image.data_addr[dst_index + 1] = letter[letter_idx + 1]
-                image.data_addr[dst_index + 2] = letter[letter_idx + 2]
-                image.data_addr[dst_index + 3] = letter[letter_idx + 3]
+                if (
+                    letter[letter_idx]
+                    or letter[letter_idx + 1]
+                    or letter[letter_idx + 2]
+                ):
+                    image.data_addr[dst_index] = color.b
+                    image.data_addr[dst_index + 1] = color.g
+                    image.data_addr[dst_index + 2] = color.r
+                    image.data_addr[dst_index + 3] = 0xFF
 
     @staticmethod
     def putstr_scaled(
@@ -122,9 +183,12 @@ class MlxDraw:
         string: str,
         image: MlxImage,
         font: MlxFont,
+        color: Color,
         scale: int = 1,
     ) -> None:
         current_x = x
         for char in string:
-            MlxDraw.putchar_scaled(current_x, y, char, image, font, scale)
+            MlxDraw.putchar_scaled(
+                current_x, y, char, image, font, color, scale
+            )
             current_x += font.LETTER_WIDTH * scale

@@ -1,6 +1,7 @@
-from typing import Callable
+from typing import TYPE_CHECKING, Callable
 
-from a_maze_ing.core.view.colors import Color
+if TYPE_CHECKING:
+    from a_maze_ing.core.view.colors import Color
 from a_maze_ing.core.view.mlx_draw import MlxDraw
 from a_maze_ing.core.view.mlx_engine import mlx_engine
 
@@ -10,12 +11,19 @@ class MlxError(Exception):
 
 
 class MlxImage:
-    def __init__(self, mlx_ptr: int, width: int, height: int) -> None:
+    def __init__(
+        self, mlx_ptr: int, width: int, height: int, img_ptr: int | None = None
+    ) -> None:
         self.width = width
         self.height = height
-        self.img_ptr: int = mlx_engine.mlx_new_image(mlx_ptr, width, height)
-        if not self.img_ptr:
-            raise MlxError("Error initializing the MLX image")
+        if img_ptr is None:
+            self.img_ptr: int = mlx_engine.mlx_new_image(
+                mlx_ptr, width, height
+            )
+            if not self.img_ptr:
+                raise MlxError("Error initializing the MLX image")
+        else:
+            self.img_ptr = img_ptr
 
         self.data_addr: memoryview
         self.bits_per_pixel: int
@@ -58,6 +66,7 @@ class MlxManager:
 
     def add_image(self, name: str, width: int, height: int) -> None:
         self.images[name] = MlxImage(self.mlx_ptr, width, height)
+        MlxDraw.clear_image(self.images[name])
 
     def push_image(self, name: str, x: int, y: int) -> None:
         if not self.window:
@@ -107,6 +116,13 @@ class MlxManager:
             )
         return self.window
 
+    def destroy_window(self) -> None:
+        if not self.window:
+            raise MlxError(
+                "No window initialized, please instanciate an image"
+            )
+        mlx_engine.mlx_destroy_window(self.mlx_ptr, self.window.win_ptr)
+
     def get_image(self, name: str) -> MlxImage:
         try:
             return self.images[name]
@@ -139,9 +155,48 @@ class MlxManager:
             )
         mlx_engine.mlx_key_hook(self.window.win_ptr, func, None)
 
+    def add_loop_hook(self, func) -> None:
+        mlx_engine.mlx_loop_hook(self.mlx_ptr, func, None)
+
+    def exit_loop(self) -> None:
+        mlx_engine.mlx_loop_exit(self.mlx_ptr)
+
+    def add_reactive_key_hook(
+        self, key_press_func, key_release_func, autorepeat=False
+    ) -> None:
+        if not self.window:
+            raise MlxError(
+                "No window initialized, please instanciate an image"
+            )
+        if autorepeat:
+            mlx_engine.mlx_do_key_autorepeatoff(self.mlx_ptr)
+        mlx_engine.mlx_hook(self.window.win_ptr, 2, 1, key_press_func, None)
+        mlx_engine.mlx_hook(self.window.win_ptr, 3, 2, key_release_func, None)
+
+    def destroy_image(self, name: str) -> None:
+        if name in self.images:
+            mlx_engine.mlx_destroy_image(
+                self.mlx_ptr, self.images[name].img_ptr
+            )
+
     def refresh_image(self, name: str) -> None:
         try:
             x, y = self.images_historic[name]
         except KeyError:
             raise MlxError("Can't find image in image historic")
         self.push_image(name, x, y)
+
+    def load_png_image(self, filename: str) -> MlxImage:
+        try:
+            image, width, height = mlx_engine.mlx_png_file_to_image(
+                self.mlx_ptr, f"./assets/{filename}"
+            )
+        except Exception as e:
+            raise MlxError(f"Failed to load image '{filename}': {e}")
+        if not image:
+            raise MlxError(f"Failed to load image '{filename}'")
+        return MlxImage(self.mlx_ptr, width, height, image)
+
+    def destroy(self) -> None:
+        self.exit_loop()
+        self.destroy_window()
