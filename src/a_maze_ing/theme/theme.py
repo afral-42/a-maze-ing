@@ -12,6 +12,7 @@ class MazeTheme:
     background: Color
     start: Color
     end: Color
+    solution: Color
     forty_two: Color
 
 
@@ -41,6 +42,7 @@ class AppTheme:
                 start=catppuccin_palette.GREEN,
                 end=catppuccin_palette.RED,
                 forty_two=catppuccin_palette.ROSEWATER,
+                solution=Color(255, 255, 255),
             ),
             ConsoleTheme(
                 background=catppuccin_palette.BASE,
@@ -60,6 +62,7 @@ class Theme(Enum):
             start=Palette.GREEN,
             end=Palette.BLUE,
             forty_two=Palette.WHITE,
+            solution=Palette.PURPLE,
         ),
         ConsoleTheme(
             background=Palette.BLACK,

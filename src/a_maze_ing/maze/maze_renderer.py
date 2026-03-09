@@ -6,6 +6,7 @@ import numpy as np
 from a_maze_ing.maze.maze_view import MazeView
 from a_maze_ing.mlx.mlx_draw import MlxDraw, Rectangle
 from a_maze_ing.mlx.mlx_manager import MlxImage
+from a_maze_ing.theme.colors import Color
 from mazegen import Direction
 
 
@@ -42,8 +43,11 @@ class MlxSimpleMazeBuilder:
             if self._maze_view.maze.has_wall(x, y, d)
         ]
 
-    def _build_cell_background(self, x: int, y: int) -> Rectangle | None:
-        color = self._maze_view.get_cell_background_color(x, y)
+    def build_cell_background(
+        self, x: int, y: int, color: Color | None = None
+    ) -> Rectangle | None:
+        if not color:
+            color = self._maze_view.get_cell_background_color(x, y)
         if not color:
             return None
 
@@ -81,7 +85,7 @@ class MlxSimpleMazeBuilder:
         elements = []
         elements.extend(self._build_cell_walls(x, y))
         elements.extend(self._build_cell_corners(x, y))
-        if rect := self._build_cell_background(x, y):
+        if rect := self.build_cell_background(x, y):
             elements.append(rect)
         return elements
 

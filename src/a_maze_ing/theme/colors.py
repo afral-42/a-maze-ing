@@ -22,6 +22,7 @@ class Palette:
     GREEN = Color(0, 255, 0)
     BLUE = Color(0, 0, 255)
     WHITE = Color(255, 255, 255)
+    PURPLE = Color(127, 0, 255)
 
     class Catppuccin(ABC):
         BASE: Color

@@ -5,7 +5,7 @@ from a_maze_ing.maze.maze_renderer import (
 from a_maze_ing.maze.maze_view import MazeView
 from a_maze_ing.mlx.mlx_draw import MlxDraw
 from a_maze_ing.mlx.mlx_manager import MlxManager
-from a_maze_ing.theme.theme import MazeTheme
+from a_maze_ing.theme.theme import MazeTheme, Palette
 from mazegen.exporter.maze_exporter import MazeExporter
 from mazegen.generator.maze_initializer import MazeInitializer
 from mazegen.generator.recursive_backtracking import (
@@ -13,6 +13,8 @@ from mazegen.generator.recursive_backtracking import (
 )
 from mazegen.models.maze import Maze
 from mazegen.models.maze_settings import MazeSettings
+from mazegen.solver.dfs_maze_solver import DfsMazeSolver
+from mazegen.solver.maze_solver import MazeSolver
 
 
 class MazeComponent:
@@ -43,6 +45,7 @@ class MazeComponent:
         self._initializer = initializer
         self._generator = self._select_generator()
         self._maze_view = self._generate()
+        self._solver = self._select_solver()
         self._exporter = exporter
 
     def get_maze_size(self) -> tuple[int, int]:
@@ -74,10 +77,13 @@ class MazeComponent:
             self._settings, self._initializer
         )
 
+    def _select_solver(self) -> MazeSolver:
+        return DfsMazeSolver(self._maze_view.maze)
+
     def handle_key_press(self, keycode: int):
         pass
 
-    def render(self):
+    def render(self) -> None:
         if self._refresh_display_flag:
             maze_builder = MlxSimpleMazeBuilder(self._maze_view)
             renderer = MazeMlxRenderer(
@@ -90,7 +96,20 @@ class MazeComponent:
         self._mlx_manager.refresh_image(self._background_image_name)
         self._mlx_manager.refresh_image(self._image_name)
 
-    def export(self):
+    def render_solution(self) -> None:
+        solution = self._solver.solve()
+        maze_builder = MlxSimpleMazeBuilder(self._maze_view)
+
+        for position in solution:
+            x, y = position
+            rectangle = maze_builder.build_cell_background(
+                x, y, Palette.PURPLE
+            )
+            MlxDraw.rectangle(
+                self._mlx_manager.get_image(self._image_name), rectangle
+            )
+
+    def export(self) -> str:
         try:
             self._exporter.export(self._maze_view.maze)
             return (
@@ -124,6 +143,9 @@ class MazeComponent:
             self._maze_view = self._generate()
             self.render()
             return
+        if option == "solve":
+            self.render_solution()
+            self.render()
         if option == "dump":
             return self._handle_dump_command()
         elif option == "help":
