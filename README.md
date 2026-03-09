@@ -22,8 +22,9 @@ This project uses uv for dependency management: https://docs.astral.sh/uv/#insta
 
 ### Setup and run
 ```bash
-make install # Install dependencies
-make run     # Run the program based on config.txt
+make install                        # Install dependencies
+make run                            # Run the program based on config.txt
+uv run a-maze-ing my_config.txt     # Specify your own config file
 ```
 
 ---
@@ -101,6 +102,13 @@ a-maze-ing ~ raycaster start    # start maze exploration as first-person view
 ## Technical Implementation
 ### Reusability
 [Specify which parts of your code are reusable and provide instructions on how to reuse them in other contexts.]
+
+The package `mazegen` is reusable in other context
+
+```bash
+uv build                                                    # build mazegen package
+python3 -m pip install dist/mazegen-0.1.0-py3-none-any.whl  # install the package with pip
+```
 
 ---
 
