@@ -3,35 +3,66 @@
 # Project Name: A-Maze-ing
 
 ## Description
-[Provide a clear presentation of the project, its goal, and a brief overview of what it accomplishes.]
+This project is a maze generation engine designed to explore fundamental concepts in Graph Theory and Algorithm Design. The primary goal is to transform an initial grid into a navigable structure by applying procedural generation techniques.
+
+Building this tool serves as a practical application for several core computer science pillars:
+- Graph Theory: Implementing "Perfect Mazes," which are technically Spanning Trees (graphs where any two nodes are connected by exactly one path, with no cycles).
+- Algorithm Design: Using traversal or partitioning algorithms—such as Depth-First Search (DFS), Prim’s, or Kruskal’s—to create structured patterns from random states.
+- Data Structures: Efficiently managing cell states and adjacencies to optimize generation speed, even for large-scale grids.
+- Configuration Management: Decoupling logic from parameters by using an external configuration file to control the generation behavior.
+
+![maze](maze.png)
 
 ---
 
 ## Instructions
 
 ### Installation
-[Steps to clone the repository and set up the environment.]
+This project uses uv for dependency management: https://docs.astral.sh/uv/#installation
 
-### Compilation
-[Commands used to compile the project, e.g., `make`.]
-
-### Execution
-[Commands to run the program, including any necessary arguments or flags.]
+### Setup and run
+```bash
+make install # Install dependencies
+make run     # Run the program based on config.txt
+```
 
 ---
 
 ## Configuration File
-### Structure
-[Describe the complete structure of your configuration file here.]
+The configuration is define in the `config.txt` file at the root of the project.
+The configuration file accepts only the following parameters.
 
-### Format
-[Detail the format requirements, syntax, and types used in the config file.]
+| Parameter | Format | Required | Example | 
+| ----- | ----- | ----- | -----| 
+| WIDTH | integer | yes | 10 |
+| HEIGHT | integer | yes | 10 |
+| ENTRY | line,column | yes | 0,0 |
+| EXIT | line,column | yes | 9,9 |
+| OUTPUT_FILE | string | yes | output.txt |
+| PERFECT | boolean | no | True |
+| SEED | integer | no | 512786 |
+
+*Example:*
+```bash
+# config.txt
+WIDTH=80
+HEIGHT=80
+ENTRY=0,0
+EXIT=19,14
+OUTPUT_FILE=maze.txt
+PERFECT=True
+SEED=512786
+```
 
 ---
 
 ## Maze Generation
 ### Algorithm
-[Specify the maze generation algorithm you chose to implement.]
+#### Recursive Backtracking (Randomized Depth-First Search)
+
+Complexity: $O(n)$
+
+
 
 ### Selection Rationale
 [Explain why you chose this specific algorithm over others (e.g., complexity, visual style, efficiency).]
@@ -40,10 +71,30 @@
 
 ## Features
 ### Basic Features
-[List the core requirements implemented.]
+
+```bash
+a-maze-ing ~ help               # display available commands
+a-maze-ing ~ exit               # exit program
+a-maze-ing ~ maze               # display available sub-commands for maze
+a-maze-ing ~ maze help          # display available sub-commands for maze
+a-maze-ing ~ maze show          # display maze
+a-maze-ing ~ maze info          # display maze information
+a-maze-ing ~ maze regen         # generate a new maze
+a-maze-ing ~ maze solve         # display maze solution
+a-maze-ing ~ maze dump          # save maze to output file
+```
 
 ### Advanced Features
-[If applicable, describe multiple algorithms, display options, or extra functionalities.]
+```bash
+a-maze-ing ~ theme              # display available themes
+a-maze-ing ~ theme info         # display current theme
+a-maze-ing ~ theme theme-name   # change theme to selected theme
+a-maze-ing ~ algo               # display available algorithms
+a-maze-ing ~ algo algo-name     # change algorithm and regenerate the maze
+a-maze-ing ~ raycaster          # display available sub-commands for raycaster
+a-maze-ing ~ raycaster help     # display available sub-commands for raycaster
+a-maze-ing ~ raycaster start    # start maze exploration as first-person view
+```
 
 ---
 
