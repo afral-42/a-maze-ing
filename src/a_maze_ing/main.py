@@ -27,8 +27,8 @@ def parse_command_line() -> str:
     return args.filename
 
 
-def main():
-    sys.setrecursionlimit(8192)
+def main() -> None:
+    sys.setrecursionlimit(100000)
     config_filename = parse_command_line()
     try:
         raw_config = parse_config_file(config_filename)

@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    console_component.py                               :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: arebilla <arebilla@student.42lyon.fr>      +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2026/03/09 18:11:18 by arebilla          #+#    #+#              #
-#    Updated: 2026/03/09 18:11:20 by arebilla         ###   ########lyon.fr    #
-#                                                                              #
-# **************************************************************************** #
-
 import string
 
 from a_maze_ing.mlx.mlx_draw import MlxDraw, Rectangle
@@ -52,6 +40,13 @@ class ConsoleComponent:
         ) // 2
         self._history = []
         self._history_index = 0
+        self.suggestions = []
+        self.suggestions_index = 0
+        self.commands = {
+            "maze": {"show": None, "regen": None, "solve": None},
+            "exit": None,
+            "help": None,
+        }
 
     def _move_history_index(self, increment: int) -> bool:
         if (increment < 0 and self._history_index > 0) or (
@@ -62,6 +57,10 @@ class ConsoleComponent:
         return False
 
     def handle_key_press(self, keycode: int) -> None:
+        if keycode != MlxKeys.RIGHT:
+            self.suggestions_index = 0
+            self.suggestions
+
         if (
             chr(keycode) in string.printable
             and len(self._input) < self._cmd_max_len
@@ -81,6 +80,16 @@ class ConsoleComponent:
                     if self._history_index > 0
                     else bytearray()
                 )
+        elif keycode == MlxKeys.RIGHT:
+            if not self.suggestions_index:
+                self.suggestions = self.get_suggestions()
+            if self.suggestions:
+                self._input = bytearray(
+                    self.suggestions[
+                        self.suggestions_index % len(self.suggestions)
+                    ].encode()
+                )
+                self.suggestions_index += 1
         else:
             return
         self.render()
@@ -88,7 +97,35 @@ class ConsoleComponent:
     def set_theme(self, theme: ConsoleTheme) -> None:
         self._theme = theme
 
-    def render(self):
+    def get_suggestions(self) -> list[str]:
+        current_text = self._input.decode("utf-8")
+        words = current_text.split()
+        validated_last = current_text.endswith(" ") or not current_text
+
+        node = self.commands
+        size = len(words) if validated_last else len(words) - 1
+        for i in range(size):
+            word = words[i]
+            if node and word in node:
+                node = node[word]
+            else:
+                return []
+
+        if not node:
+            return []
+
+        if validated_last:
+            base_str = " ".join(words) + " " if words else ""
+            return [base_str + key for key in node.keys()]
+        else:
+            prefix = words[-1]
+            base_str = " ".join(words[:-1])
+            base_str = base_str + " " if base_str else ""
+            return [
+                base_str + key for key in node.keys() if key.startswith(prefix)
+            ]
+
+    def render(self) -> None:
         image = self._mlx_manager.get_image(self._image_name)
         self._drawer.rectangle(
             image,
