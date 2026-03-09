@@ -1,14 +1,40 @@
+import argparse
 import sys
 
 from a_maze_ing.app.app_component import AppComponent
 from a_maze_ing.mlx.mlx_manager import MlxManager
-from a_maze_ing.parsing.parsing import compute_config_model, parse_config_file
+from a_maze_ing.parsing.parsing import (
+    ParsingError,
+    compute_config_model,
+    parse_config_file,
+)
 from a_maze_ing.theme.theme import Theme
+
+
+def parse_command_line() -> str:
+    parser = argparse.ArgumentParser(
+        prog="a-maze-ing",
+        description="Maze generator and more",
+        epilog="Have fun!",
+    )
+    parser.add_argument(
+        "filename",
+        nargs="?",
+        default="config.txt",
+        help="a-maze-ing configuration file. Default value is 'config.txt'",
+    )
+    args = parser.parse_args()
+    return args.filename
 
 
 def main():
     sys.setrecursionlimit(8192)
-    raw_config = parse_config_file("config.txt")
+    config_filename = parse_command_line()
+    try:
+        raw_config = parse_config_file(config_filename)
+    except ParsingError as e:
+        print(e)
+        sys.exit(1)
     config = compute_config_model(raw_config)
     mlx_manager = MlxManager()
     app = AppComponent(
