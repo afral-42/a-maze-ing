@@ -50,7 +50,7 @@ class AppController:
     def _close_console(self) -> None:
         if self._background == AppFocus.MAZE:
             self._set_focus(AppFocus.MAZE)
-            self._maze.focus()
+            self._maze.render()
         elif self._background == AppFocus.RAYCASTER:
             self._set_focus(AppFocus.RAYCASTER)
 

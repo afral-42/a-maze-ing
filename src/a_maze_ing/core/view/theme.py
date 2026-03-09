@@ -69,8 +69,10 @@ class Theme(Enum):
         ),
     )
     CATPPUCCIN_MACCHIATO = AppTheme.catppuccin(
-        "cattpuccin-macchiato", Palette.Machiatto
+        "cattpuccin-macchiato", Palette.Macchiato
     )
+
+    CATPPUCCIN_LATTE = AppTheme.catppuccin("cattpuccin-latte", Palette.Latte)
 
     @classmethod
     def get_theme(cls, name: str) -> AppTheme:

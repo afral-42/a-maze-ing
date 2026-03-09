@@ -13,9 +13,7 @@ class Color:
         return (self.b, self.g, self.r, self.a)
 
     def to_int(self) -> int:
-        result = (self.b << 16) | (self.g << 8) | (self.r << 4) | self.a
-
-        return result
+        return (self.b << 16) | (self.g << 8) | (self.r << 4) | self.a
 
 
 class Palette:
@@ -36,7 +34,7 @@ class Palette:
         TEXT: Color
         OVERLAY_0: Color
 
-    class Machiatto(Catppuccin):
+    class Macchiato(Catppuccin):
         BASE = Color(30, 32, 48)
         LAVENDER = Color(183, 173, 244)
         GREEN = Color(166, 218, 149)
@@ -46,3 +44,14 @@ class Palette:
         ROSEWATER = Color(244, 219, 214)
         TEXT = Color(205, 214, 244)
         OVERLAY_0 = Color(108, 112, 134)
+
+    class Latte(Catppuccin):
+        BASE = Color(239, 241, 245)
+        LAVENDER = Color(114, 135, 243)
+        GREEN = Color(64, 160, 43)
+        RED = Color(210, 15, 57)
+        BLUE = Color(30, 102, 245)
+        SURFACE_0 = Color(204, 208, 218)
+        ROSEWATER = Color(220, 138, 120)
+        TEXT = Color(76, 79, 105)
+        OVERLAY_0 = Color(156, 160, 176)

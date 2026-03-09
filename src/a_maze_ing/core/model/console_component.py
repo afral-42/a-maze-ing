@@ -45,8 +45,8 @@ class ConsoleComponent:
             self._input.append(keycode)
         elif keycode == MlxKeys.BACK_SPACE and self._input:
             self._input.pop()
-        elif keycode == MlxKeys.ENTER:
-            pass
+        else:
+            return
         self.render()
 
     def set_theme(self, theme: ConsoleTheme) -> None:
@@ -63,7 +63,7 @@ class ConsoleComponent:
             Rectangle(0, 0, image.width, 2, self._theme.border),
         )
         self._drawer.putstr_scaled(
-            10,
+            5,
             self._first_line_y,
             self._prompt + self._input.decode() + self._cursor,
             image,
@@ -71,7 +71,7 @@ class ConsoleComponent:
             self._theme.text,
         )
         self._drawer.putstr_scaled(
-            10,
+            5,
             self._first_line_y + self._font.LETTER_HEIGHT,
             self._output,
             image,

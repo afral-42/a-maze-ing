@@ -77,12 +77,6 @@ class MazeComponent:
     def handle_key_press(self, keycode: int):
         pass
 
-    def change_theme(self) -> None:
-        # self._theme_id = (self._theme_id + 1) % len(self._themes)
-        # self._maze_view.set_theme(self._themes[self._theme_id])
-        self._refresh_display_flag = True
-        self.render()
-
     def render(self):
         if self._refresh_display_flag:
             maze_builder = MlxSimpleMazeBuilder(self._maze_view)
@@ -106,32 +100,32 @@ class MazeComponent:
         except Exception:
             return "maze: error, export failed!!!"
 
-    def focus(self) -> None:
-        self.render()
-
     def handle_help_command(self) -> str:
         return "maze - available options: show, regen, dump, help"
 
     def handle_unknown_option(self, option) -> str:
         return f"maze: unknown option '{option}', try 'maze help'"
 
+    def _handle_dump_command(self) -> str:
+        try:
+            self._exporter.export(self._maze_view.maze)
+            return (
+                "maze: export successfull, file "
+                f"'{self._maze_view.maze.settings.output_file}' written."
+            )
+        except Exception:
+            return "maze: error, export failed!!!"
+
     def handle_command(self, option: str) -> str | None:
         if option == "show":
-            self.focus()
+            self.render()
             return
         if option == "regen":
             self._maze_view = self._generate()
             self.render()
             return
         if option == "dump":
-            try:
-                self._exporter.export(self._maze_view.maze)
-                return (
-                    "maze: export successfull, file "
-                    f"'{self._maze_view.maze.settings.output_file}' written."
-                )
-            except Exception:
-                return "maze: error, export failed!!!"
+            return self._handle_dump_command()
         elif option == "help":
             return self.handle_help_command()
         return self.handle_help_command()
