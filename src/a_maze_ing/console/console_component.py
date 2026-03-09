@@ -1,3 +1,15 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    console_component.py                               :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: arebilla <arebilla@student.42lyon.fr>      +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2026/03/09 18:11:18 by arebilla          #+#    #+#              #
+#    Updated: 2026/03/09 18:11:20 by arebilla         ###   ########lyon.fr    #
+#                                                                              #
+# **************************************************************************** #
+
 import string
 
 from a_maze_ing.mlx.mlx_draw import MlxDraw, Rectangle
@@ -8,6 +20,8 @@ from a_maze_ing.theme.theme import ConsoleTheme
 
 
 class ConsoleComponent:
+    MAX_HISTORY_LEN = 10
+
     def __init__(
         self,
         mlx_manager: MlxManager,
@@ -36,6 +50,16 @@ class ConsoleComponent:
         self._first_line_y = (
             self._image_height - 2 * self._font.LETTER_HEIGHT
         ) // 2
+        self._history = []
+        self._history_index = 0
+
+    def _move_history_index(self, increment: int) -> bool:
+        if (increment < 0 and self._history_index > 0) or (
+            increment > 0 and self._history_index < len(self._history)
+        ):
+            self._history_index += increment
+            return True
+        return False
 
     def handle_key_press(self, keycode: int) -> None:
         if (
@@ -45,6 +69,18 @@ class ConsoleComponent:
             self._input.append(keycode)
         elif keycode == MlxKeys.BACK_SPACE and self._input:
             self._input.pop()
+        elif keycode == MlxKeys.UP:
+            if self._move_history_index(1):
+                self._input = bytearray(
+                    self._history[-1 * self._history_index].encode()
+                )
+        elif keycode == MlxKeys.DOWN:
+            if self._move_history_index(-1):
+                self._input = (
+                    bytearray(self._history[-1 * self._history_index].encode())
+                    if self._history_index > 0
+                    else bytearray()
+                )
         else:
             return
         self.render()
@@ -80,8 +116,16 @@ class ConsoleComponent:
         )
         self._mlx_manager.refresh_image(self._image_name)
 
+    def _update_history(self, command) -> None:
+        if len(self._history) >= self.MAX_HISTORY_LEN:
+            self._history.pop(0)
+        self._history.append(command)
+
     def get_command(self) -> str:
         command = self._input.decode()
+        if command:
+            self._update_history(command)
+        self._history_index = 0
         self._reset_content()
         return command
 
