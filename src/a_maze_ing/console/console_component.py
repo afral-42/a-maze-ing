@@ -105,6 +105,7 @@ class ConsoleComponent:
             image,
             self._font,
             self._theme.text,
+            self._theme.background,
         )
         self._drawer.putstr_scaled(
             5,
@@ -113,6 +114,7 @@ class ConsoleComponent:
             image,
             self._font,
             self._theme.text,
+            self._theme.background,
         )
         self._mlx_manager.refresh_image(self._image_name)
 
