@@ -1,9 +1,10 @@
 from typing import TYPE_CHECKING
 
+from a_maze_ing.theme.colors import Color
+
 if TYPE_CHECKING:
     from a_maze_ing.mlx.mlx_font import MlxFont
     from a_maze_ing.mlx.mlx_manager import MlxImage
-    from a_maze_ing.theme.colors import Color
 
 from dataclasses import dataclass
 
@@ -139,13 +140,26 @@ class MlxDraw:
                 image.data_addr[dst_index + 3] = letter[letter_idx + 3]
 
     @staticmethod
+    def correct_transparency(fg: Color, bg: Color, alpha: int) -> Color:
+        alpha_factor = alpha / 255.0
+        correct_color = lambda f, b: int(
+            alpha_factor * f + (1.0 - alpha_factor) * b
+        )
+        return Color(
+            r=correct_color(fg.r, bg.r),
+            g=correct_color(fg.g, bg.g),
+            b=correct_color(fg.b, bg.b),
+        )
+
+    @staticmethod
     def putchar_scaled(
         x: int,
         y: int,
         char: str,
         image: MlxImage,
         font: MlxFont,
-        color: Color,
+        font_color: Color,
+        bg_color: Color,
         scale: int,
     ) -> None:
         letter = font.get_char(char)
@@ -171,9 +185,17 @@ class MlxDraw:
                     or letter[letter_idx + 1]
                     or letter[letter_idx + 2]
                 ):
-                    image.data_addr[dst_index] = color.b
-                    image.data_addr[dst_index + 1] = color.g
-                    image.data_addr[dst_index + 2] = color.r
+                    alpha = letter[letter_idx + 3]
+                    c = (
+                        font_color
+                        if alpha == 0xFF
+                        else MlxDraw.correct_transparency(
+                            font_color, bg_color, alpha
+                        )
+                    )
+                    image.data_addr[dst_index] = c.b
+                    image.data_addr[dst_index + 1] = c.g
+                    image.data_addr[dst_index + 2] = c.r
                     image.data_addr[dst_index + 3] = 0xFF
 
     @staticmethod
@@ -183,12 +205,13 @@ class MlxDraw:
         string: str,
         image: MlxImage,
         font: MlxFont,
-        color: Color,
+        font_color: Color,
+        bg_color: Color,
         scale: int = 1,
     ) -> None:
         current_x = x
         for char in string:
             MlxDraw.putchar_scaled(
-                current_x, y, char, image, font, color, scale
+                current_x, y, char, image, font, font_color, bg_color, scale
             )
             current_x += font.LETTER_WIDTH * scale
