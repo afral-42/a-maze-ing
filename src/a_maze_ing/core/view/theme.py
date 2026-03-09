@@ -25,14 +25,16 @@ class ConsoleTheme:
 
 @dataclass
 class AppTheme:
+    name: str
     maze_theme: MazeTheme
     console_theme: ConsoleTheme
 
     @classmethod
     def catppuccin(
-        cls, catppuccin_palette: type[Palette.Catppuccin]
+        cls, name: str, catppuccin_palette: type[Palette.Catppuccin]
     ) -> AppTheme:
         return cls(
+            name,
             MazeTheme(
                 wall=catppuccin_palette.LAVENDER,
                 background=catppuccin_palette.BASE,
@@ -50,8 +52,8 @@ class AppTheme:
 
 
 class Theme(Enum):
-    CATPPUCCIN_MACCHIATO = AppTheme.catppuccin(Palette.Machiatto)
     CLASSIC = AppTheme(
+        "classic",
         MazeTheme(
             wall=Palette.WHITE,
             background=Palette.BLACK,
@@ -66,3 +68,17 @@ class Theme(Enum):
             border=Palette.WHITE,
         ),
     )
+    CATPPUCCIN_MACCHIATO = AppTheme.catppuccin(
+        "cattpuccin-macchiato", Palette.Machiatto
+    )
+
+    @classmethod
+    def get_theme(cls, name: str) -> AppTheme:
+        for t in cls:
+            if name == t.value.name:
+                return t.value
+        raise ValueError(f"Theme '{name}' not found")
+
+    @classmethod
+    def get_available_themes(cls) -> list[str]:
+        return [t.value.name for t in cls]

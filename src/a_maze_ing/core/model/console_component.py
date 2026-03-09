@@ -49,6 +49,9 @@ class ConsoleComponent:
             pass
         self.render()
 
+    def set_theme(self, theme: ConsoleTheme) -> None:
+        self._theme = theme
+
     def render(self):
         image = self._mlx_manager.get_image(self._image_name)
         self._drawer.rectangle(

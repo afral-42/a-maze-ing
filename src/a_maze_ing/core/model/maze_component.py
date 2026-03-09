@@ -30,7 +30,7 @@ class MazeComponent:
         theme: MazeTheme,
     ) -> None:
         self._algo = None
-        self._refresh_display = False
+        self._refresh_display_flag = False
         self._theme = theme
         self._area_width = area_width
         self._area_width = area_height
@@ -48,6 +48,11 @@ class MazeComponent:
     def get_maze_size(self) -> tuple[int, int]:
         return self._maze_view.width, self._maze_view.height
 
+    def set_theme(self, theme: MazeTheme) -> None:
+        self._theme = theme
+        self._maze_view.set_theme(theme)
+        self._refresh_display_flag = True
+
     def _generate(self):
         test_maze = self._generator.generate()
         maze = Maze(test_maze, self._settings)
@@ -58,11 +63,11 @@ class MazeComponent:
             self._area_width,
             self._area_width,
         )
-        self._refresh_display = True
+        self._refresh_display_flag = True
         return maze_view
 
     def set_algo(self) -> None:
-        self._refresh_display = True
+        self._refresh_display_flag = True
 
     def _select_generator(self):
         return RecursiveBacktrackingGenerator(
@@ -75,11 +80,11 @@ class MazeComponent:
     def change_theme(self) -> None:
         # self._theme_id = (self._theme_id + 1) % len(self._themes)
         # self._maze_view.set_theme(self._themes[self._theme_id])
-        self._refresh_display = True
+        self._refresh_display_flag = True
         self.render()
 
     def render(self):
-        if self._refresh_display:
+        if self._refresh_display_flag:
             maze_builder = MlxSimpleMazeBuilder(self._maze_view)
             renderer = MazeMlxRenderer(
                 maze_builder,
@@ -87,7 +92,7 @@ class MazeComponent:
                 self._mlx_manager.get_image(self._background_image_name),
             )
             renderer.render()
-            self._refresh_display = False
+            self._refresh_display_flag = False
         self._mlx_manager.refresh_image(self._background_image_name)
         self._mlx_manager.refresh_image(self._image_name)
 
@@ -104,22 +109,19 @@ class MazeComponent:
     def focus(self) -> None:
         self.render()
 
-    def handle_command(self, options: list[str]) -> str | None:
-        if not options:
+    def handle_help_command(self) -> str:
+        return "maze - available options: show, regen, dump, help"
+
+    def handle_unknown_option(self, option) -> str:
+        return f"maze: unknown option '{option}', try 'maze help'"
+
+    def handle_command(self, option: str) -> str | None:
+        if option == "show":
             self.focus()
             return
-        if len(options) > 1:
-            return (
-                f"maze: unknown options '{' '.join(options)}', try 'maze help'"
-            )
-
-        option = options[0]
         if option == "regen":
             self._maze_view = self._generate()
             self.render()
-            return
-        if option == "theme":
-            self.change_theme()
             return
         if option == "dump":
             try:
@@ -130,6 +132,6 @@ class MazeComponent:
                 )
             except Exception:
                 return "maze: error, export failed!!!"
-        if option == "help":
-            return "maze - available options: regen, theme, dump"
-        return f"maze: unknown options '{' '.join(options)}', try 'maze help'"
+        elif option == "help":
+            return self.handle_help_command()
+        return self.handle_help_command()
