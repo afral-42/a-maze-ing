@@ -1,6 +1,6 @@
 from enum import Enum
 
-from mazegen.generator.abstract_grid_generator import MazeGridGenerator
+from mazegen.generator.abstract_grid_generator import AbstractMazeGridGenerator
 from mazegen.generator.dead_ends_breaker import DeadEndBreaker
 from mazegen.generator.maze_initializer import MazeInitializer
 from mazegen.generator.recursive_backtracking import (
@@ -39,7 +39,7 @@ class MazeGenerator:
 
     def select_generator(
         self, settings: MazeSettings, algorithm: MazeGenerationAlgorithm
-    ) -> MazeGridGenerator:
+    ) -> AbstractMazeGridGenerator:
         match algorithm:
             case MazeGenerationAlgorithm.RECURSIVE_BACKTRACKING:
                 initializer = MazeInitializer(settings)
