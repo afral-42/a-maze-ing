@@ -6,7 +6,7 @@ from a_maze_ing.maze.maze_view import MazeView
 from a_maze_ing.mlx.mlx_draw import MlxDraw
 from a_maze_ing.mlx.mlx_manager import MlxManager
 from a_maze_ing.theme.theme import MazeTheme, Palette
-from mazegen.exporter.maze_exporter import MazeExporter
+from mazegen.exporter.maze_exporter import MazeExporter, MazeExportError
 from mazegen.generator.maze_generator import (
     MazeGenerationAlgorithm,
     MazeGenerator,
@@ -109,7 +109,7 @@ class MazeComponent:
                 "maze: export successfull, file "
                 f"'{self._maze_view.maze.settings.output_file}' written."
             )
-        except Exception:
+        except MazeExportError:
             return "maze: error, export failed!!!"
 
     def handle_help_command(self) -> str:
