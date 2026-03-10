@@ -72,7 +72,7 @@ class ConsoleComponent:
     def handle_key_press(self, keycode: int) -> None:
         if keycode != MlxKeys.TAB:
             self.suggestions_index = 0
-            self.suggestions
+            self.suggestions = []
 
         if (
             chr(keycode) in string.printable
