@@ -23,27 +23,27 @@ class MazeGenerationAlgorithm(Enum):
 
 
 class MazeGenerator:
-    def __init__(self) -> None:
-        pass
+    def __init__(self, settings: MazeSettings) -> None:
+        self._settings = settings
 
-    def generate(
-        self, settings: MazeSettings, algorithm: MazeGenerationAlgorithm
-    ) -> MazeModel:
-        generator = self.select_generator(settings, algorithm)
+    def generate(self, algorithm: MazeGenerationAlgorithm) -> MazeModel:
+        generator = self._select_generator(algorithm)
         maze_source = generator.generate()
-        maze = MazeModel(maze_source, settings)
-        if not settings.perfect:
+        maze = MazeModel(maze_source, self._settings)
+        if not self._settings.perfect:
             dead_end_breaker = DeadEndBreaker(maze)
             dead_end_breaker.break_dead_ends()
         return maze
 
-    def select_generator(
-        self, settings: MazeSettings, algorithm: MazeGenerationAlgorithm
+    def _select_generator(
+        self, algorithm: MazeGenerationAlgorithm
     ) -> AbstractMazeGridGenerator:
         match algorithm:
             case MazeGenerationAlgorithm.RECURSIVE_BACKTRACKING:
-                initializer = MazeInitializer(settings)
-                return RecursiveBacktrackingGenerator(settings, initializer)
+                initializer = MazeInitializer(self._settings)
+                return RecursiveBacktrackingGenerator(
+                    self._settings, initializer
+                )
             case _:
                 raise MazeGenerationError(
                     f"Algorithm '{algorithm.value}' not implemented."

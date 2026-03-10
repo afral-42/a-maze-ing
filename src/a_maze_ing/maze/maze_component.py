@@ -55,12 +55,12 @@ class MazeComponent:
         self._refresh_display_flag = True
 
     def _generate(self):
-        generator = MazeGenerator()
-        maze_model = generator.generate(self._settings, self._algo)
+        generator = MazeGenerator(self._settings)
+        maze_model = generator.generate(self._algo)
         maze_view = MazeView(
             maze_model,
             self._theme,
-            5,
+            1,
             self._area_width,
             self._area_width,
         )

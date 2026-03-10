@@ -3,6 +3,10 @@ from pathlib import Path
 from mazegen.models.maze import MazeModel
 
 
+class MazeExportError(Exception):
+    pass
+
+
 class MazeExporter:
     def export(self, maze: MazeModel) -> None:
         text = "\n".join(
@@ -13,6 +17,10 @@ class MazeExporter:
                 "",
             ]
         )
-        # TODO: voir comment on fait la gestion d'erreurs
         f = Path(maze.settings.output_file)
-        f.write_text(text)
+        try:
+            f.write_text(text)
+        except OSError as e:
+            raise MazeExportError(
+                f"Error, failed to write '{maze.settings.output_file}': {e}"
+            )

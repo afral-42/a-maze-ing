@@ -1,4 +1,4 @@
-from .exporter.maze_exporter import MazeExporter
+from .exporter.maze_exporter import MazeExporter, MazeExportError
 from .generator.abstract_grid_generator import AbstractMazeGridGenerator
 from .generator.maze_generator import MazeGenerationAlgorithm, MazeGenerator
 from .generator.maze_initializer import MazeInitializer
@@ -17,4 +17,5 @@ __all__ = [
     "MazeGenerator",
     "Direction",
     "MazeExporter",
+    "MazeExportError",
 ]
