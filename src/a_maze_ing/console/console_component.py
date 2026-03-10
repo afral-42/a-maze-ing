@@ -43,7 +43,20 @@ class ConsoleComponent:
         self.suggestions = []
         self.suggestions_index = 0
         self.commands = {
-            "maze": {"show": None, "regen": None, "solve": None},
+            "maze": {
+                "show": None,
+                "regen": None,
+                "solve": None,
+                "dump": None,
+                "help": None,
+            },
+            "raycaster": None,
+            "theme": {
+                "classic": None,
+                "cattpuccin-macchiato": None,
+                "cattpuccin-latte": None,
+            },
+            "algo": None,
             "exit": None,
             "help": None,
         }
@@ -57,7 +70,7 @@ class ConsoleComponent:
         return False
 
     def handle_key_press(self, keycode: int) -> None:
-        if keycode != MlxKeys.RIGHT:
+        if keycode != MlxKeys.TAB:
             self.suggestions_index = 0
             self.suggestions
 
@@ -80,7 +93,7 @@ class ConsoleComponent:
                     if self._history_index > 0
                     else bytearray()
                 )
-        elif keycode == MlxKeys.RIGHT:
+        elif keycode == MlxKeys.TAB:
             if not self.suggestions_index:
                 self.suggestions = self.get_suggestions()
             if self.suggestions:

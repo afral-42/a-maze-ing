@@ -8,3 +8,4 @@ class MlxKeys(IntEnum):
     UP = 65362
     DOWN = 65364
     RIGHT = 65363
+    TAB = 65289
