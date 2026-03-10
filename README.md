@@ -13,6 +13,7 @@ Building this tool serves as a practical application for several core computer s
 
 ![maze](maze.png)
 
+[TODO: AJOUTER UN VISUEL DE LA CONSOLE ET DU RAYTRACER]
 ---
 
 ## Instructions
