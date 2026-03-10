@@ -102,6 +102,8 @@ a-maze-ing ~ raycaster start    # start maze exploration as first-person view
 ## Technical Implementation
 ### Reusability
 
+[TODO: BRANCHER LE SOLVER]
+
 The package `mazegen` is reusable in other context:
 
 ```bash
