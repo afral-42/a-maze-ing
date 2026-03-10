@@ -1,4 +1,4 @@
-from mazegen import Maze
+from mazegen import MazeModel
 from mazegen.models.direction import Direction
 from mazegen.solver.maze_solver import MazeSolver
 
@@ -11,12 +11,12 @@ class DfsMazeSolver(MazeSolver):
         Direction.EAST: (1, 0),
     }
 
-    def __init__(self, maze: Maze) -> None:
+    def __init__(self, maze: MazeModel) -> None:
         self.maze = maze
         self.path: list[tuple[int, int]] = []
 
     def _get_available_positions(
-        self, maze: Maze, position: tuple[int, int]
+        self, maze: MazeModel, position: tuple[int, int]
     ) -> list[tuple[int, int]]:
 
         available_positions: list[tuple[int, int]] = []

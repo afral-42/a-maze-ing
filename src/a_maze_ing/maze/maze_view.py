@@ -3,14 +3,14 @@ import numpy as np
 from a_maze_ing.raycaster.rc_map import RayCastingMap
 from a_maze_ing.theme.colors import Color
 from a_maze_ing.theme.theme import MazeTheme
-from mazegen import Maze
+from mazegen import MazeModel
 from mazegen.models.direction import Direction
 
 
-class MazeView(Maze):
+class MazeView(MazeModel):
     def __init__(
         self,
-        maze: Maze,
+        maze: MazeModel,
         theme: MazeTheme,
         wall_thickness: int,
         image_width: int,

@@ -1,10 +1,10 @@
 from pathlib import Path
 
-from mazegen.models.maze import Maze
+from mazegen.models.maze import MazeModel
 
 
 class MazeExporter:
-    def export(self, maze: Maze) -> None:
+    def export(self, maze: MazeModel) -> None:
         text = "\n".join(
             [
                 maze.generate_str_repr(),

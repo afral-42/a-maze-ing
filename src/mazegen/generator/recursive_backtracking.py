@@ -3,13 +3,13 @@ import random
 import numpy as np
 from numpy.typing import NDArray
 
-from mazegen.generator.maze_generator import MazeGenerator
+from mazegen.generator.abstract_grid_generator import MazeGridGenerator
 from mazegen.generator.maze_initializer import MazeInitializer
 from mazegen.models.direction import DX, DY, OPPOSITE, Direction
 from mazegen.models.maze_settings import MazeSettings
 
 
-class RecursiveBacktrackingGenerator(MazeGenerator):
+class RecursiveBacktrackingGenerator(MazeGridGenerator):
     def __init__(
         self, settings: MazeSettings, initializer: MazeInitializer
     ) -> None:
