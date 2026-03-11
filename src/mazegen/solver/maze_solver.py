@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from mazegen import Maze
 from mazegen.models.direction import Direction
+from mazegen.models.maze import MazeModel
 
 
 class MazeSolver(ABC):
@@ -12,7 +12,7 @@ class MazeSolver(ABC):
         Direction.EAST: (1, 0),
     }
 
-    def __init__(self, maze: Maze) -> None:
+    def __init__(self, maze: MazeModel) -> None:
         self.maze = maze
         self.path: list[tuple[int, int]] = []
 
