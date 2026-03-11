@@ -70,8 +70,8 @@ class MazeComponent:
     def set_algo(self) -> None:
         self._refresh_display_flag = True
 
-    def _select_solver(self) -> MazeSolver:
-        return AStarMazeSolver(self._maze_view.maze)
+    def _select_solver(self) -> type[MazeSolver]:
+        return AStarMazeSolver
 
     def handle_key_press(self, keycode: int):
         pass
@@ -90,9 +90,9 @@ class MazeComponent:
         self._mlx_manager.refresh_image(self._image_name)
 
     def render_solution(self) -> None:
-        solution = self._solver.solve()
+        solver = self._solver(self._maze_view.maze)
+        solution = solver.solve()
         maze_builder = MlxSimpleMazeBuilder(self._maze_view)
-
         for position in solution:
             x, y = position
             rectangle = maze_builder.build_cell_background(
