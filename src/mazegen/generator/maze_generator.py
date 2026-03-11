@@ -2,6 +2,7 @@ from enum import Enum
 
 from mazegen.generator.abstract_grid_generator import AbstractMazeGridGenerator
 from mazegen.generator.dead_ends_breaker import DeadEndBreaker
+from mazegen.generator.kruskal_maze_generator import KruskalMazeGenerator
 from mazegen.generator.maze_initializer import MazeInitializer
 from mazegen.generator.recursive_backtracking import (
     RecursiveBacktrackingGenerator,
@@ -16,10 +17,18 @@ class MazeGenerationError(Exception):
 
 class MazeGenerationAlgorithm(Enum):
     RECURSIVE_BACKTRACKING = "recursive-backtracking"
+    KRUSKAL = "kruskal"
 
     @classmethod
     def get_available_algorithms(cls) -> list[str]:
         return [algo.value for algo in cls]
+
+    @classmethod
+    def get_algorithm(cls, algorithm_name) -> MazeGenerationAlgorithm:
+        for algo in cls:
+            if algo.value == algorithm_name:
+                return algo
+        raise ValueError(f"Algorithm '{algorithm_name}' not available")
 
 
 class MazeGenerator:
@@ -44,6 +53,9 @@ class MazeGenerator:
                 return RecursiveBacktrackingGenerator(
                     self._settings, initializer
                 )
+            case MazeGenerationAlgorithm.KRUSKAL:
+                initializer = MazeInitializer(self._settings)
+                return KruskalMazeGenerator(self._settings, initializer)
             case _:
                 raise MazeGenerationError(
                     f"Algorithm '{algorithm.value}' not implemented."
