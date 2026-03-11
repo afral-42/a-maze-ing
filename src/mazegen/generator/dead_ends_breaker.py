@@ -26,7 +26,7 @@ class DeadEndBreaker:
                     return dir
         return None
 
-    def break_dead_ends(self):
+    def break_dead_ends(self) -> None:
         for y, x in np.ndindex(self._maze.source.shape):
             if (
                 self._maze.is_valid(x, y)

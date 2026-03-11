@@ -35,7 +35,7 @@ class Edge:
 
 class KruskalMazeGenerator(AbstractMazeGridGenerator):
     def init_sets(self, lines: int, cols: int) -> list[list[Tree]]:
-        sets = []
+        sets: list[list[Tree]] = []
         for i in range(lines):
             sets.append([])
             for _ in range(cols):

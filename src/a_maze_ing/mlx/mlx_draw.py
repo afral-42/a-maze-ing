@@ -1,3 +1,4 @@
+from collections.abc import Callable
 from typing import TYPE_CHECKING
 
 from a_maze_ing.theme.colors import Color
@@ -142,7 +143,7 @@ class MlxDraw:
     @staticmethod
     def correct_transparency(fg: Color, bg: Color, alpha: int) -> Color:
         alpha_factor = alpha / 255.0
-        correct_color = lambda f, b: int(
+        correct_color: Callable[[int, int], int] = lambda f, b: int(
             alpha_factor * f + (1.0 - alpha_factor) * b
         )
         return Color(

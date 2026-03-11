@@ -155,14 +155,17 @@ class MlxManager:
             )
         mlx_engine.mlx_key_hook(self.window.win_ptr, func, None)
 
-    def add_loop_hook(self, func) -> None:
+    def add_loop_hook(self, func: Callable[[None], None]) -> None:
         mlx_engine.mlx_loop_hook(self.mlx_ptr, func, None)
 
     def exit_loop(self) -> None:
         mlx_engine.mlx_loop_exit(self.mlx_ptr)
 
     def add_reactive_key_hook(
-        self, key_press_func, key_release_func, autorepeat=False
+        self,
+        key_press_func: Callable[[int, None], None],
+        key_release_func: Callable[[int, None], None],
+        autorepeat: bool = False,
     ) -> None:
         if not self.window:
             raise MlxError(

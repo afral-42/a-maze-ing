@@ -24,6 +24,7 @@ class CommandHandler:
         }
 
     def get_commands(self, subcommand: str | None = None) -> list[str]:
-        if subcommand is None:
-            return list(self.commands.keys())
-        return list(self.commands.get(subcommand, {}).keys())
+        if subcommand is not None:
+            commands = self.commands.get(subcommand, {})
+            return [] if commands is None else list(commands.keys())
+        return list(self.commands.keys())

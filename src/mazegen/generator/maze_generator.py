@@ -24,7 +24,7 @@ class MazeGenerationAlgorithm(Enum):
         return [algo.value for algo in cls]
 
     @classmethod
-    def get_algorithm(cls, algorithm_name) -> MazeGenerationAlgorithm:
+    def get_algorithm(cls, algorithm_name: str) -> MazeGenerationAlgorithm:
         for algo in cls:
             if algo.value == algorithm_name:
                 return algo

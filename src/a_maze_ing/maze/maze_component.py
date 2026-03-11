@@ -5,7 +5,8 @@ from a_maze_ing.maze.maze_renderer import (
 from a_maze_ing.maze.maze_view import MazeView
 from a_maze_ing.mlx.mlx_draw import MlxDraw
 from a_maze_ing.mlx.mlx_manager import MlxManager
-from a_maze_ing.theme.theme import MazeTheme, Palette
+from a_maze_ing.theme.colors import Palette
+from a_maze_ing.theme.theme import MazeTheme
 from mazegen.exporter.maze_exporter import MazeExporter, MazeExportError
 from mazegen.generator.maze_generator import (
     MazeGenerationAlgorithm,
@@ -54,7 +55,7 @@ class MazeComponent:
         self._maze_view.set_theme(theme)
         self._refresh_display_flag = True
 
-    def _generate(self):
+    def _generate(self) -> MazeView:
         generator = MazeGenerator(self._settings)
         maze_model = generator.generate(self._algo)
         maze_view = MazeView(
@@ -75,7 +76,7 @@ class MazeComponent:
     def _select_solver(self) -> type[MazeSolver]:
         return AStarMazeSolver
 
-    def handle_key_press(self, keycode: int):
+    def handle_key_press(self, keycode: int) -> None:
         pass
 
     def render(self) -> None:
@@ -118,7 +119,7 @@ class MazeComponent:
     def handle_help_command(self) -> str:
         return "maze - available options: show, regen, dump, help"
 
-    def handle_unknown_option(self, option) -> str:
+    def handle_unknown_option(self, option: str) -> str:
         return f"maze: unknown option '{option}', try 'maze help'"
 
     def _handle_dump_command(self) -> str:
@@ -134,15 +135,15 @@ class MazeComponent:
     def handle_command(self, option: str) -> str | None:
         if option == "show":
             self.render()
-            return
+            return None
         if option == "regen":
             self._maze_view = self._generate()
             self.render()
-            return
+            return None
         if option == "solve":
             self.render_solution()
             self.render()
-            return
+            return None
         if option == "dump":
             return self._handle_dump_command()
         elif option == "help":

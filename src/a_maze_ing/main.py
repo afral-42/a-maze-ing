@@ -24,7 +24,7 @@ def parse_command_line() -> str:
         help="a-maze-ing configuration file. Default value is 'config.txt'",
     )
     args = parser.parse_args()
-    return args.filename
+    return str(args.filename)
 
 
 def main() -> int:

@@ -26,7 +26,7 @@ class AppController:
         mlx_manager: MlxManager,
     ) -> None:
         self._focus = AppFocus.WELCOME
-        self._background = None
+        self._background = AppFocus.CONSOLE
         self._console = console
         self._maze = maze
         self._welcome = welcome
@@ -36,7 +36,7 @@ class AppController:
     def press_key_hook(self, keycode: int, params: None) -> None:
         self.key_hook(keycode, params)
 
-    def release_key_hook(self, keycode, params: None) -> None:
+    def release_key_hook(self, keycode: int, params: None) -> None:
         pass
 
     def key_hook(self, keycode: int, params: None) -> None:
@@ -118,10 +118,10 @@ class AppController:
         self._maze.render()
         self._set_focus(AppFocus.MAZE)
 
-    def _handle_command(self, command: str):
+    def _handle_command(self, command: str) -> None:
         if not command.strip(" "):
             self._console.render()
-            return
+            return None
         command_elts = [e for e in command.split() if e]
         if len(command_elts) == 1:
             self._handle_no_options_command(command_elts[0])

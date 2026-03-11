@@ -39,9 +39,9 @@ class ConsoleComponent:
         self._first_line_y = (
             self._image_height - 2 * self._font.LETTER_HEIGHT
         ) // 2
-        self._history = []
+        self._history: list[str] = []
         self._history_index = 0
-        self.suggestions = []
+        self.suggestions: list[str] = []
         self.suggestions_index = 0
         self.commands = CommandHandler().commands
 
@@ -152,7 +152,7 @@ class ConsoleComponent:
         )
         self._mlx_manager.refresh_image(self._image_name)
 
-    def _update_history(self, command) -> None:
+    def _update_history(self, command: str) -> None:
         if len(self._history) >= self.MAX_HISTORY_LEN:
             self._history.pop(0)
         self._history.append(command)
