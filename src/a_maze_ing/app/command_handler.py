@@ -1,15 +1,29 @@
+from a_maze_ing.theme.theme import Theme
+from mazegen.generator.maze_generator import MazeGenerationAlgorithm
+
+
 class CommandHandler:
     def __init__(self) -> None:
-        pass
+        self.commands = {
+            "maze": {
+                "show": None,
+                "regen": None,
+                "solve": None,
+                "dump": None,
+                "help": None,
+            },
+            "raycaster": None,
+            "theme": {theme: None for theme in Theme.get_available_themes()},
+            "algo": {
+                algo: None
+                for algo in MazeGenerationAlgorithm.get_available_algorithms()
+            },
+            "reset": None,
+            "exit": None,
+            "help": None,
+        }
 
-    # def parse_command(self, command: str) -> None:
-    #     if not command.strip(" "):
-    #         # self._console.render()
-    #         return ""
-    #     command_elts = [e for e in command.split() if e]
-    #     if len(command_elts) == 1:
-    #         component, option = command_elts[0], None
-    #     elif len(command_elts) == 2:
-    #         component, option = command_elts
-    #     else:
-    #         self._handle_unknown_command(self) -> None:
+    def get_commands(self, subcommand: str | None = None) -> list[str]:
+        if subcommand is None:
+            return list(self.commands.keys())
+        return list(self.commands.get(subcommand, {}).keys())

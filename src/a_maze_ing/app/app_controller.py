@@ -1,5 +1,7 @@
 from enum import Enum, auto
 
+from a_maze_ing.app.command_handler import CommandHandler
+from a_maze_ing.app.start_component import StartComponent
 from a_maze_ing.console.console_component import ConsoleComponent
 from a_maze_ing.maze.maze_component import MazeComponent
 from a_maze_ing.mlx.mlx_keys import MlxKeys
@@ -9,6 +11,7 @@ from mazegen.generator.maze_generator import MazeGenerationAlgorithm
 
 
 class AppFocus(Enum):
+    WELCOME = auto()
     CONSOLE = auto()
     MAZE = auto()
     RAYCASTER = auto()
@@ -19,13 +22,16 @@ class AppController:
         self,
         console: ConsoleComponent,
         maze: MazeComponent,
+        welcome: StartComponent,
         mlx_manager: MlxManager,
     ) -> None:
-        self._focus = AppFocus.CONSOLE
+        self._focus = AppFocus.WELCOME
         self._background = None
         self._console = console
         self._maze = maze
+        self._welcome = welcome
         self._mlx_manager = mlx_manager
+        self._command_handler = CommandHandler()
 
     def press_key_hook(self, keycode: int, params: None) -> None:
         self.key_hook(keycode, params)
@@ -42,16 +48,19 @@ class AppController:
                 self._set_focus(AppFocus.CONSOLE)
                 self._console.render()
         elif keycode == MlxKeys.ESCAPE and self._focus == AppFocus.CONSOLE:
-            self._close_console()
+            self._render_focus()
         elif self._focus == AppFocus.CONSOLE:
             self._console.handle_key_press(keycode)
         elif self._focus == AppFocus.MAZE:
             self._maze.handle_key_press(keycode)
 
-    def _close_console(self) -> None:
+    def _render_focus(self) -> None:
         if self._background == AppFocus.MAZE:
             self._set_focus(AppFocus.MAZE)
             self._maze.render()
+        elif self._background == AppFocus.WELCOME:
+            self._set_focus(AppFocus.WELCOME)
+            self._welcome.render()
         elif self._background == AppFocus.RAYCASTER:
             self._set_focus(AppFocus.RAYCASTER)
 
@@ -64,11 +73,15 @@ class AppController:
 
     def _handle_no_options_command(self, component: str) -> None:
         if component == "help":
-            self._console.print(
-                "available commands: algo, theme, maze, raycaster, exit"
+            available_commands = ", ".join(
+                self._command_handler.get_commands()
             )
+            self._console.print(f"available commands: {available_commands}")
         elif component == "exit":
             self._mlx_manager.destroy()
+        elif component == "reset":
+            self._set_focus(AppFocus.WELCOME)
+            self._welcome.render()
         elif component == "maze":
             message = self._maze.handle_help_command()
             self._console.print(message)
@@ -89,9 +102,11 @@ class AppController:
             self._console.print(f"Unknown theme: '{option}'")
             return
         self._maze.set_theme(theme.maze_theme)
-        self._maze.render()
+        self._welcome.set_theme(theme)
+        self._render_focus()
         self._console.set_theme(theme.console_theme)
         self._console.render()
+        self._set_focus(AppFocus.CONSOLE)
 
     def _handle_algo_command(self, option: str) -> None:
         try:

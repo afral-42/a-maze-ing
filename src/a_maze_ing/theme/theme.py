@@ -3,7 +3,11 @@ from enum import Enum
 
 from a_maze_ing.mlx.mlx_font import MlxFont
 from a_maze_ing.theme.colors import Color, Palette
-from a_maze_ing.theme.fonts import inconsolata_24
+from a_maze_ing.theme.fonts import (
+    inconsolata_24,
+    press_start_2p_24,
+    press_start_2p_32,
+)
 
 
 @dataclass
@@ -25,10 +29,19 @@ class ConsoleTheme:
 
 
 @dataclass
+class WelcomeScreenTheme:
+    background: Color
+    text: Color
+    font_title: MlxFont
+    font_subtitle: MlxFont
+
+
+@dataclass
 class AppTheme:
     name: str
     maze_theme: MazeTheme
     console_theme: ConsoleTheme
+    welcome_screen_theme: WelcomeScreenTheme
 
     @classmethod
     def catppuccin(
@@ -50,6 +63,12 @@ class AppTheme:
                 border=catppuccin_palette.OVERLAY_0,
                 font=inconsolata_24,
             ),
+            WelcomeScreenTheme(
+                background=catppuccin_palette.BASE,
+                text=catppuccin_palette.TEXT,
+                font_title=press_start_2p_32,
+                font_subtitle=press_start_2p_24,
+            ),
         )
 
 
@@ -69,6 +88,12 @@ class Theme(Enum):
             text=Palette.WHITE,
             font=inconsolata_24,
             border=Palette.WHITE,
+        ),
+        WelcomeScreenTheme(
+            background=Palette.BLACK,
+            text=Palette.WHITE,
+            font_title=press_start_2p_32,
+            font_subtitle=press_start_2p_24,
         ),
     )
     CATPPUCCIN_MACCHIATO = AppTheme.catppuccin(

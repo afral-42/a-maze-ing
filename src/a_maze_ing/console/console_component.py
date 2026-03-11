@@ -1,11 +1,11 @@
 import string
 
+from a_maze_ing.app.command_handler import CommandHandler
 from a_maze_ing.mlx.mlx_draw import MlxDraw, Rectangle
 from a_maze_ing.mlx.mlx_font import MlxFont
 from a_maze_ing.mlx.mlx_keys import MlxKeys
 from a_maze_ing.mlx.mlx_manager import MlxManager
-from a_maze_ing.theme.theme import ConsoleTheme, Theme
-from mazegen.generator.maze_generator import MazeGenerationAlgorithm
+from a_maze_ing.theme.theme import ConsoleTheme
 
 
 class ConsoleComponent:
@@ -43,23 +43,7 @@ class ConsoleComponent:
         self._history_index = 0
         self.suggestions = []
         self.suggestions_index = 0
-        self.commands = {
-            "maze": {
-                "show": None,
-                "regen": None,
-                "solve": None,
-                "dump": None,
-                "help": None,
-            },
-            "raycaster": None,
-            "theme": {theme: None for theme in Theme.get_available_themes()},
-            "algo": {
-                algo: None
-                for algo in MazeGenerationAlgorithm.get_available_algorithms()
-            },
-            "exit": None,
-            "help": None,
-        }
+        self.commands = CommandHandler().commands
 
     def _move_history_index(self, increment: int) -> bool:
         if (increment < 0 and self._history_index > 0) or (

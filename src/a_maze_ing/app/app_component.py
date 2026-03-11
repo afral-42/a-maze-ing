@@ -1,4 +1,5 @@
 from a_maze_ing.app.app_controller import AppController
+from a_maze_ing.app.start_component import StartComponent
 from a_maze_ing.console.console_component import ConsoleComponent
 from a_maze_ing.maze.maze_component import MazeComponent
 from a_maze_ing.mlx.mlx_draw import MlxDraw
@@ -27,8 +28,12 @@ class AppComponent:
     def start_app(self) -> None:
         maze_component = self.start_maze()
         console_component = self.start_console()
+        start_component = self.start_welcome_screen()
         app_controller = AppController(
-            console_component, maze_component, self._mlx_manager
+            console_component,
+            maze_component,
+            start_component,
+            self._mlx_manager,
         )
 
         self._mlx_manager.init_window(
@@ -46,10 +51,27 @@ class AppComponent:
                 self._window_width, self._window_height
             ),
         )
+        self._mlx_manager.push_image_centered_on_region(
+            "welcome", 0, 0, self._window_width, self._window_height
+        )
+        start_component.render()
         self._mlx_manager.add_reactive_key_hook(
             app_controller.press_key_hook, app_controller.release_key_hook
         )
         mlx_engine.mlx_loop(self._mlx_manager.mlx_ptr)
+
+    def start_welcome_screen(self) -> StartComponent:
+        start_component = StartComponent(
+            self._window_width,
+            self._window_height,
+            "welcome",
+            self._theme.welcome_screen_theme,
+            self._mlx_manager,
+        )
+        self._mlx_manager.add_image(
+            "welcome", self._window_width, self._window_height
+        )
+        return start_component
 
     def start_maze(self) -> MazeComponent:
         initializer = MazeInitializer(self._config)
