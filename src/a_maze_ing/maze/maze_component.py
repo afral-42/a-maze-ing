@@ -68,7 +68,6 @@ class MazeComponent:
         return maze_view
 
     def set_algo(self, algo: MazeGenerationAlgorithm) -> None:
-        print(algo)
         self._algo = algo
         self._maze_view = self._generate()
         self._refresh_display_flag = True
