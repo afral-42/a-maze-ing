@@ -27,20 +27,21 @@ def parse_command_line() -> str:
     return args.filename
 
 
-def main() -> None:
+def main() -> int:
     sys.setrecursionlimit(100000)
     config_filename = parse_command_line()
     try:
         raw_config = parse_config_file(config_filename)
     except ParsingError as e:
         print(e)
-        sys.exit(1)
+        return 1
     config = compute_config_model(raw_config)
     mlx_manager = MlxManager()
     app = AppComponent(
         1400, 1400, Theme.CATPPUCCIN_MACCHIATO.value, mlx_manager, config
     )
     app.start_app()
+    return 0
 
 
 if __name__ == "__main__":

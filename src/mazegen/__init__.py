@@ -1,17 +1,21 @@
-from .exporter.maze_exporter import MazeExporter
-from .generator.maze_generator import MazeGenerator
+from .exporter.maze_exporter import MazeExporter, MazeExportError
+from .generator.abstract_grid_generator import AbstractMazeGridGenerator
+from .generator.maze_generator import MazeGenerationAlgorithm, MazeGenerator
 from .generator.maze_initializer import MazeInitializer
 from .generator.recursive_backtracking import RecursiveBacktrackingGenerator
 from .models.direction import Direction
-from .models.maze import Maze
+from .models.maze import MazeModel
 from .models.maze_settings import MazeSettings
 
 __all__ = [
     "MazeSettings",
     "MazeInitializer",
-    "Maze",
+    "MazeModel",
+    "MazeGenerationAlgorithm",
     "RecursiveBacktrackingGenerator",
+    "AbstractMazeGridGenerator",
     "MazeGenerator",
     "Direction",
     "MazeExporter",
+    "MazeExportError",
 ]

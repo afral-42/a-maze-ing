@@ -13,6 +13,7 @@ Building this tool serves as a practical application for several core computer s
 
 ![maze](maze.png)
 
+[TODO: AJOUTER UN VISUEL DE LA CONSOLE ET DU RAYTRACER]
 ---
 
 ## Instructions
@@ -101,15 +102,46 @@ a-maze-ing ~ raycaster start    # start maze exploration as first-person view
 
 ## Technical Implementation
 ### Reusability
-[Specify which parts of your code are reusable and provide instructions on how to reuse them in other contexts.]
 
-The package `mazegen` is reusable in other context
+[TODO: BRANCHER LE SOLVER]
+
+The package `mazegen` is reusable in other context:
 
 ```bash
 uv build                                                    # build mazegen package
 python3 -m pip install dist/mazegen-0.1.0-py3-none-any.whl  # install the package with pip
 ```
+Basic usage:
+```python
+from mazegen import (
+    MazeGenerator,
+    MazeExporter,
+    MazeGenerationAlgorithm,
+    MazeSettings,
+    MazeExportError,
+)
 
+
+def main():
+    settings = MazeSettings(
+        width=15,
+        height=10,
+        entry=(0, 0),
+        exit=(14, 9),
+        output_file="output.txt",
+        perfect=True,
+    )
+    generator = MazeGenerator(settings)
+    maze = generator.generate(MazeGenerationAlgorithm.RECURSIVE_BACKTRACKING)
+    try:
+        MazeExporter().export(maze)
+    except MazeExportError as e:
+        print(e)
+
+
+if __name__ == "__main__":
+    main()
+```
 ---
 
 ## Project Management

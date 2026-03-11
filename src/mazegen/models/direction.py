@@ -34,3 +34,17 @@ ANGLE = {
     Direction.SOUTH: math.pi / 2,
     Direction.EAST: 0.0,
 }
+
+NEXT = {
+    Direction.NORTH: Direction.EAST,
+    Direction.EAST: Direction.SOUTH,
+    Direction.SOUTH: Direction.WEST,
+    Direction.WEST: Direction.NORTH,
+}
+
+PREVIOUS = {
+    Direction.NORTH: Direction.WEST,
+    Direction.EAST: Direction.NORTH,
+    Direction.SOUTH: Direction.EAST,
+    Direction.WEST: Direction.SOUTH,
+}

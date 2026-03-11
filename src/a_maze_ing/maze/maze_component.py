@@ -6,12 +6,12 @@ from a_maze_ing.maze.maze_view import MazeView
 from a_maze_ing.mlx.mlx_draw import MlxDraw
 from a_maze_ing.mlx.mlx_manager import MlxManager
 from a_maze_ing.theme.theme import MazeTheme, Palette
-from mazegen.exporter.maze_exporter import MazeExporter
-from mazegen.generator.maze_initializer import MazeInitializer
-from mazegen.generator.recursive_backtracking import (
-    RecursiveBacktrackingGenerator,
+from mazegen.exporter.maze_exporter import MazeExporter, MazeExportError
+from mazegen.generator.maze_generator import (
+    MazeGenerationAlgorithm,
+    MazeGenerator,
 )
-from mazegen.models.maze import Maze
+from mazegen.generator.maze_initializer import MazeInitializer
 from mazegen.models.maze_settings import MazeSettings
 from mazegen.solver.a_star_solver import AStarMazeSolver
 from mazegen.solver.maze_solver import MazeSolver
@@ -31,7 +31,7 @@ class MazeComponent:
         exporter: MazeExporter,
         theme: MazeTheme,
     ) -> None:
-        self._algo = None
+        self._algo = MazeGenerationAlgorithm.RECURSIVE_BACKTRACKING
         self._refresh_display_flag = False
         self._theme = theme
         self._area_width = area_width
@@ -42,8 +42,6 @@ class MazeComponent:
         self._background_image_name = background_image_name
         self._drawer = drawer
         self._settings = settings
-        self._initializer = initializer
-        self._generator = self._select_generator()
         self._maze_view = self._generate()
         self._solver = self._select_solver()
         self._exporter = exporter
@@ -57,10 +55,10 @@ class MazeComponent:
         self._refresh_display_flag = True
 
     def _generate(self):
-        test_maze = self._generator.generate()
-        maze = Maze(test_maze, self._settings)
+        generator = MazeGenerator(self._settings)
+        maze_model = generator.generate(self._algo)
         maze_view = MazeView(
-            maze,
+            maze_model,
             self._theme,
             1,
             self._area_width,
@@ -71,11 +69,6 @@ class MazeComponent:
 
     def set_algo(self) -> None:
         self._refresh_display_flag = True
-
-    def _select_generator(self):
-        return RecursiveBacktrackingGenerator(
-            self._settings, self._initializer
-        )
 
     def _select_solver(self) -> MazeSolver:
         return AStarMazeSolver(self._maze_view.maze)
@@ -116,7 +109,7 @@ class MazeComponent:
                 "maze: export successfull, file "
                 f"'{self._maze_view.maze.settings.output_file}' written."
             )
-        except Exception:
+        except MazeExportError:
             return "maze: error, export failed!!!"
 
     def handle_help_command(self) -> str:
