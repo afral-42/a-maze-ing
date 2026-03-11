@@ -13,7 +13,7 @@ from mazegen.generator.recursive_backtracking import (
 )
 from mazegen.models.maze import Maze
 from mazegen.models.maze_settings import MazeSettings
-from mazegen.solver.dfs_maze_solver import DfsMazeSolver
+from mazegen.solver.a_star_solver import AStarMazeSolver
 from mazegen.solver.maze_solver import MazeSolver
 
 
@@ -78,7 +78,7 @@ class MazeComponent:
         )
 
     def _select_solver(self) -> MazeSolver:
-        return DfsMazeSolver(self._maze_view.maze)
+        return AStarMazeSolver(self._maze_view.maze)
 
     def handle_key_press(self, keycode: int):
         pass
