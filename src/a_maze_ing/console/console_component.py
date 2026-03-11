@@ -4,7 +4,8 @@ from a_maze_ing.mlx.mlx_draw import MlxDraw, Rectangle
 from a_maze_ing.mlx.mlx_font import MlxFont
 from a_maze_ing.mlx.mlx_keys import MlxKeys
 from a_maze_ing.mlx.mlx_manager import MlxManager
-from a_maze_ing.theme.theme import ConsoleTheme
+from a_maze_ing.theme.theme import ConsoleTheme, Theme
+from mazegen.generator.maze_generator import MazeGenerationAlgorithm
 
 
 class ConsoleComponent:
@@ -51,12 +52,11 @@ class ConsoleComponent:
                 "help": None,
             },
             "raycaster": None,
-            "theme": {
-                "classic": None,
-                "cattpuccin-macchiato": None,
-                "cattpuccin-latte": None,
+            "theme": {theme: None for theme in Theme.get_available_themes()},
+            "algo": {
+                algo: None
+                for algo in MazeGenerationAlgorithm.get_available_algorithms()
             },
-            "algo": None,
             "exit": None,
             "help": None,
         }

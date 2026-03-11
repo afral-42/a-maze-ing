@@ -67,7 +67,10 @@ class MazeComponent:
         self._refresh_display_flag = True
         return maze_view
 
-    def set_algo(self) -> None:
+    def set_algo(self, algo: MazeGenerationAlgorithm) -> None:
+        print(algo)
+        self._algo = algo
+        self._maze_view = self._generate()
         self._refresh_display_flag = True
 
     def _select_solver(self) -> MazeSolver:
@@ -98,9 +101,10 @@ class MazeComponent:
             rectangle = maze_builder.build_cell_background(
                 x, y, Palette.PURPLE
             )
-            MlxDraw.rectangle(
-                self._mlx_manager.get_image(self._image_name), rectangle
-            )
+            if rectangle is not None:
+                MlxDraw.rectangle(
+                    self._mlx_manager.get_image(self._image_name), rectangle
+                )
 
     def export(self) -> str:
         try:
