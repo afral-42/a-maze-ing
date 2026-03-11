@@ -142,6 +142,7 @@ class MazeComponent:
         if option == "solve":
             self.render_solution()
             self.render()
+            return
         if option == "dump":
             return self._handle_dump_command()
         elif option == "help":

@@ -198,5 +198,8 @@ class MlxManager:
         return MlxImage(self.mlx_ptr, width, height, image)
 
     def destroy(self) -> None:
-        self.exit_loop()
         self.destroy_window()
+        for image in self.images:
+            self.destroy_image(image)
+        mlx_engine.mlx_release(self.mlx_ptr)
+        self.exit_loop()

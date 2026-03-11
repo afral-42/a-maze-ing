@@ -32,10 +32,10 @@ def main() -> int:
     config_filename = parse_command_line()
     try:
         raw_config = parse_config_file(config_filename)
+        config = compute_config_model(raw_config)
     except ParsingError as e:
         print(e)
         return 1
-    config = compute_config_model(raw_config)
     mlx_manager = MlxManager()
     app = AppComponent(
         1400, 1400, Theme.CATPPUCCIN_MACCHIATO.value, mlx_manager, config

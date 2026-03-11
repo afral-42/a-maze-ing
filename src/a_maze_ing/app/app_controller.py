@@ -101,6 +101,7 @@ class AppController:
             return
         self._maze.set_algo(algo)
         self._maze.render()
+        self._set_focus(AppFocus.MAZE)
 
     def _handle_command(self, command: str):
         if not command.strip(" "):
