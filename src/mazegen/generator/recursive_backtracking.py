@@ -11,12 +11,11 @@ from mazegen.models.maze_settings import MazeSettings
 
 class RecursiveBacktrackingGenerator(AbstractMazeGridGenerator):
     def __init__(
-        self, settings: MazeSettings, initializer: MazeInitializer
+        self,
+        settings: MazeSettings,
+        initializer: MazeInitializer,
     ) -> None:
-        self._settings = settings
-        self._initializer = initializer
-        if self._settings.seed:
-            random.seed(self._settings.seed)
+        super().__init__(settings, initializer)
 
     def generate(self) -> NDArray[np.int8]:
         grid = self._initializer.init_maze()
@@ -36,6 +35,7 @@ class RecursiveBacktrackingGenerator(AbstractMazeGridGenerator):
                 and 0 <= nx < self._settings.width
                 and grid[ny][nx] == 15
             ):
+                self._build_steps.append((x, y, d))
                 grid[y][x] &= ~d
                 grid[ny][nx] &= ~(OPPOSITE[d])
                 self._carve_passages_from(nx, ny, grid)

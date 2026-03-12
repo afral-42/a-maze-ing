@@ -9,6 +9,7 @@ class CommandHandler:
                 "show": None,
                 "regen": None,
                 "solve": None,
+                "animation": None,
                 "dump": None,
                 "help": None,
             },

@@ -7,6 +7,7 @@ from mazegen.generator.maze_initializer import MazeInitializer
 from mazegen.generator.recursive_backtracking import (
     RecursiveBacktrackingGenerator,
 )
+from mazegen.models.direction import Direction
 from mazegen.models.maze import MazeModel
 from mazegen.models.maze_settings import MazeSettings
 
@@ -34,15 +35,21 @@ class MazeGenerationAlgorithm(Enum):
 class MazeGenerator:
     def __init__(self, settings: MazeSettings) -> None:
         self._settings = settings
+        self._build_steps: list[tuple[int, int, Direction]] = []
 
     def generate(self, algorithm: MazeGenerationAlgorithm) -> MazeModel:
         generator = self._select_generator(algorithm)
         maze_source = generator.generate()
+        self._build_steps = generator.get_build_steps()
         maze = MazeModel(maze_source, self._settings)
         if not self._settings.perfect:
             dead_end_breaker = DeadEndBreaker(maze)
             dead_end_breaker.break_dead_ends()
+            self._build_steps.extend(dead_end_breaker.get_build_steps())
         return maze
+
+    def get_build_steps(self) -> list[tuple[int, int, Direction]]:
+        return self._build_steps
 
     def _select_generator(
         self, algorithm: MazeGenerationAlgorithm

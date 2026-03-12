@@ -67,4 +67,5 @@ class KruskalMazeGenerator(AbstractMazeGridGenerator):
                 set1.connect(set2)
                 maze.source[edge.y][edge.x] &= ~edge.dir
                 maze.source[ny][nx] &= ~(OPPOSITE[edge.dir])
+                self._build_steps.append((edge.x, edge.y, edge.dir))
         return maze.source

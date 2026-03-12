@@ -32,9 +32,15 @@ class AppController:
         self._welcome = welcome
         self._mlx_manager = mlx_manager
         self._command_handler = CommandHandler()
+        self._pause_event_observers = [self._maze]
+        self._focus_event_observers = [self._maze]
 
     def press_key_hook(self, keycode: int, params: None) -> None:
         self.key_hook(keycode, params)
+
+    def _propagate_pause_event(self):
+        for obs in self._pause_event_observers:
+            obs.notify_pause_event()
 
     def release_key_hook(self, keycode: int, params: None) -> None:
         pass
@@ -46,6 +52,7 @@ class AppController:
                 self._handle_command(command)
             else:
                 self._set_focus(AppFocus.CONSOLE)
+                self._propagate_pause_event()
                 self._console.render()
         elif keycode == MlxKeys.ESCAPE and self._focus == AppFocus.CONSOLE:
             self._render_focus()
@@ -57,6 +64,7 @@ class AppController:
     def _render_focus(self) -> None:
         if self._background == AppFocus.MAZE:
             self._set_focus(AppFocus.MAZE)
+            self._maze.notify_focus_event()
             self._maze.render()
         elif self._background == AppFocus.WELCOME:
             self._set_focus(AppFocus.WELCOME)

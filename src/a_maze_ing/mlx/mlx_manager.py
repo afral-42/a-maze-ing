@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Any, Callable
 
 if TYPE_CHECKING:
     from a_maze_ing.theme.colors import Color
@@ -155,8 +155,10 @@ class MlxManager:
             )
         mlx_engine.mlx_key_hook(self.window.win_ptr, func, None)
 
-    def add_loop_hook(self, func: Callable[[None], None]) -> None:
-        mlx_engine.mlx_loop_hook(self.mlx_ptr, func, None)
+    def add_loop_hook(
+        self, func: Callable[[Any], None] | None, params: Any = None
+    ) -> None:
+        mlx_engine.mlx_loop_hook(self.mlx_ptr, func, params)
 
     def exit_loop(self) -> None:
         mlx_engine.mlx_loop_exit(self.mlx_ptr)

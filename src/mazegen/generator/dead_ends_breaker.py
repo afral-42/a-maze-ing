@@ -14,9 +14,10 @@ from mazegen.models.maze import MazeModel
 class DeadEndBreaker:
     def __init__(self, maze: MazeModel) -> None:
         self._maze = maze
+        self._build_steps: list[tuple[int, int, Direction]] = []
 
     def _find_dead_end(self, x: int, y: int) -> Direction | None:
-        for i, dir in enumerate(Direction):
+        for dir in Direction:
             if (
                 self._maze.has_wall(x, y, dir)
                 and self._maze.has_wall(x, y, NEXT[dir])
@@ -37,3 +38,7 @@ class DeadEndBreaker:
                 self._maze.source[
                     (y + DY[dead_end], x + DX[dead_end])
                 ] &= ~OPPOSITE[dead_end]
+                self._build_steps.append((x, y, dead_end))
+
+    def get_build_steps(self) -> list[tuple[int, int, Direction]]:
+        return self._build_steps

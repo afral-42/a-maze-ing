@@ -18,6 +18,7 @@ class MazeTheme:
     end: Color
     solution: Color
     forty_two: Color
+    wall_thickness: int
 
 
 @dataclass
@@ -56,6 +57,7 @@ class AppTheme:
                 end=catppuccin_palette.RED,
                 forty_two=catppuccin_palette.ROSEWATER,
                 solution=Color(255, 255, 255),
+                wall_thickness=1,
             ),
             ConsoleTheme(
                 background=catppuccin_palette.BASE,
@@ -82,6 +84,7 @@ class Theme(Enum):
             end=Palette.BLUE,
             forty_two=Palette.WHITE,
             solution=Palette.PURPLE,
+            wall_thickness=1,
         ),
         ConsoleTheme(
             background=Palette.BLACK,

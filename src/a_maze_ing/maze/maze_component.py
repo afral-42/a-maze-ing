@@ -1,3 +1,7 @@
+import time
+from collections.abc import Generator
+
+from a_maze_ing.maze.maze_animation import MazeAnimation
 from a_maze_ing.maze.maze_renderer import (
     MazeMlxRenderer,
     MlxSimpleMazeBuilder,
@@ -13,6 +17,7 @@ from mazegen.generator.maze_generator import (
     MazeGenerator,
 )
 from mazegen.generator.maze_initializer import MazeInitializer
+from mazegen.models.direction import Direction
 from mazegen.models.maze_settings import MazeSettings
 from mazegen.solver.a_star_solver import AStarMazeSolver
 from mazegen.solver.maze_solver import MazeSolver
@@ -37,15 +42,17 @@ class MazeComponent:
         self._theme = theme
         self._area_width = area_width
         self._area_width = area_height
-        self._theme_id = 0
         self._mlx_manager = mlx_manager
         self._image_name = image_name
         self._background_image_name = background_image_name
         self._drawer = drawer
         self._settings = settings
+        self._build_steps: list[tuple[int, int, Direction]] = []
         self._maze_view = self._generate()
         self._solver = self._select_solver()
         self._exporter = exporter
+        self._pause_animation = False
+        self._animation_on_going = False
 
     def get_maze_size(self) -> tuple[int, int]:
         return self._maze_view.width, self._maze_view.height
@@ -58,10 +65,12 @@ class MazeComponent:
     def _generate(self) -> MazeView:
         generator = MazeGenerator(self._settings)
         maze_model = generator.generate(self._algo)
+        self._build_steps = generator.get_build_steps()
+        self._end_animation()
         maze_view = MazeView(
             maze_model,
             self._theme,
-            1,
+            self._theme.wall_thickness,
             self._area_width,
             self._area_width,
         )
@@ -134,18 +143,81 @@ class MazeComponent:
 
     def handle_command(self, option: str) -> str | None:
         if option == "show":
+            self._end_animation()
             self.render()
             return None
         if option == "regen":
+            self._end_animation()
             self._maze_view = self._generate()
             self.render()
             return None
         if option == "solve":
+            self._end_animation()
             self.render_solution()
             self.render()
             return None
+        if option == "animation":
+            if self._build_steps:
+                self._run_maze_animation()
+                return None
+            else:
+                return "No animation available"
         if option == "dump":
             return self._handle_dump_command()
         elif option == "help":
             return self.handle_help_command()
         return self.handle_help_command()
+
+    def _animation_loop_hook(
+        self,
+        animation: Generator[None],
+    ) -> None:
+        if self._pause_animation:
+            return
+        before = time.perf_counter()
+        self._update_animation_frame(animation)
+        self._render_animation_frame()
+        after = time.perf_counter()
+        elapsed = after - before
+        time.sleep(max(0.125 - elapsed, 0.0))
+
+    def _update_animation_frame(self, animation: Generator[None]) -> None:
+        try:
+            next(animation)
+        except StopIteration:
+            self._end_animation()
+
+    def _end_animation(self) -> None:
+        self._animation_on_going = False
+        self._pause_animation = False
+        self._mlx_manager.add_loop_hook(None, None)
+
+    def _render_animation_frame(self) -> None:
+        self._mlx_manager.refresh_image(self._background_image_name)
+        self._mlx_manager.refresh_image(self._image_name)
+
+    def _run_maze_animation(self) -> None:
+        maze_animation = MazeAnimation(
+            self._settings,
+            self._build_steps,
+            self._theme,
+            self._mlx_manager.get_image(self._image_name),
+            self._mlx_manager.get_image(self._background_image_name),
+            self._mlx_manager,
+        )
+        animation = maze_animation.generate_animation()
+        self._animation_on_going = True
+        self._pause_animation = False
+        self._refresh_display_flag = True
+        self._mlx_manager.add_loop_hook(self._animation_loop_hook, animation)
+
+    def pause_animation(self) -> None:
+        self._pause_animation = True
+
+    def notify_pause_event(self) -> None:
+        if self._animation_on_going:
+            self._pause_animation = True
+
+    def notify_focus_event(self) -> None:
+        if self._animation_on_going:
+            self._pause_animation = False

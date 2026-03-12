@@ -26,9 +26,9 @@ class AppComponent:
         self._config = config
 
     def start_app(self) -> None:
-        maze_component = self.start_maze()
-        console_component = self.start_console()
-        start_component = self.start_welcome_screen()
+        maze_component = self._start_maze()
+        console_component = self._start_console()
+        start_component = self._start_welcome_screen()
         app_controller = AppController(
             console_component,
             maze_component,
@@ -60,7 +60,7 @@ class AppComponent:
         )
         mlx_engine.mlx_loop(self._mlx_manager.mlx_ptr)
 
-    def start_welcome_screen(self) -> StartComponent:
+    def _start_welcome_screen(self) -> StartComponent:
         start_component = StartComponent(
             self._window_width,
             self._window_height,
@@ -73,7 +73,7 @@ class AppComponent:
         )
         return start_component
 
-    def start_maze(self) -> MazeComponent:
+    def _start_maze(self) -> MazeComponent:
         initializer = MazeInitializer(self._config)
         maze_component = MazeComponent(
             self._config,
@@ -93,7 +93,7 @@ class AppComponent:
         self._mlx_manager.add_image("maze", *maze_component.get_maze_size())
         return maze_component
 
-    def start_console(self) -> ConsoleComponent:
+    def _start_console(self) -> ConsoleComponent:
         height = ConsoleComponent.get_console_height(
             2, self._theme.console_theme.font, 10
         )
