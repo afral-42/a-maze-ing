@@ -181,7 +181,7 @@ class MazeComponent:
         self._render_animation_frame()
         after = time.perf_counter()
         elapsed = after - before
-        time.sleep(max(0.125 - elapsed, 0.0))
+        time.sleep(max(0.05 - elapsed, 0.0))
 
     def _update_animation_frame(self, animation: Generator[None]) -> None:
         try:
