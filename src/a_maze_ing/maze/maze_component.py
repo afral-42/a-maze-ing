@@ -20,7 +20,7 @@ from mazegen.generator.maze_generator import (
 from mazegen.generator.maze_initializer import MazeInitializer
 from mazegen.models.direction import Direction
 from mazegen.models.maze_settings import MazeSettings
-from mazegen.solver.a_star_solver import AStarMazeSolver
+from mazegen.solver.dfs_maze_solver import DfsMazeSolver
 from mazegen.solver.maze_solver import MazeSolver
 
 
@@ -84,7 +84,7 @@ class MazeComponent:
         self._refresh_display_flag = True
 
     def _select_solver(self) -> type[MazeSolver]:
-        return AStarMazeSolver
+        return DfsMazeSolver
 
     def handle_key_press(self, keycode: int) -> None:
         pass
