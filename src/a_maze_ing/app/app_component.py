@@ -35,9 +35,20 @@ class AppComponent:
             start_component,
             self._mlx_manager,
         )
-
+        self._mlx_manager.add_image(
+            "rc_view", self._window_width, self._window_height
+        )
+        self._mlx_manager.add_image(
+            "rc_sky", self._window_width, self._window_height
+        )
         self._mlx_manager.init_window(
             self._window_width, self._window_height, "A-Math-Ing"
+        )
+        self._mlx_manager.push_image_centered_on_region(
+            "rc_view", 0, 0, self._window_width, self._window_height
+        )
+        self._mlx_manager.push_image_centered_on_region(
+            "rc_sky", 0, 0, self._window_width, self._window_height
         )
         self._mlx_manager.push_image_centered_on_region(
             "maze_background", 0, 0, self._window_width, self._window_height
@@ -82,6 +93,8 @@ class AppComponent:
             MlxDraw(),
             "maze",
             "maze_background",
+            "rc_view",
+            "rc_sky",
             self._window_width,
             self._window_height,
             MazeExporter(),

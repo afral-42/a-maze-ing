@@ -167,13 +167,13 @@ class MlxManager:
         self,
         key_press_func: Callable[[int, None], None],
         key_release_func: Callable[[int, None], None],
-        autorepeat: bool = False,
+        disable_autorepeat: bool = False,
     ) -> None:
         if not self.window:
             raise MlxError(
                 "No window initialized, please instanciate an image"
             )
-        if autorepeat:
+        if disable_autorepeat:
             mlx_engine.mlx_do_key_autorepeatoff(self.mlx_ptr)
         mlx_engine.mlx_hook(self.window.win_ptr, 2, 1, key_press_func, None)
         mlx_engine.mlx_hook(self.window.win_ptr, 3, 2, key_release_func, None)

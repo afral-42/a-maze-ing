@@ -13,7 +13,10 @@ class Color:
         return (self.b, self.g, self.r, self.a)
 
     def to_int(self) -> int:
-        return (self.b << 16) | (self.g << 8) | (self.r << 4) | self.a
+        return (self.b << 24) | (self.g << 16) | (self.r << 8) | self.a
+
+    def to_int_little_endian(self) -> int:
+        return (self.a << 24) | (self.r << 16) | (self.g << 8) | self.b
 
 
 class Palette:

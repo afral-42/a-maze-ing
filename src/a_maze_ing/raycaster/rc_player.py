@@ -1,7 +1,7 @@
 import math
 
-from core.model.direction import ANGLE, DX, DY, Direction
-from core.model.rc_map import RayCastingMap
+from a_maze_ing.raycaster.rc_map import RayCastingMap
+from mazegen.models.direction import ANGLE, DX, DY, Direction
 
 
 class Player:

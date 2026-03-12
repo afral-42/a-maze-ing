@@ -1,10 +1,10 @@
 import time
 
-from a_maze_ing.core.model.rc_engine import RayCastingEngine
-from a_maze_ing.core.model.rc_map import RayCastingMap
-from a_maze_ing.core.model.rc_player import Player
 from a_maze_ing.mlx.mlx_manager import MlxManager
-from a_maze_ing.raycaster.rc_renderer import RayCastingRenderer
+from a_maze_ing.raycaster.rc_engine import RayCastingEngine
+from a_maze_ing.raycaster.rc_map import RayCastingMap
+from a_maze_ing.raycaster.rc_player import Player
+from a_maze_ing.raycaster.rc_renderer import MlxRayCastingRenderer
 
 
 class RayCastingMlxController:
@@ -13,8 +13,10 @@ class RayCastingMlxController:
         player: Player,
         map: RayCastingMap,
         engine: RayCastingEngine,
-        renderer: RayCastingRenderer,
+        renderer: MlxRayCastingRenderer,
         manager: MlxManager,
+        image_name: str,
+        sky_image_name: str,
     ) -> None:
         self._player = player
         self._map = map
@@ -28,10 +30,12 @@ class RayCastingMlxController:
             "d": 0,
         }
         self.last_frame_time = time.perf_counter()
+        self._image_name = image_name
+        self._sky_image_name = sky_image_name
 
     def run_game_loop(self) -> None:
         self._manager.add_reactive_key_hook(
-            self.press_key_hook, self.release_key_hook
+            self.press_key_hook, self.release_key_hook, disable_autorepeat=True
         )
         self._manager.add_loop_hook(self.loop_hook)
 
@@ -43,7 +47,7 @@ class RayCastingMlxController:
     def check_events(self) -> None:
         new_frame_time = time.perf_counter()
         delta_time = new_frame_time - self.last_frame_time
-        # print("fps:", 1 / delta_time)
+        # TODO: print("fps:", 1 / delta_time)
         self.last_frame_time = new_frame_time
         if self._keys_status["w"] == 1:
             self._player.move(1, delta_time)
@@ -59,9 +63,10 @@ class RayCastingMlxController:
         self._renderer.render_frame(walls, self._player.angle)
 
     def draw(self) -> None:
-        self._manager.refresh_image("rc_maze")
+        self._manager.refresh_image(self._image_name)
 
     def press_key_hook(self, keycode: int, params: None) -> None:
+        print("release")
         if keycode == 119:
             self._keys_status["w"] = 1
         if keycode == 115:
@@ -74,6 +79,7 @@ class RayCastingMlxController:
             self._manager.destroy()
 
     def release_key_hook(self, keycode: int, params: None) -> None:
+        print("press")
         if keycode == 119:
             self._keys_status["w"] = 0
         if keycode == 115:

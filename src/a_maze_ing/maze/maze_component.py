@@ -10,6 +10,7 @@ from a_maze_ing.maze.maze_renderer import (
 from a_maze_ing.maze.maze_view import MazeView
 from a_maze_ing.mlx.mlx_draw import MlxDraw
 from a_maze_ing.mlx.mlx_manager import MlxManager
+from a_maze_ing.raycaster.rc_component import RaycasterComponent
 from a_maze_ing.theme.colors import Palette
 from a_maze_ing.theme.theme import MazeTheme
 from mazegen.exporter.maze_exporter import MazeExporter, MazeExportError
@@ -33,6 +34,8 @@ class MazeComponent:
         drawer: MlxDraw,
         image_name: str,
         background_image_name: str,
+        rc_image_name: str,
+        rc_sky_image_name: str,
         area_width: int,
         area_height: int,
         exporter: MazeExporter,
@@ -42,10 +45,12 @@ class MazeComponent:
         self._refresh_display_flag = False
         self._theme = theme
         self._area_width = area_width
-        self._area_width = area_height
+        self._area_height = area_height
         self._mlx_manager = mlx_manager
         self._image_name = image_name
         self._background_image_name = background_image_name
+        self._rc_image_name = rc_image_name
+        self._rc_sky_image_name = rc_sky_image_name
         self._drawer = drawer
         self._settings = settings
         self._build_steps: list[tuple[int, int, Direction]] = []
@@ -158,6 +163,9 @@ class MazeComponent:
             self.render_solution()
             self.render()
             return None
+        if option == "raycaster":
+            self.run_raycaster()
+            return None
         if option == "animation":
             if self._build_steps:
                 self._run_maze_animation()
@@ -223,3 +231,15 @@ class MazeComponent:
     def notify_focus_event(self) -> None:
         if self._animation_on_going:
             self._pause_animation = False
+
+    def run_raycaster(self) -> None:
+        raycaster = RaycasterComponent(
+            self._area_width,
+            self._area_height,
+            self._maze_view,
+            self._mlx_manager,
+            self._rc_image_name,
+            self._rc_sky_image_name,
+            self._theme,
+        )
+        raycaster.run_raycaster()
