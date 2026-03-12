@@ -1,6 +1,7 @@
 import time
 from collections.abc import Generator
 
+from a_maze_ing.app.command_handler import CommandHandler
 from a_maze_ing.maze.maze_animation import MazeAnimation
 from a_maze_ing.maze.maze_renderer import (
     MazeMlxRenderer,
@@ -126,7 +127,8 @@ class MazeComponent:
             return "maze: error, export failed!!!"
 
     def handle_help_command(self) -> str:
-        return "maze - available options: show, regen, dump, help"
+        commands = ", ".join(CommandHandler().get_commands("maze"))
+        return f"maze - available options: {commands}"
 
     def handle_unknown_option(self, option: str) -> str:
         return f"maze: unknown option '{option}', try 'maze help'"
