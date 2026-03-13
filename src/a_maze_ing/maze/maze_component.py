@@ -154,8 +154,11 @@ class MazeComponent:
             return None
         if option == "solve":
             self._end_animation()
+            if self._refresh_display_flag:
+                self.render()
             self.render_solution()
             self.render()
+            self._refresh_display_flag = True
             return None
         if option == "raycaster":
             self.run_raycaster()
