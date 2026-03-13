@@ -8,6 +8,30 @@ class Direction(IntFlag):
     SOUTH = auto()
     WEST = auto()
 
+    @classmethod
+    def from_vector(cls, vector) -> Direction | None:
+        match vector:
+            case (1, 0):
+                return Direction.EAST
+            case (-1, 0):
+                return Direction.WEST
+            case (0, 1):
+                return Direction.SOUTH
+            case (0, -1):
+                return Direction.NORTH
+        return None
+
+    def to_str(self) -> str:
+        match self:
+            case Direction.NORTH:
+                return "N"
+            case Direction.SOUTH:
+                return "S"
+            case Direction.EAST:
+                return "E"
+            case Direction.WEST:
+                return "W"
+
 
 DX = {
     Direction.WEST: -1,

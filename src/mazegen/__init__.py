@@ -6,6 +6,8 @@ from .generator.recursive_backtracking import RecursiveBacktrackingGenerator
 from .models.direction import Direction
 from .models.maze import MazeModel
 from .models.maze_settings import MazeSettings
+from .solver.a_star_solver import AStarMazeSolver
+from .solver.dfs_maze_solver import DfsMazeSolver
 
 __all__ = [
     "MazeSettings",
@@ -18,4 +20,6 @@ __all__ = [
     "Direction",
     "MazeExporter",
     "MazeExportError",
+    "AStarMazeSolver",
+    "DfsMazeSolver",
 ]

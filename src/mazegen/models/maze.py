@@ -44,6 +44,6 @@ class MazeModel:
         return bool(self.source[y][x] == -1)
 
     def generate_str_repr(self) -> str:
-        return "\n".join(
-            "".join(f"{c & 0xF:X}" for c in row) for row in self.source
+        return "".join(
+            "".join(f"{c & 0xF:X}" for c in row) + "\n" for row in self.source
         )
