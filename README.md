@@ -1,3 +1,15 @@
+<!-- *********************************************************************** -->
+<!--                                                                         -->
+<!--                                                      :::      ::::::::  -->
+<!-- README.md                                          :+:      :+:    :+:  -->
+<!--                                                  +:+ +:+         +:+    -->
+<!-- By: arebilla <arebilla@student.42lyon.fr>      +#+  +:+       +#+       -->
+<!--                                              +#+#+#+#+#+   +#+          -->
+<!-- Created: 2026/03/13 16:08:54 by arebilla          #+#    #+#            -->
+<!-- Updated: 2026/03/13 16:08:55 by arebilla         ###   ########lyon.fr  -->
+<!--                                                                         -->
+<!-- *********************************************************************** -->
+
 *This project has been created as part of the 42 curriculum by abounoua, arebilla*
 
 # Project Name: A-Maze-ing
@@ -114,11 +126,12 @@ python3 -m pip install dist/mazegen-0.1.0-py3-none-any.whl  # install the packag
 Basic usage:
 ```python
 from mazegen import (
-    MazeGenerator,
+    AStarMazeSolver,
     MazeExporter,
-    MazeGenerationAlgorithm,
-    MazeSettings,
     MazeExportError,
+    MazeGenerationAlgorithm,
+    MazeGenerator,
+    MazeSettings,
 )
 
 
@@ -133,8 +146,9 @@ def main():
     )
     generator = MazeGenerator(settings)
     maze = generator.generate(MazeGenerationAlgorithm.RECURSIVE_BACKTRACKING)
+    solution = AStarMazeSolver(maze).solve()
     try:
-        MazeExporter().export(maze)
+        MazeExporter().export(maze, solution)
     except MazeExportError as e:
         print(e)
 

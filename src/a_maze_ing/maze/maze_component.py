@@ -21,7 +21,7 @@ from mazegen.generator.maze_generator import (
 from mazegen.generator.maze_initializer import MazeInitializer
 from mazegen.models.direction import Direction
 from mazegen.models.maze_settings import MazeSettings
-from mazegen.solver.dfs_maze_solver import DfsMazeSolver
+from mazegen.solver.a_star_solver import AStarMazeSolver
 from mazegen.solver.maze_solver import MazeSolver
 
 
@@ -59,6 +59,7 @@ class MazeComponent:
         self._exporter = exporter
         self._pause_animation = False
         self._animation_on_going = False
+        self._solution: list[tuple[int, int]] | None = None
 
     def get_maze_size(self) -> tuple[int, int]:
         return self._maze_view.width, self._maze_view.height
@@ -72,6 +73,7 @@ class MazeComponent:
         generator = MazeGenerator(self._settings)
         maze_model = generator.generate(self._algo)
         self._build_steps = generator.get_build_steps()
+        self._solution = None
         self._end_animation()
         maze_view = MazeView(
             maze_model,
@@ -89,7 +91,7 @@ class MazeComponent:
         self._refresh_display_flag = True
 
     def _select_solver(self) -> type[MazeSolver]:
-        return DfsMazeSolver
+        return AStarMazeSolver
 
     def handle_key_press(self, keycode: int) -> None:
         pass
@@ -109,9 +111,9 @@ class MazeComponent:
 
     def render_solution(self) -> None:
         solver = self._solver(self._maze_view.maze)
-        solution = solver.solve()
+        self._solution = solver.solve()
         maze_builder = MlxSimpleMazeBuilder(self._maze_view)
-        for position in solution:
+        for position in self._solution:
             x, y = position
             rectangle = maze_builder.build_cell_background(
                 x, y, Palette.PURPLE
@@ -121,16 +123,6 @@ class MazeComponent:
                     self._mlx_manager.get_image(self._image_name), rectangle
                 )
 
-    def export(self) -> str:
-        try:
-            self._exporter.export(self._maze_view.maze)
-            return (
-                "maze: export successfull, file "
-                f"'{self._maze_view.maze.settings.output_file}' written."
-            )
-        except MazeExportError:
-            return "maze: error, export failed!!!"
-
     def handle_help_command(self) -> str:
         commands = ", ".join(CommandHandler().get_commands("maze"))
         return f"maze - available options: {commands}"
@@ -139,13 +131,15 @@ class MazeComponent:
         return f"maze: unknown option '{option}', try 'maze help'"
 
     def _handle_dump_command(self) -> str:
+        if self._solution is None:
+            return "maze: error, please solve the maze first!"
         try:
-            self._exporter.export(self._maze_view.maze)
+            self._exporter.export(self._maze_view.maze, self._solution)
             return (
                 "maze: export successfull, file "
                 f"'{self._maze_view.maze.settings.output_file}' written."
             )
-        except Exception:
+        except MazeExportError:
             return "maze: error, export failed!!!"
 
     def handle_command(self, option: str) -> str | None:
