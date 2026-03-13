@@ -6,15 +6,15 @@ from mazegen.generator.maze_initializer import MazeInitializer
 
 
 class MazeSettings(BaseModel):
-    width: Annotated[int, Field(ge=0, le=10000)]
-    height: Annotated[int, Field(ge=0, le=10000)]
+    width: Annotated[int, Field(ge=2, le=349)]
+    height: Annotated[int, Field(ge=2, le=349)]
     entry: tuple[
-        Annotated[int, Field(ge=0, le=10000)],
-        Annotated[int, Field(ge=0, le=10000)],
+        Annotated[int, Field(ge=0, le=348)],
+        Annotated[int, Field(ge=0, le=348)],
     ]
     exit: tuple[
-        Annotated[int, Field(ge=0, le=10000)],
-        Annotated[int, Field(ge=0, le=10000)],
+        Annotated[int, Field(ge=0, le=348)],
+        Annotated[int, Field(ge=0, le=348)],
     ]
     output_file: str
     perfect: bool
@@ -24,16 +24,21 @@ class MazeSettings(BaseModel):
 
     @model_validator(mode="after")
     def check_configuration(self) -> "MazeSettings":
+        if self.entry == self.exit:
+            raise ValueError(
+                "Invalid entry and exit points: it shall be different "
+                "coordinates."
+            )
         for coordinates in [self.entry, self.exit]:
             x, y = coordinates
-            if not (x <= self.width and y <= self.height):
+            if not (x < self.width and y < self.height):
                 raise ValueError(
-                    f"Invalid coordinates {coordinates}:"
-                    "must be within maze bounds"
+                    f"Invalid coordinates {coordinates}: "
+                    "must be within maze bounds."
                 )
             if self._is_point_inside_42(coordinates):
                 raise ValueError(
-                    f"Invalid coordinates {coordinates}:collides with 42"
+                    f"Invalid coordinates {coordinates}: collides with 42."
                 )
         return self
 

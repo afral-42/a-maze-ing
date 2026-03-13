@@ -9,9 +9,19 @@ class ParsingError(Exception):
     pass
 
 
+def format_pydantic_error(pydantic_error: ValidationError) -> str:
+    messages: list[str] = []
+    for e in pydantic_error.errors():
+        if e["loc"]:
+            messages.append(f"- {str(e['loc'][0]).upper()}: {e['msg']}")
+        else:
+            messages.append(f"- {e['msg']}")
+    return "\n".join(messages)
+
+
 def parse_config_file(filename: str) -> dict[str, str | tuple[str, ...]]:
     config: dict[str, str | tuple[str, ...]] = {}
-
+    line = 0
     try:
         with open(filename, "r") as f:
             for line in f:
@@ -28,11 +38,9 @@ def parse_config_file(filename: str) -> dict[str, str | tuple[str, ...]]:
                     config[key.lower()] = value.strip()
 
     except ValueError:
-        print(f"Invalid line in config file: {line}")
-        raise ParsingError
+        raise ParsingError(f"Invalid line in config file: {line}")
     except Exception as e:
-        print(f"Error reading config file {filename}: {e}")
-        raise ParsingError
+        raise ParsingError(f"Error reading config file {filename}: {e}")
 
     return config
 
@@ -43,8 +51,13 @@ def compute_config_model(
     try:
         return MazeSettings.model_validate(config)
     except ValidationError as e:
-        print(f"Invalid configuration: {e}")
-        raise ParsingError
+        msg = "\n".join(
+            [
+                f"Invalid configuration, found {e.error_count()} input error(s):",
+                format_pydantic_error(e),
+            ]
+        )
+        raise ParsingError(msg)
 
 
 def main() -> None:

@@ -34,7 +34,7 @@ def main() -> int:
         raw_config = parse_config_file(config_filename)
         config = compute_config_model(raw_config)
     except ParsingError as e:
-        print(e)
+        print(e, file=sys.stderr)
         return 1
     mlx_manager = MlxManager()
     app = AppComponent(
