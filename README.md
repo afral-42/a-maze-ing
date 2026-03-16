@@ -11,7 +11,7 @@ Building this tool serves as a practical application for several core computer s
 - Data Structures: Efficiently managing cell states and adjacencies to optimize generation speed, even for large-scale grids.
 - Configuration Management: Decoupling logic from parameters by using an external configuration file to control the generation behavior.
 
-![maze](maze.png)
+![maze](assets/maze.png)
 
 [TODO: AJOUTER UN VISUEL DE LA CONSOLE ET DU RAYTRACER]
 ---
@@ -65,6 +65,8 @@ SEED=512786
 The recursive backtracking id an adaptation of the Depth-First-Search (DFS) algorithm for traversing a Tree or a Graph data structure. The algorithm starts at the root node and explores as far as possible along each branch before backtracking.
 
 In this adaptation for a maze generation, the maze is modelled as a graph $(V, E)$ where each location in the maze is a vertice $V$ of the graph, and each passage between two adjacent location is an edge $E$. The graph is traversed by visiting each vertice a single time, the next vertice being randomly selected among the adjacent vertices. This allows to build a spanning tree of the maze graph, which can be converted in a perfect maze, each edge being a passage to an adjacent location.
+
+![Graph to spanning tree illustration](assets/graph_to_spanning_tree.svg)
 
 The implementation of this algorithm is recursive. For large labyrinth, it is required in python to increase the recursion limit `sys.setrecursionlimit` to prevent hitting this limit.
 
@@ -122,9 +124,13 @@ class Tree:
 
 ```
 
+
 The procedure runs as follows
 - The list of edges is randomly sorted.
 - For each edge in the list, we check if the trees corresponding to the the vertices are connected. If they are not, we perform a union by rank. If they are connected, we continue to the next edge.
+
+![Union by rank illustration](assets/union_by_rank.svg)
+
 - Once all the edges have been checked, it remains a single connected Tree which is a spanning tree of the maze graph. Edges of this spanning tree are passages from one location to the adjacent one. A perfect maze can then be built from this spanning tree.
 
 The overall complexity of this algorithm is $O(n log(n))$, where n is the size of the maze (width x height).
