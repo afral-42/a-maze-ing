@@ -15,24 +15,28 @@ Building this tool serves as a practical application for several core computer s
   - **Raycasting engine**: A custom-built raycaster for immersive, first-person navigation within the generated structure.
   - **Command Line Interface (CLI)**: A fully functionnal integrated terminal to execute real-time commands (algorithm swapping, maze regeneration, color palette selection...)
 
-<div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
-    <figure style="flex: 1; min-width: 300px; margin: 10px; text-align: center;">
-        <img src="assets/maze.png" style="width: 100%;">
-        <figcaption style="margin-top: 8px;"><i>Maze view with integrated terminal</i></figcaption>
-    </figure>
-    <figure style="flex: 1; min-width: 300px; margin: 10px; text-align: center;">
-        <img src="assets/raytracer.png" style="width: 100%">
-        <figcaption style="margin-top: 8px;"><i>Raycasting engine visualisation of the maze</i></figcaption>
-    </figure>
-    <figure style="flex: 1; min-width: 300px; margin: 10px; text-align: center;">
-        <img src="assets/maze_latte.png" style="width: 100%">
-        <figcaption style="margin-top: 8px;"><i>Maze with different theme and solution</i></figcaption>
-    </figure>
-    <figure style="flex: 1; min-width: 300px; margin: 10px; text-align: center;">
-        <img src="assets/animation.png" style="width: 100%">
-        <figcaption style="margin-top: 8px;"><i>Maze generation animation</i></figcaption>
-    </figure>
-</div>
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="assets/maze.png" width="100%"><br>
+      <em>Maze view with integrated terminal</em>
+    </td>
+    <td align="center" width="50%">
+      <img src="assets/raytracer.png" width="100%"><br>
+      <em>Raycasting engine visualisation of the maze</em>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="assets/maze_latte.png" width="100%"><br>
+      <em>Maze with different theme and solution</em>
+    </td>
+    <td align="center" width="50%">
+      <img src="assets/animation.png" width="100%"><br>
+      <em>Maze generation animation</em>
+    </td>
+  </tr>
+</table>
 
 ---
 
