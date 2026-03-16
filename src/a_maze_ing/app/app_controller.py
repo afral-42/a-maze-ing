@@ -7,7 +7,10 @@ from a_maze_ing.maze.maze_component import MazeComponent
 from a_maze_ing.mlx.mlx_keys import MlxKeys
 from a_maze_ing.mlx.mlx_manager import MlxManager
 from a_maze_ing.theme.theme import Theme
-from mazegen.generator.maze_generator import MazeGenerationAlgorithm
+from mazegen.generator.maze_generator import (
+    MazeGenerationAlgorithm,
+    MazeSolvingAlgorithm,
+)
 
 
 class AppFocus(Enum):
@@ -100,6 +103,10 @@ class AppController:
         elif component == "algo":
             algos = MazeGenerationAlgorithm.get_available_algorithms()
             self._console.print(f"available algorithms: {', '.join(algos)}")
+        elif component == "solver":
+            solvers = MazeSolvingAlgorithm.get_available_algorithms()
+            self._console.print(f"available solvers: {', '.join(solvers)}")
+
         else:
             self._handle_unknown_command(component)
 
@@ -126,6 +133,15 @@ class AppController:
         self._maze.render()
         self._set_focus(AppFocus.MAZE)
 
+    def _handle_solver_command(self, option: str) -> None:
+        try:
+            solver = MazeSolvingAlgorithm.get_algorithm(option)
+        except ValueError:
+            self._console.print(f"Unknown solver: '{option}'")
+            return
+        self._maze.set_solver(solver)
+        self._console.print(f"Solver changed to: '{option}'")
+
     def _handle_command(self, command: str) -> None:
         if not command.strip(" "):
             self._console.render()
@@ -146,6 +162,8 @@ class AppController:
                 self._handle_theme_command(option)
             elif component == "algo":
                 self._handle_algo_command(option)
+            elif component == "solver":
+                self._handle_solver_command(option)
             else:
                 self._handle_unknown_command(command)
         else:

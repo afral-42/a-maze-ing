@@ -1,11 +1,18 @@
 from abc import ABC, abstractmethod
 
-from mazegen.generator.maze_generator import MazeGenerationError
+from mazegen.generator.maze_generator import (
+    MazeGenerationError,
+    MazeSolvingAlgorithm,
+)
 from mazegen.models.direction import Direction
 from mazegen.models.maze import MazeModel
 
 
-class MazeSolver(ABC):
+class MazeSolvingError(Exception):
+    pass
+
+
+class MazeSolution(ABC):
     POSITION_TABLE = {
         Direction.NORTH: (0, -1),
         Direction.SOUTH: (0, 1),
@@ -53,3 +60,24 @@ class MazeSolver(ABC):
                 raise MazeGenerationError("Failed to parse maze solution")
             directions.append(direction.to_str())
         return "".join(directions)
+
+
+class MazeSolver:
+    def __init__(self) -> None:
+        pass
+
+    @staticmethod
+    def solve(
+        maze: MazeModel, solver: MazeSolvingAlgorithm
+    ) -> list[tuple[int, int]]:
+        from mazegen.solver.a_star_solver import AStarMazeSolver
+        from mazegen.solver.dfs_maze_solver import DfsMazeSolver
+
+        if solver == MazeSolvingAlgorithm.ASTAR:
+            a_star = AStarMazeSolver(maze)
+            return a_star.solve()
+        elif solver == MazeSolvingAlgorithm.DFS:
+            dfs = DfsMazeSolver(maze)
+            return dfs.solve()
+        else:
+            raise MazeSolvingError(f"Solver '{solver.value}' not implemented.")
