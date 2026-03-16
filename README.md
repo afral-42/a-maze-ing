@@ -7,7 +7,7 @@ This project is a maze generation engine designed to explore fundamental concept
 
 Building this tool serves as a practical application for several core computer science pillars:
 - Graph Theory: Implementing "Perfect Mazes," which are technically Spanning Trees (graphs where any two nodes are connected by exactly one path, with no cycles).
-- Algorithm Design: Using traversal or partitioning algorithms—such as Depth-First Search (DFS), Prim’s, or Kruskal’s—to create structured patterns from random states.
+- Algorithm Design: Using traversal or partitioning algorithms such as Depth-First Search (DFS), Prim’s, or Kruskal’s to create structured patterns from random states.
 - Data Structures: Efficiently managing cell states and adjacencies to optimize generation speed, even for large-scale grids.
 - Configuration Management: Decoupling logic from parameters by using an external configuration file to control the generation behavior.
 
@@ -57,6 +57,46 @@ SEED=512786
 ```
 
 ---
+
+## A-Math-ing Graph Theory: The Mathematics of Mazes
+
+As this project has been called friendly *a-math-ing*, we want to bring you into a deep dive in mathematical maze representation. Let's begin with this graph theoretical introduction. 
+
+Why do we care about Graph Theory in a maze generation project? Because to a computer, a maze is not a picture made of walls and empty spaces; it is a mathematical structure called a **Graph**. 
+
+### 1. What is a Graph?
+
+In mathematics and computer science, a graph is a structure used to model pairwise relations between objects. It is made of two fundamental components:
+* **Nodes (or Vertices):** The individual entities or points. In our maze, every single walkable cell is a node.
+* **Edges:** The lines or connections between the nodes. In our maze, if two adjacent cells don't have a wall between them, they are connected by an edge.
+
+Graphs can be **weighted** (moving from node A to node B costs a certain amount of energy or time) or **unweighted** (every step has the exact same cost). By converting a 2D grid into a graph, we allow algorithms like Dijkstra or A* to navigate it mathematically.
+
+### 2. The Spanning Tree
+
+Now, imagine a graph with many interconnected nodes, forming multiple loops and alternative routes. A **Spanning Tree** is a specific sub-graph extracted from this main graph that satisfies two strict conditions:
+1.  **It "Spans":** It must connect absolutely *every single node* of the original graph. No cell is left behind.
+2.  **It is a "Tree":** It must contain **zero cycles (no loops)**. There is exactly one, and only one, unique path between any two nodes.
+
+*Fun Fact:* What we call a "Perfect Maze" (a maze where every cell is reachable, but there are no loops around walls), is a Spanning Tree on a grid graph!
+
+### 3. The Minimum Spanning Tree (MST)
+
+Let's take it one step further. What if our graph is weighted? For example, building a corridor between Room A and Room B costs $10, but between Room B and Room C costs $2. 
+
+A **Minimum Spanning Tree (MST)** is a Spanning Tree that connects all the vertices together with the **absolute minimum total edge weight**. It answers the question: *"How can I connect every single point in this network as cheaply as possible without creating any redundant loops?"*
+
+Algorithms like **Kruskal's** or **Prim's** are famous for finding the MST. In maze generation, using randomized weights with these algorithms is one of the most beautiful ways to carve out complex, perfect mazes.
+
+### 4. Graph Theory Applications in Real Life
+
+Graph theory is not just for maze enthusiasts; it is the invisible backbone of our modern world. Here are a few ways these concepts are applied daily:
+* **GPS and Navigation (A\* & Dijkstra):** Google Maps models cities as graphs (Intersections = Nodes, Roads = Edges) to compute the shortest path to your destination.
+* **Telecommunications & Power Grids (MST):** When an energy company wants to wire a new neighborhood, they use Minimum Spanning Trees to figure out the layout that uses the least amount of copper cable while ensuring every house has power.
+* **Social Networks:** On platforms like LinkedIn or Facebook, you are a node, and your friendships are edges. The "Degrees of Separation" concept is just finding the shortest path between two nodes in a massive social graph.
+* **Biology and Medicine:** Graphs are used to model neural networks in the brain, or how different proteins interact with each other in genomics.
+* **Logistics:** Delivery companies (like Amazon or FedEx) use complex graph algorithms to optimize their delivery routes, saving millions of gallons of fuel every year.
+
 
 ## Maze Generation
 ### Algorithm
@@ -138,6 +178,88 @@ The overall complexity of this algorithm is $O(n log(n))$, where n is the size o
 
 ### Selection Rationale
 [Explain why you chose this specific algorithm over others (e.g., complexity, visual style, efficiency).]
+
+---
+
+## Maze Solving
+### Algorithm
+#### Depth-First Search (DFS)
+
+##### Introduction
+Depth-First Search (DFS) is a classic algorithmic technique used for traversing or searching tree and graph data structures. In the context of our maze solver, it acts as a "blind" search algorithm that explores as far as possible down one path before retreating. Imagine walking through a maze by always keeping your right hand on the wall, DFS follows a very similar philosophy of exhaustive exploration along a single branch.
+
+##### How it Works
+The DFS algorithm operates using a Last-In, First-Out (LIFO) structure, typically implemented with a `Stack` (or via recursion). The step-by-step process is as follows:
+
+1. **Start:** Begin at the maze's starting point and push it onto the stack.
+2. **Explore:** Pop the current cell from the stack and mark it as visited.
+3. **Check Neighbors:** Look at all adjacent, unvisited, and accessible cells (i.e., no walls blocking the way).
+4. **Advance or Backtrack:** 
+   * If there are available neighbors, push them onto the stack and move to the next one.
+   * If there are no available neighbors (a dead end), the algorithm automatically backtracks by popping the next available cell from the stack.
+5. **Finish:** The process repeats until the destination is reached or the stack is empty (meaning no solution exists).
+
+##### Results and Path Quality
+DFS is guaranteed to find a path to the exit if one exists. However, **it does not guarantee the shortest path**. Because it blindly plunges down the first available route, it often generates winding, visually suboptimal paths.
+
+*Note:* The only scenario where DFS is guaranteed to find the *only* (and thus, shortest) path is if the maze is a "perfect maze." Mathematically, a perfect maze is a connected acyclic graph (a tree), meaning there are no loops and there is exactly one unique path between any two distinct cells.
+
+##### Complexity and Performance
+* **Time Complexity:** $O(V + E)$, where $V$ is the number of vertices (cells in the maze) and $E$ is the number of edges (open passages). Since each cell connects to a maximum of 4 neighbors in a 2D grid, $E \le 4V$, making the time complexity effectively $O(V)$.
+* **Space Complexity:** $O(V)$ in the worst-case scenario. If the maze consists of a single, long, snake-like path, the recursion depth or stack size will grow proportionally to the total number of cells.
+* **Performance:** DFS is extremely fast to execute and simple to implement. While it isn't ideal for finding optimized routes, it is highly efficient for simply determining *if* a maze is solvable or for exploring perfect mazes.
+
+## From Blind Search to Smart Navigation: The A* Algorithm
+
+As you read before, DFS really acts like a no-brain robot; it is like consistently following the right wall without asking ourselves any questions about the path we are taking to the end. So actually, we don't have any guarantee that we will find the shortest path with DFS. But what would you say if this robot actually had a compass, helping it to answer the simple question: "am I following the shortest path?"
+
+That's exactly the idea which popped into the minds of Peter E. Hart, Nils John Nilsson and Bertram Raphael in 1968. At that time, the best-known pathfinding algorithm was the Dijkstra algorithm. Let's dive into the Dijkstra algorithm to understand the idea of these researchers.
+
+The Dijkstra algorithm relies on a fundamental principle to find the shortest path in a maze. To find the shortest path to a cell X, we have to find the shortest path to its parent X - 1, and recursively to its parent X - 2, and so on. So basically, the best way to make sure of this is to jump to a cell only if we have definitely found the shortest path to it. To achieve this, Dijkstra keeps it simple: it maps every direct neighbor of the explored cells, and it jumps to the globally closest one based on its total accumulated cost from the start. That's it, mathematics guarantee us that we found the shortest path. 
+
+Why, would you ask? Let's imagine that it is not the case. Suppose there is a secret path, unknown to our algorithm, that actually makes the distance shorter than what we found. This would imply that this secret path has at least one cell accessible with a smaller total cost than the path we chose. So why didn't Dijkstra find it based on its systematic choice of taking the cell with the smallest total cost from its map? It's actually impossible. Since the algorithm assumes that costs are consistent (positive), adding new costs on top of an already higher path cost can never make it smaller. Therefore, we are guaranteed that we always jump to a cell using the absolute shortest path.
+
+#### Giving Dijkstra a Compass (The Heuristic)
+
+However, researchers highlighted a major flaw: while Dijkstra always finds the shortest path, it is overly sensitive to every path. It focuses solely on the entry cost ($g(n)$). If a path has a small cost from the start, Dijkstra will systematically explore it, even if it is physically heading in the exact opposite direction of the exit! It explores in perfectly circular, blind waves.
+
+To solve this, they gave Dijkstra a "compass" what we call in mathematics a heuristic ($h(n)$). Instead of just looking at the distance covered from the start, the A* algorithm evaluates cells based on a combined score:
+
+$$f(n) = g(n) + h(n)$$
+
+*(Total Score = Real cost from start + Estimated cost to the exit)*
+
+To maintain Dijkstra's absolute mathematical guarantee (the ability to "lock" a cell's shortest path on the first visit and never look back), this heuristic must strictly follow two rules:
+
+* **It must be Optimistic (Admissible):** The heuristic must never overestimate the true distance to the exit. **Mathematically, for any node $n$, it must satisfy $h(n) \le h^*(n)$, where $h^*(n)$ is the true minimum cost to reach the target from $n$.** By remaining strictly optimistic, we ensure the algorithm never prematurely discards the true shortest path out of unwarranted pessimism. In fact, the heuristic acts purely as a priority sorter, not a true distance calculator. When the algorithm reaches the target (where the heuristic becomes exactly $0$), it compares its true accumulated cost with the optimistic scores of all other pending paths. Because these remaining scores are strictly optimistic, we are absolutely certain that any other path will end up being strictly longer, guaranteeing we found the optimal route.
+* **It must be Consistent (Monotonic):** The estimated cost must drop no faster than the real cost accumulates between two steps. **Mathematically, it must satisfy the triangle inequality: $h(n) \le c(n, n') + h(n')$, where $c(n, n')$ is the true step cost between a node $n$ and its neighbor $n'$.** This acts as a mathematical shield, guaranteeing that the total score $f(n)$ never decreases as we move forward. Think of it as the equivalent of Dijkstra's positive cost rule. It ensures that a path that currently seems longer to reach a node $n$ doesn't suddenly drop in score to become artificially better than a faster path to $n'$. By forcing the heuristic to decrease proportionally (it cannot plummet abruptly), we maintain a positive evolution of the total costs (since moving has a real cost). This ensures the heuristic never abstracts away the real cost, allowing us to confidently validate and lock a cell knowing no hidden path with a heavy entry cost will suddenly become more beneficial later. This consistency is the secret lock that allows A* to freeze a cell's cost on the very first visit, avoiding infinite recalculations.
+#### Under the Hood: Implementation
+
+To make this algorithm not just smart, but incredibly fast, the choice of data structures is critical. In this project, A* is implemented using a Min-Heap (Priority Queue).
+
+#### The Min-Heap Structure
+
+When the algorithm explores a maze, it discovers many neighboring cells that are put in a "waiting list" (the Open Set). At every single step, the algorithm must ask: *"Which of all these pending cells has the lowest $f(n)$ score?"*
+
+If we used a standard list or array, the computer would have to scan the entire list every time, which is highly inefficient. Instead, we use a Min-Heap, a specialized binary tree structure where the parent node is always smaller than its children.
+
+* **Insertion:** When we discover a new cell, we push it into the heap with its $f(n)$ score. The heap automatically bubbles it up to its correct position.
+* **Extraction:** The cell with the absolute lowest $f(n)$ score is always waiting at the very top (the root) of the tree. We can extract it instantly.
+* **Tracking:** Alongside the heap, a standard dictionary keeps track of the "came_from" relationships and the best $g(n)$ scores found so far for each cell. Crucially, every time we evaluate a cell and push its neighbors into the heap, we link each neighbor to its current parent in the path and mark it as validated. This allows us, once the exit is reached, to simply backtrack through this list of optimized parents to reconstruct the final shortest path.
+
+#### Results and Path Quality
+
+Because our heuristic (typically Manhattan distance) strictly respects the rules of admissibility and consistency, the A* implementation behaves flawlessly:
+
+* **Optimal Path Guarantee:** It is mathematically guaranteed to find the absolute shortest path from the start to the end.
+* **Surgical Precision:** Unlike Dijkstra, which floods the maze equally in all directions, A* is pulled towards the target. It ignores dead ends that are physically too far in the wrong direction, resulting in a dramatically lower number of explored cells. The path generated is both perfectly optimal and computed with minimal waste.
+
+#### Complexity and Performance
+
+Thanks to the Min-Heap implementation, the performance is highly optimized:
+
+* **Time Complexity:** $\mathcal{O}(E \log V)$, where $V$ is the number of vertices (cells) and $E$ is the number of edges (navigable neighbors). In the worst-case scenario, pulling the lowest score from the heap takes $\mathcal{O}(\log V)$ time. Because A* uses a heuristic to aggressively prune the search space, the actual number of operations is practically much lower than pure Dijkstra.
+* **Space Complexity:** $\mathcal{O}(V)$. The algorithm needs to store the Open Set (the heap) and the Closed Set (visited nodes mapping) in memory. In the absolute worst-case scenario (a completely open maze with no walls), it might store nearly all cells in memory before reaching the exit.
 
 ---
 
