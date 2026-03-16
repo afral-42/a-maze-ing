@@ -35,7 +35,7 @@ class RaycasterComponent:
         self._renderer = MlxRayCastingRenderer(
             self._image, MlxDraw(), self._theme
         )
-        self._rc_controller = RayCastingMlxController(
+        self.rc_controller = RayCastingMlxController(
             self._player,
             self._map,
             self._engine,
@@ -45,4 +45,4 @@ class RaycasterComponent:
         )
 
     def run_raycaster(self) -> None:
-        self._rc_controller.run_game_loop()
+        self.rc_controller.run_game_loop()

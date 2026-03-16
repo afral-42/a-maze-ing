@@ -15,8 +15,8 @@ class CommandHandler:
                 "animation": None,
                 "dump": None,
                 "help": None,
+                "raycaster": None,
             },
-            "raycaster": None,
             "theme": {theme: None for theme in Theme.get_available_themes()},
             "algo": {
                 algo: None
