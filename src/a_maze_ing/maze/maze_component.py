@@ -11,7 +11,6 @@ from a_maze_ing.maze.maze_view import MazeView
 from a_maze_ing.mlx.mlx_draw import MlxDraw
 from a_maze_ing.mlx.mlx_manager import MlxManager
 from a_maze_ing.raycaster.rc_component import RaycasterComponent
-from a_maze_ing.theme.colors import Palette
 from a_maze_ing.theme.theme import MazeTheme
 from mazegen.exporter.maze_exporter import MazeExporter, MazeExportError
 from mazegen.generator.maze_generator import (
@@ -119,7 +118,7 @@ class MazeComponent:
         for position in self._solution:
             x, y = position
             rectangle = maze_builder.build_cell_background(
-                x, y, Palette.PURPLE
+                x, y, self._theme.solution
             )
             if rectangle is not None:
                 MlxDraw.rectangle(
@@ -189,7 +188,7 @@ class MazeComponent:
         self._render_animation_frame()
         after = time.perf_counter()
         elapsed = after - before
-        time.sleep(max(0.05 - elapsed, 0.0))
+        time.sleep(max(0.02 - elapsed, 0.0))
 
     def _update_animation_frame(self, animation: Generator[None]) -> None:
         try:
