@@ -9,8 +9,6 @@ if TYPE_CHECKING:
 
 from dataclasses import dataclass
 
-from a_maze_ing.mlx.mlx_engine import mlx_engine
-
 
 @dataclass
 class Rectangle:
@@ -35,19 +33,6 @@ class MlxDraw:
         image.data_addr[offset + 3] = color.a
 
     @staticmethod
-    def draw_text(
-        mlx_ptr: int, win_ptr: int, string: str, x: int, y: int, color: Color
-    ) -> None:
-        color_number: int = color.to_int()
-        mlx_engine.mlx_string_put(mlx_ptr, win_ptr, x, y, color_number, string)
-
-    @staticmethod
-    def square(image: MlxImage, x: int, y: int, side: int) -> None:
-        for i in range(y, y + side):
-            for j in range(x, x + side):
-                MlxDraw.draw_pixel(image, j, i, Color(a=255, r=255, g=0, b=0))
-
-    @staticmethod
     def rectangle(image: MlxImage, r: Rectangle) -> None:
         if r.x < 0:
             x = 0
@@ -61,7 +46,8 @@ class MlxDraw:
         line = color * width
         for i in range(r.height):
             offset = start + i * image.size_line
-            image.data_addr[offset : offset + len(line)] = line
+            end = offset + len(line)
+            image.data_addr[offset:end] = line
 
     @staticmethod
     def clear_image(image: MlxImage) -> None:

@@ -22,7 +22,7 @@ class MlxRayCastingRenderer:
     def render_frame(
         self, walls: list[RayCastingWallUnit], angle: float
     ) -> None:
-        self._display_walls(walls, angle)
+        self._display_walls(walls)
 
     def _calculate_wall_y_position(self, height: int) -> int:
         return (self._image.height - height) // 2
@@ -55,7 +55,7 @@ class MlxRayCastingRenderer:
         )
         return col
 
-    def _display_walls(self, walls: list[RayCastingWallUnit], angle) -> None:
+    def _display_walls(self, walls: list[RayCastingWallUnit]) -> None:
         img = self._image
         view_64 = img.data_addr.cast("Q")
         bg_color = self._theme.background.to_int_little_endian()
