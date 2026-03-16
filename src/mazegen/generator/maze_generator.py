@@ -34,6 +34,22 @@ class MazeGenerationAlgorithm(Enum):
         raise ValueError(f"Algorithm '{algorithm_name}' not available")
 
 
+class MazeSolvingAlgorithm(Enum):
+    DFS = "dfs"
+    ASTAR = "astar"
+
+    @classmethod
+    def get_available_algorithms(cls) -> list[str]:
+        return [algo.value for algo in cls]
+
+    @classmethod
+    def get_algorithm(cls, algorithm_name: str) -> MazeSolvingAlgorithm:
+        for algo in cls:
+            if algo.value == algorithm_name:
+                return algo
+        raise ValueError(f"Algorithm '{algorithm_name}' not available")
+
+
 class MazeGenerator:
     def __init__(self, settings: MazeSettings) -> None:
         self._settings = settings

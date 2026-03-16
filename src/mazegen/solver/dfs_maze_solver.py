@@ -1,8 +1,8 @@
 from mazegen.models.direction import Direction
-from mazegen.solver.maze_solver import MazeSolver
+from mazegen.solver.maze_solver import MazeSolution
 
 
-class DfsMazeSolver(MazeSolver):
+class DfsMazeSolver(MazeSolution):
     POSITION_TABLE = {
         Direction.NORTH: (0, -1),
         Direction.SOUTH: (0, 1),

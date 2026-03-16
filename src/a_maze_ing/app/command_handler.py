@@ -1,5 +1,8 @@
 from a_maze_ing.theme.theme import Theme
-from mazegen.generator.maze_generator import MazeGenerationAlgorithm
+from mazegen.generator.maze_generator import (
+    MazeGenerationAlgorithm,
+    MazeSolvingAlgorithm,
+)
 
 
 class CommandHandler:
@@ -18,6 +21,10 @@ class CommandHandler:
             "algo": {
                 algo: None
                 for algo in MazeGenerationAlgorithm.get_available_algorithms()
+            },
+            "solver": {
+                solver: None
+                for solver in MazeSolvingAlgorithm.get_available_algorithms()
             },
             "reset": None,
             "exit": None,

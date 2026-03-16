@@ -17,11 +17,11 @@ from mazegen.exporter.maze_exporter import MazeExporter, MazeExportError
 from mazegen.generator.maze_generator import (
     MazeGenerationAlgorithm,
     MazeGenerator,
+    MazeSolvingAlgorithm,
 )
 from mazegen.generator.maze_initializer import MazeInitializer
 from mazegen.models.direction import Direction
 from mazegen.models.maze_settings import MazeSettings
-from mazegen.solver.a_star_solver import AStarMazeSolver
 from mazegen.solver.maze_solver import MazeSolver
 
 
@@ -42,6 +42,7 @@ class MazeComponent:
         theme: MazeTheme,
     ) -> None:
         self._algo = MazeGenerationAlgorithm.RECURSIVE_BACKTRACKING
+        self._solver = MazeSolvingAlgorithm.ASTAR
         self._refresh_display_flag = False
         self._theme = theme
         self._area_width = area_width
@@ -55,7 +56,7 @@ class MazeComponent:
         self._settings = settings
         self._build_steps: list[tuple[int, int, Direction]] = []
         self._maze_view = self._generate()
-        self._solver = self._select_solver()
+
         self._exporter = exporter
         self._pause_animation = False
         self._animation_on_going = False
@@ -90,8 +91,8 @@ class MazeComponent:
         self._maze_view = self._generate()
         self._refresh_display_flag = True
 
-    def _select_solver(self) -> type[MazeSolver]:
-        return AStarMazeSolver
+    def set_solver(self, solver: MazeSolvingAlgorithm) -> None:
+        self._solver = solver
 
     def handle_key_press(self, keycode: int) -> None:
         pass
@@ -110,8 +111,7 @@ class MazeComponent:
         self._mlx_manager.refresh_image(self._image_name)
 
     def render_solution(self) -> None:
-        solver = self._solver(self._maze_view.maze)
-        self._solution = solver.solve()
+        self._solution = MazeSolver.solve(self._maze_view.maze, self._solver)
         maze_builder = MlxSimpleMazeBuilder(self._maze_view)
         for position in self._solution:
             x, y = position
