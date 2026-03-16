@@ -2,7 +2,7 @@ import argparse
 import sys
 
 from a_maze_ing.app.app_component import AppComponent
-from a_maze_ing.mlx.mlx_manager import MlxManager
+from a_maze_ing.mlx.mlx_manager import MlxError, MlxManager
 from a_maze_ing.parsing.parsing import (
     ParsingError,
     compute_config_model,
@@ -36,11 +36,19 @@ def main() -> int:
     except ParsingError as e:
         print(e, file=sys.stderr)
         return 1
-    mlx_manager = MlxManager()
-    app = AppComponent(
-        1400, 1400, Theme.CATPPUCCIN_MACCHIATO.value, mlx_manager, config
-    )
-    app.start_app()
+    try:
+        with MlxManager() as mlx_manager:
+            app = AppComponent(
+                1400,
+                1400,
+                Theme.CATPPUCCIN_MACCHIATO.value,
+                mlx_manager,
+                config,
+            )
+            app.start_app()
+    except MlxError as e:
+        print(e, file=sys.stderr)
+        return 1
     return 0
 
 
