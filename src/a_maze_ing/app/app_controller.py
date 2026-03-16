@@ -97,7 +97,7 @@ class AppController:
             )
             self._console.print(f"available commands: {available_commands}")
         elif component == "exit":
-            self._mlx_manager.destroy()
+            self._mlx_manager.exit_loop()
         elif component == "reset":
             self._set_focus(AppFocus.WELCOME)
             self._welcome.render()
