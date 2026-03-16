@@ -35,7 +35,6 @@ class MazeComponent:
         image_name: str,
         background_image_name: str,
         rc_image_name: str,
-        rc_sky_image_name: str,
         area_width: int,
         area_height: int,
         exporter: MazeExporter,
@@ -50,7 +49,6 @@ class MazeComponent:
         self._image_name = image_name
         self._background_image_name = background_image_name
         self._rc_image_name = rc_image_name
-        self._rc_sky_image_name = rc_sky_image_name
         self._drawer = drawer
         self._settings = settings
         self._build_steps: list[tuple[int, int, Direction]] = []
@@ -236,7 +234,6 @@ class MazeComponent:
             self._maze_view,
             self._mlx_manager,
             self._rc_image_name,
-            self._rc_sky_image_name,
             self._theme,
         )
         raycaster.run_raycaster()

@@ -1,6 +1,3 @@
-import math
-from dataclasses import dataclass
-
 import numpy as np
 
 from a_maze_ing.mlx.mlx_draw import MlxDraw, Rectangle
@@ -11,34 +8,21 @@ from a_maze_ing.theme.theme import MazeTheme
 from mazegen import Direction
 
 
-@dataclass
-class MlxRayCastingRendererConfiguration:
-    wall_color: Color
-    sky_color: Color
-    floor_color: Color
-    start_color: Color
-    end_color: Color
-
-
 class MlxRayCastingRenderer:
     def __init__(
         self,
         image: MlxImage,
         drawer: MlxDraw,
         theme: MazeTheme,
-        sky: MlxImage,
     ):
         self._image = image
         self._drawer = drawer
         self._theme = theme
-        self._sky = sky
 
     def render_frame(
         self, walls: list[RayCastingWallUnit], angle: float
     ) -> None:
-        self._draw_background(angle)
-        self._display_walls(walls)
-        # self._draw_walls(walls)
+        self._display_walls(walls, angle)
 
     def _calculate_wall_y_position(self, height: int) -> int:
         return (self._image.height - height) // 2
@@ -71,7 +55,7 @@ class MlxRayCastingRenderer:
         )
         return col
 
-    def _display_walls(self, walls: list[RayCastingWallUnit]) -> None:
+    def _display_walls(self, walls: list[RayCastingWallUnit], angle) -> None:
         img = self._image
         view_64 = img.data_addr.cast("Q")
         bg_color = self._theme.background.to_int_little_endian()
@@ -81,7 +65,6 @@ class MlxRayCastingRenderer:
             clear_color,
             dtype=np.uint64,
         )
-
         for x, wall in enumerate(walls):
             wall_color = self._calculate_wall_color(wall.type, wall.direction)
             wall_color_32 = wall_color.to_int_little_endian()
@@ -94,37 +77,41 @@ class MlxRayCastingRenderer:
         arr = np.ascontiguousarray(frame.T.ravel())
         view_64[:] = memoryview(arr).cast("B").cast("Q")
 
-    def _draw_walls(self, walls: list[RayCastingWallUnit]) -> None:
-        wall_width = self._image.width // len(walls)
-        for i, wall in enumerate(walls):
-            h = min(wall.height, self._image.height)
-            x = i * wall_width
-            y = (self._image.height - h) // 2
-            color = self._calculate_wall_color(
-                wall.type, wall.depth_factor, wall.direction
-            )
-            self._drawer.rectangle(
-                self._image, Rectangle(x, y, wall_width, h, color)
-            )
-
-    def _draw_background(self, angle: float) -> None:
-        # floor = Rectangle(
-        #     0,
-        #     self._image.height // 2,
-        #     self._image.width,
-        #     self._image.height // 2,
-        #     self._theme.background,
-        # )
-        floor = Rectangle(
-            0,
-            0,
-            self._image.width,
-            self._image.height,
+    def draw_finish_message(self) -> None:
+        text_1 = "winner winner"
+        text_2 = "chicken dinner!"
+        width_1 = len(text_1) * self._theme.font.LETTER_WIDTH
+        width_2 = len(text_2) * self._theme.font.LETTER_WIDTH
+        height = self._theme.font.LETTER_HEIGHT
+        x_1 = (self._image.width - width_1) // 2
+        y_1 = (self._image.height - height) // 2
+        x_2 = (self._image.width - width_2) // 2
+        y_2 = y_1 + height
+        MlxDraw.rectangle(
+            self._image,
+            Rectangle(
+                min(x_1, x_2) - 10,
+                y_1,
+                max(width_1, width_2) + 20,
+                2 * height,
+                self._theme.background,
+            ),
+        )
+        MlxDraw.putstr_scaled(
+            x_1,
+            y_1,
+            text_1,
+            self._image,
+            self._theme.font,
+            self._theme.text,
             self._theme.background,
         )
-        sky_offset = int(self._sky.width * angle / math.tau)
-        self._drawer.copy_image(self._image, self._sky, sky_offset, 0)
-        self._drawer.copy_image(
-            self._image, self._sky, sky_offset - self._sky.width, 0
+        MlxDraw.putstr_scaled(
+            x_2,
+            y_2,
+            text_2,
+            self._image,
+            self._theme.font,
+            self._theme.text,
+            self._theme.background,
         )
-        self._drawer.rectangle(self._image, floor)

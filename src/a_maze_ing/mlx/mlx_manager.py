@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any, Callable, Self
 
 if TYPE_CHECKING:
     from a_maze_ing.theme.colors import Color
@@ -59,6 +59,9 @@ class MlxManager:
         self.images: dict[str, MlxImage] = {}
         self.window: MlxWindow | None = None
         self.images_historic: dict[str, tuple[int, int]] = {}
+
+    def __enter__(self) -> Self:
+        return self
 
     def init_window(self, width: int, height: int, title: str) -> None:
         if not self.window:
@@ -191,7 +194,7 @@ class MlxManager:
             raise MlxError("Can't find image in image historic")
         self.push_image(name, x, y)
 
-    def load_png_image(self, filename: str) -> MlxImage:
+    def load_png_image(self, filename: str, image_name: str) -> MlxImage:
         try:
             image, width, height = mlx_engine.mlx_png_file_to_image(
                 self.mlx_ptr, f"./assets/{filename}"
@@ -200,6 +203,7 @@ class MlxManager:
             raise MlxError(f"Failed to load image '{filename}': {e}")
         if not image:
             raise MlxError(f"Failed to load image '{filename}'")
+        self.images[image_name] = MlxImage(self.mlx_ptr, width, height, image)
         return MlxImage(self.mlx_ptr, width, height, image)
 
     def destroy(self) -> None:

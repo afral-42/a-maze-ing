@@ -19,6 +19,8 @@ class MazeTheme:
     solution: Color
     forty_two: Color
     wall_thickness: int
+    text: Color
+    font: MlxFont
 
 
 @dataclass
@@ -58,6 +60,8 @@ class AppTheme:
                 forty_two=catppuccin_palette.ROSEWATER,
                 solution=Color(255, 255, 255),
                 wall_thickness=1,
+                text=catppuccin_palette.TEXT,
+                font=press_start_2p_24,
             ),
             ConsoleTheme(
                 background=catppuccin_palette.BASE,
@@ -85,6 +89,8 @@ class Theme(Enum):
             forty_two=Palette.WHITE,
             solution=Palette.PURPLE,
             wall_thickness=1,
+            text=Palette.WHITE,
+            font=press_start_2p_24,
         ),
         ConsoleTheme(
             background=Palette.BLACK,

@@ -65,52 +65,6 @@ class RayCastingEngine:
         self._config = config
         self._player = player
 
-    def _get_depth_vertical(
-        self, cos_a: float, tan_a: float
-    ) -> tuple[float, WallType]:
-        i = 0
-        while True:
-            if cos_a > 0:
-                intersection_x = int(self._player.x) + i + 1.0
-            else:
-                intersection_x = int(self._player.x) - 0.000001 - i
-            dx = intersection_x - self._player.x
-            intersection_y = self._player.y + dx * tan_a
-            depth_vert = dx / cos_a
-            if depth_vert >= self._config.max_depth:
-                return self._config.max_depth, WallType.BASE
-            if self._map.is_wall(intersection_x, intersection_y):
-                return depth_vert, self._get_wall_type(
-                    intersection_x,
-                    intersection_y,
-                    WallOrientation.VERTICAL,
-                    cos_a,
-                )
-            i += 1
-
-    def _get_depth_horizontal(
-        self, sin_a: float, tan_a: float
-    ) -> tuple[float, WallType]:
-        i = 0
-        while True:
-            if sin_a > 0:
-                intersection_y = int(self._player.y) + i + 1.0
-            else:
-                intersection_y = int(self._player.y) - 0.000001 - i
-            dy = intersection_y - self._player.y
-            intersection_x = self._player.x + dy / tan_a
-            depth_hor = dy / sin_a
-            if depth_hor >= self._config.max_depth:
-                return self._config.max_depth, WallType.BASE
-            if self._map.is_wall(intersection_x, intersection_y):
-                return depth_hor, self._get_wall_type(
-                    intersection_x,
-                    intersection_y,
-                    WallOrientation.HORIZONTAL,
-                    sin_a,
-                )
-            i += 1
-
     def _get_wall_type(
         self,
         x: float,
@@ -186,14 +140,11 @@ class RayCastingEngine:
             ):
                 break
 
-            if self._map.grid[map_y][map_x] > 0:
+            if self._map.grid[map_y][map_x] == 1:
                 hit = True
 
         if side == WallOrientation.HORIZONTAL:
             depth_hor = side_dist_x - x_delta_dist
-            # direction = (
-            #     Direction.NORTH if math.sin(angle) < 0 else Direction.SOUTH
-            # )
             direction = (
                 Direction.EAST if math.cos(angle) >= 0 else Direction.WEST
             )
@@ -202,8 +153,8 @@ class RayCastingEngine:
                 self._get_wall_type(
                     map_x,
                     map_y,
-                    WallOrientation.HORIZONTAL,
-                    math.sin(angle),
+                    WallOrientation.VERTICAL,
+                    math.cos(angle),
                 ),
                 direction,
             )
@@ -212,16 +163,13 @@ class RayCastingEngine:
             direction = (
                 Direction.NORTH if math.sin(angle) < 0 else Direction.SOUTH
             )
-            # direction = (
-            #     Direction.EAST if math.cos(angle) >= 0 else Direction.WEST
-            # )
             return (
                 depth_ver,
                 self._get_wall_type(
                     map_x,
                     map_y,
-                    WallOrientation.VERTICAL,
-                    math.cos(angle),
+                    WallOrientation.HORIZONTAL,
+                    math.sin(angle),
                 ),
                 direction,
             )
@@ -233,25 +181,8 @@ class RayCastingEngine:
             - self._config.half_fov
             - self._config.delta_angle
         )
-        for _ in range(self._config.rays_qty):
+        for i in range(self._config.rays_qty):
             angle = angle + self._config.delta_angle
-            # cos_a = math.cos(angle)
-            # sin_a = math.sin(angle)
-            # tan_a = math.tan(angle)
-            # depth_vertical, wall_type_vert = self._get_depth_vertical(
-            #     cos_a, tan_a
-            # )
-            # depth_horizontal, wall_type_hor = self._get_depth_horizontal(
-            #     sin_a, tan_a
-            # )
-            # if depth_vertical < depth_horizontal:
-            #     depth = depth_vertical
-            #     wall_type = wall_type_vert
-            #     direction = Direction.EAST if cos_a >= 0 else Direction.WEST
-            # else:
-            #     depth = depth_horizontal
-            #     wall_type = wall_type_hor
-            #     direction = Direction.NORTH if sin_a < 0 else Direction.SOUTH
             depth, wall_type, direction = self._cast_a_ray(
                 self._player.x, self._player.y, angle
             )

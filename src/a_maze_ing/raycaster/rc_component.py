@@ -18,7 +18,6 @@ class RaycasterComponent:
         maze_view: MazeView,
         mlx_manager: MlxManager,
         image_name: str,
-        sky_image_name: str,
         theme: MazeTheme,
     ) -> None:
         self._width = width
@@ -26,17 +25,15 @@ class RaycasterComponent:
         self._maze_view = maze_view
         self._mlx_manager = mlx_manager
         self._image = self._mlx_manager.get_image(image_name)
-        self._sky_image = self._mlx_manager.get_image(sky_image_name)
         self._config = RayCastingConfig(
             self._width, self._height, math.radians(60), 100.0
         )
         self._map = self._maze_view.convert_to_ray_casting_map()
-        print(self._map.grid)
         self._player = Player(self._map)
         self._theme = theme
         self._engine = RayCastingEngine(self._map, self._config, self._player)
         self._renderer = MlxRayCastingRenderer(
-            self._image, MlxDraw(), self._theme, self._sky_image
+            self._image, MlxDraw(), self._theme
         )
         self._rc_controller = RayCastingMlxController(
             self._player,
@@ -45,7 +42,6 @@ class RaycasterComponent:
             self._renderer,
             self._mlx_manager,
             image_name,
-            sky_image_name,
         )
 
     def run_raycaster(self) -> None:
