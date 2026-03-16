@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from mazegen.models.maze import MazeModel
-from mazegen.solver.maze_solver import MazeSolver
+from mazegen.solver.maze_solver import MazeSolution
 
 
 class MazeExportError(Exception):
@@ -15,7 +15,7 @@ class MazeExporter:
                 maze.generate_str_repr(),
                 ",".join(str(coord) for coord in maze.settings.entry),
                 ",".join(str(coord) for coord in maze.settings.exit),
-                MazeSolver.solution_to_str(maze, solution),
+                MazeSolution.solution_to_str(maze, solution),
             ]
         )
         f = Path(maze.settings.output_file)

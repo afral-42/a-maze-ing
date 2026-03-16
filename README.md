@@ -3,17 +3,37 @@
 # Project Name: A-Maze-ing
 
 ## Description
-This project is a maze generation engine designed to explore fundamental concepts in Graph Theory and Algorithm Design. The primary goal is to transform an initial grid into a navigable structure by applying procedural generation techniques.
+This project is a **maze generation engine** designed to explore fundamental concepts in **Graph Theory** and **Algorithm Design**. The primary goal is to transform an initial grid into a navigable structure by applying procedural generation techniques.
 
 Building this tool serves as a practical application for several core computer science pillars:
-- Graph Theory: Implementing "Perfect Mazes," which are technically Spanning Trees (graphs where any two nodes are connected by exactly one path, with no cycles).
-- Algorithm Design: Using traversal or partitioning algorithms—such as Depth-First Search (DFS), Prim’s, or Kruskal’s—to create structured patterns from random states.
-- Data Structures: Efficiently managing cell states and adjacencies to optimize generation speed, even for large-scale grids.
-- Configuration Management: Decoupling logic from parameters by using an external configuration file to control the generation behavior.
+- **Graph Theory:** Implementing "Perfect Mazes," which are technically Spanning Trees (graphs where any two nodes are connected by exactly one path, with no cycles).
+- **Algorithm Design:** Using traversal or partitioning algorithms—such as **Depth-First Search (DFS)**, **Prim’s**, or **Kruskal’s**—to create structured patterns from random states.
+- **Data Structures:** Efficiently managing cell states and adjacencies to optimize generation speed, even for large-scale grids.
+- **Configuration Management:** Decoupling logic from parameters by using an external configuration file to control the generation behavior.
+- **Graphic programming:**
+  - Visual rendering of the maze using **MinilibX** (a minimalist X11 wrapper) including **animated visualization** of the generation process to illustrate algorithm behavior in real time.
+  - **Raycasting engine**: A custom-built raycaster for immersive, first-person navigation within the generated structure.
+  - **Command Line Interface (CLI)**: A fully functionnal integrated terminal to execute real-time commands (algorithm swapping, maze regeneration, color palette selection...)
 
-![maze](assets/maze.png)
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
+    <figure style="flex: 1; min-width: 300px; margin: 10px; text-align: center;">
+        <img src="assets/maze.png" style="width: 100%;">
+        <figcaption style="margin-top: 8px;"><i>Maze view with integrated terminal</i></figcaption>
+    </figure>
+    <figure style="flex: 1; min-width: 300px; margin: 10px; text-align: center;">
+        <img src="assets/raytracer.png" style="width: 100%">
+        <figcaption style="margin-top: 8px;"><i>Raycasting engine visualisation of the maze</i></figcaption>
+    </figure>
+    <figure style="flex: 1; min-width: 300px; margin: 10px; text-align: center;">
+        <img src="assets/maze_latte.png" style="width: 100%">
+        <figcaption style="margin-top: 8px;"><i>Maze with different theme and solution</i></figcaption>
+    </figure>
+    <figure style="flex: 1; min-width: 300px; margin: 10px; text-align: center;">
+        <img src="assets/animation.png" style="width: 100%">
+        <figcaption style="margin-top: 8px;"><i>Maze generation animation</i></figcaption>
+    </figure>
+</div>
 
-[TODO: AJOUTER UN VISUEL DE LA CONSOLE ET DU RAYTRACER]
 ---
 
 ## Instructions
@@ -34,15 +54,15 @@ uv run a-maze-ing my_config.txt     # Specify your own config file
 The configuration is define in the `config.txt` file at the root of the project.
 The configuration file accepts only the following parameters.
 
-| Parameter | Format | Required | Example | 
-| ----- | ----- | ----- | -----| 
-| WIDTH | integer | yes | 10 |
-| HEIGHT | integer | yes | 10 |
-| ENTRY | line,column | yes | 0,0 |
-| EXIT | line,column | yes | 9,9 |
-| OUTPUT_FILE | string | yes | output.txt |
-| PERFECT | boolean | no | True |
-| SEED | integer | no | 512786 |
+| Parameter | Format | Required | Constraints | Example | 
+| ----- | ----- | ----- | ----- | ----- | 
+| WIDTH | integer | yes | min=2,max=349 | 10 |
+| HEIGHT | integer | yes | min=2,max=349 | 10 |
+| ENTRY | line,column | yes | min=0,max=348 | 0,0 |
+| EXIT | line,column | yes | min=0,max=348 | 9,9 |
+| OUTPUT_FILE | string | yes | minimum length=1 | output.txt |
+| PERFECT | boolean | no | N/A | True |
+| SEED | integer | no | N/A | 512786 |
 
 *Example:*
 ```bash
@@ -144,13 +164,15 @@ The overall complexity of this algorithm is $O(n log(n))$, where n is the size o
 ## Features
 ### Basic Features
 
+Use `ENTER` key to open console, `ESCAPE` key to close console.
+
 ```bash
 a-maze-ing ~ help               # display available commands
 a-maze-ing ~ exit               # exit program
+a-maze-ing ~ reset              # return to home screen
 a-maze-ing ~ maze               # display available sub-commands for maze
 a-maze-ing ~ maze help          # display available sub-commands for maze
 a-maze-ing ~ maze show          # display maze
-a-maze-ing ~ maze info          # display maze information
 a-maze-ing ~ maze regen         # generate a new maze
 a-maze-ing ~ maze solve         # display maze solution
 a-maze-ing ~ maze dump          # save maze to output file
@@ -159,21 +181,19 @@ a-maze-ing ~ maze dump          # save maze to output file
 ### Advanced Features
 ```bash
 a-maze-ing ~ theme              # display available themes
-a-maze-ing ~ theme info         # display current theme
 a-maze-ing ~ theme theme-name   # change theme to selected theme
-a-maze-ing ~ algo               # display available algorithms
-a-maze-ing ~ algo algo-name     # change algorithm and regenerate the maze
-a-maze-ing ~ raycaster          # display available sub-commands for raycaster
-a-maze-ing ~ raycaster help     # display available sub-commands for raycaster
-a-maze-ing ~ raycaster start    # start maze exploration as first-person view
+a-maze-ing ~ algo               # display available maze generation algorithms
+a-maze-ing ~ algo algo-name     # change maze generation algorithm and regenerate the maze
+a-maze-ing ~ solver             # display available maze resolution algorithms
+a-maze-ing ~ solver algo-name   # change maze resolution algorithm
+a-maze-ing ~ maze animation     # run animated view of maze generation algorithm
+a-maze-ing ~ maze raycaster     # run raycaster rendering
 ```
 
 ---
 
 ## Technical Implementation
 ### Reusability
-
-[TODO: BRANCHER LE SOLVER]
 
 The package `mazegen` is reusable in other context:
 
@@ -184,12 +204,13 @@ python3 -m pip install dist/mazegen-0.1.0-py3-none-any.whl  # install the packag
 Basic usage:
 ```python
 from mazegen import (
-    AStarMazeSolver,
     MazeExporter,
     MazeExportError,
     MazeGenerationAlgorithm,
     MazeGenerator,
     MazeSettings,
+    MazeSolver,
+    MazeSolvingAlgorithm,
 )
 
 
@@ -203,8 +224,9 @@ def main():
         perfect=True,
     )
     generator = MazeGenerator(settings)
-    maze = generator.generate(MazeGenerationAlgorithm.RECURSIVE_BACKTRACKING)
-    solution = AStarMazeSolver(maze).solve()
+    maze = generator.generate(MazeGenerationAlgorithm.KRUSKAL)
+    solver = MazeSolver()
+    solution = solver.solve(maze, MazeSolvingAlgorithm.ASTAR)
     try:
         MazeExporter().export(maze, solution)
     except MazeExportError as e:
