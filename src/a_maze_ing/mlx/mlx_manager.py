@@ -1,8 +1,6 @@
 from types import TracebackType
-from typing import TYPE_CHECKING, Any, Callable, Self
+from typing import Any, Callable, Self
 
-if TYPE_CHECKING:
-    pass
 from a_maze_ing.mlx.mlx_draw import MlxDraw
 from a_maze_ing.mlx.mlx_engine import mlx_engine
 
