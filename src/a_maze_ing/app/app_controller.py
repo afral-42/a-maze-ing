@@ -46,10 +46,11 @@ class AppController:
             obs.notify_pause_event()
 
     def release_key_hook(self, keycode: int, params: None) -> None:
-        pass
+        if self._focus == AppFocus.RAYCASTER:
+            self._maze.handle_key_release(keycode)
 
     def key_hook(self, keycode: int, params: None) -> None:
-        if keycode == MlxKeys.ENTER:
+        if keycode == MlxKeys.ENTER and self._focus != AppFocus.RAYCASTER:
             if self._focus == AppFocus.CONSOLE:
                 command = self._console.get_command()
                 self._handle_command(command)
@@ -62,6 +63,13 @@ class AppController:
         elif self._focus == AppFocus.CONSOLE:
             self._console.handle_key_press(keycode)
         elif self._focus == AppFocus.MAZE:
+            self._maze.handle_key_press(keycode)
+        elif self._focus == AppFocus.RAYCASTER:
+            if keycode == MlxKeys.ESCAPE:
+                self._maze.exit_raycaster()
+                self._focus = AppFocus.MAZE
+                self._maze.render()
+                return
             self._maze.handle_key_press(keycode)
 
     def _render_focus(self) -> None:
@@ -157,7 +165,10 @@ class AppController:
                 if message is not None:
                     self._console.print(message)
                 else:
-                    self._set_focus(AppFocus.MAZE)
+                    if option == "raycaster":
+                        self._set_focus(AppFocus.RAYCASTER)
+                    else:
+                        self._set_focus(AppFocus.MAZE)
             elif component == "theme":
                 self._handle_theme_command(option)
             elif component == "algo":

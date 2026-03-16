@@ -54,7 +54,7 @@ class MazeComponent:
         self._settings = settings
         self._build_steps: list[tuple[int, int, Direction]] = []
         self._maze_view = self._generate()
-
+        self._raycaster: RaycasterComponent | None = None
         self._exporter = exporter
         self._pause_animation = False
         self._animation_on_going = False
@@ -93,7 +93,12 @@ class MazeComponent:
         self._solver = solver
 
     def handle_key_press(self, keycode: int) -> None:
-        pass
+        if self._raycaster:
+            self._raycaster.rc_controller.press_key_hook(keycode, None)
+
+    def handle_key_release(self, keycode: int) -> None:
+        if self._raycaster:
+            self._raycaster.rc_controller.release_key_hook(keycode, None)
 
     def render(self) -> None:
         if self._refresh_display_flag:
@@ -228,7 +233,8 @@ class MazeComponent:
             self._pause_animation = False
 
     def run_raycaster(self) -> None:
-        raycaster = RaycasterComponent(
+        self._mlx_manager.disable_auto_repeat()
+        self._raycaster = RaycasterComponent(
             self._area_width,
             self._area_height,
             self._maze_view,
@@ -236,4 +242,8 @@ class MazeComponent:
             self._rc_image_name,
             self._theme,
         )
-        raycaster.run_raycaster()
+        self._raycaster.run_raycaster()
+
+    def exit_raycaster(self) -> None:
+        self._mlx_manager.add_loop_hook(None, None)
+        self._mlx_manager.enable_auto_repeat()

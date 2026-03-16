@@ -212,3 +212,9 @@ class MlxManager:
             self.destroy_image(image)
         mlx_engine.mlx_release(self.mlx_ptr)
         self.exit_loop()
+
+    def disable_auto_repeat(self) -> None:
+        mlx_engine.mlx_do_key_autorepeatoff(self.mlx_ptr)
+
+    def enable_auto_repeat(self) -> None:
+        mlx_engine.mlx_do_key_autorepeaton(self.mlx_ptr)
