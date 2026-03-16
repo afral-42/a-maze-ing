@@ -58,7 +58,7 @@ class AppTheme:
                 start=catppuccin_palette.GREEN,
                 end=catppuccin_palette.RED,
                 forty_two=catppuccin_palette.ROSEWATER,
-                solution=Color(255, 255, 255),
+                solution=catppuccin_palette.MAUVE,
                 wall_thickness=1,
                 text=catppuccin_palette.TEXT,
                 font=press_start_2p_24,
