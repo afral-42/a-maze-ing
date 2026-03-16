@@ -1,15 +1,3 @@
-<!-- *********************************************************************** -->
-<!--                                                                         -->
-<!--                                                      :::      ::::::::  -->
-<!-- README.md                                          :+:      :+:    :+:  -->
-<!--                                                  +:+ +:+         +:+    -->
-<!-- By: arebilla <arebilla@student.42lyon.fr>      +#+  +:+       +#+       -->
-<!--                                              +#+#+#+#+#+   +#+          -->
-<!-- Created: 2026/03/13 16:08:54 by arebilla          #+#    #+#            -->
-<!-- Updated: 2026/03/13 16:08:55 by arebilla         ###   ########lyon.fr  -->
-<!--                                                                         -->
-<!-- *********************************************************************** -->
-
 *This project has been created as part of the 42 curriculum by abounoua, arebilla*
 
 # Project Name: A-Maze-ing
@@ -74,8 +62,72 @@ SEED=512786
 ### Algorithm
 #### Recursive Backtracking (Randomized Depth-First Search)
 
-Complexity: $O(n)$
+The recursive backtracking id an adaptation of the Depth-First-Search (DFS) algorithm for traversing a Tree or a Graph data structure. The algorithm starts at the root node and explores as far as possible along each branch before backtracking.
 
+In this adaptation for a maze generation, the maze is modelled as a graph $(V, E)$ where each location in the maze is a vertice $V$ of the graph, and each passage between two adjacent location is an edge $E$. The graph is traversed by visiting each vertice a single time, the next vertice being randomly selected among the adjacent vertices. This allows to build a spanning tree of the maze graph, which can be converted in a perfect maze, each edge being a passage to an adjacent location.
+
+The implementation of this algorithm is recursive. For large labyrinth, it is required in python to increase the recursion limit `sys.setrecursionlimit` to prevent hitting this limit.
+
+The complexity of this algorithm is $O(n)$, where n is the size of the maze (width x height)
+
+#### Kruskal's algorithm
+
+This methodology is an adaptation of the Kruskal's algorithm. Kruskal's algorithm finds a minimum spanning tree of a graph. A minimum spanning tree of a connected weighted graph is a connected subgraph, without cycles, for which the sum of the weights of all the edges of the subgraph is minimal. 
+
+In this adaptation for a maze generation, the maze is modelled as a graph $(V, E)$ where each location in the maze is a vertice $V$ of the graph, and each free passage between two adjacent location is an edge $E$. The edges are randomly sorted, which is equivalent to give them each a unique weight, and sort them by weight.
+
+```python
+@dataclass
+class Edge:
+    x: int
+    y: int
+    dir: Direction
+```
+At the start of the procedure, each vertice of the graph is associated with a Tree. The tree has 2 attributes, 
+- `parent`: which is the parent node, or `None` if the node is the root of the tree.
+- `rank`: which is the height of the tree.
+
+It has 3 methods:
+- `root`: returns the root of the tree.
+- `is_connected`: check if two trees are connected, it means they share the same root.
+- `union_by_rank`: connects two trees. The root of the tree with the highest rank becomes the root of the other tree. If the rank is equal, either tree becomes the new root, and its rank is increased by one.
+
+The time complexity of these method is $O(log(n))$.
+
+```python
+class Tree:
+    def __init__(self) -> None:
+        self.parent: Tree | None = None
+        self.rank = 0
+
+    @property
+    def root(self) -> Tree:
+        if self.parent is None:
+            return self
+        return self.parent.root
+
+    def is_connected(self, node: Tree) -> bool:
+        return self.root == node.root
+
+    def union_by_rank(self, node: Tree) -> None:
+        self_root = self.root
+        node_root = node.root
+        if self_root.rank > node_root.rank:
+            node_root.parent = self_root
+        elif self_root.rank < node_root.rank:
+            self_root.parent = node_root
+        else:
+            node_root.parent = self_root
+            self_root.rank += 1
+
+```
+
+The procedure runs as follows
+- The list of edges is randomly sorted.
+- For each edge in the list, we check if the trees corresponding to the the vertices are connected. If they are not, we perform a union by rank. If they are connected, we continue to the next edge.
+- Once all the edges have been checked, it remains a single connected Tree which is a spanning tree of the maze graph. Edges of this spanning tree are passages from one location to the adjacent one. A perfect maze can then be built from this spanning tree.
+
+The overall complexity of this algorithm is $O(n log(n))$, where n is the size of the maze (width x height).
 
 
 ### Selection Rationale
