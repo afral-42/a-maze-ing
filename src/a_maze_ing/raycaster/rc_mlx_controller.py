@@ -35,9 +35,6 @@ class RayCastingMlxController:
         self._start_time = datetime.now()
 
     def run_game_loop(self) -> None:
-        # self._manager.add_reactive_key_hook(
-        #     self.press_key_hook, self.release_key_hook, disable_autorepeat=True
-        # )
         self._manager.add_loop_hook(self.loop_hook)
 
     def loop_hook(self, params: None) -> None:
@@ -79,8 +76,6 @@ class RayCastingMlxController:
             self._keys_status["a"] = 1
         if keycode == 100:
             self._keys_status["d"] = 1
-        # if keycode == 65307:
-        #     self._manager.destroy()
 
     def release_key_hook(self, keycode: int, params: None) -> None:
         if keycode == 119:

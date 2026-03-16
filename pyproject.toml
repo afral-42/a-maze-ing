@@ -48,9 +48,15 @@ select = [
     "I",
     # pyflakes
     "F",
+    # error
+    "E",
     # docstrings
     #"D101", "D102", "D103"
 ]
+ignore = ["E731"]
+
+[tool.ruff.lint.pycodestyle]
+max-doc-length = 79
 
 [build-system]
 requires = ["uv_build >= 0.10.7, <0.11.0"]

@@ -9,7 +9,7 @@ class Direction(IntFlag):
     WEST = auto()
 
     @classmethod
-    def from_vector(cls, vector) -> Direction | None:
+    def from_vector(cls, vector: tuple[int, int]) -> Direction | None:
         match vector:
             case (1, 0):
                 return Direction.EAST

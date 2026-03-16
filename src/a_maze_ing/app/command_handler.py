@@ -1,3 +1,5 @@
+from typing import Any
+
 from a_maze_ing.theme.theme import Theme
 from mazegen.generator.maze_generator import (
     MazeGenerationAlgorithm,
@@ -7,7 +9,7 @@ from mazegen.generator.maze_generator import (
 
 class CommandHandler:
     def __init__(self) -> None:
-        self.commands = {
+        self.commands: dict[str, Any] = {
             "maze": {
                 "show": None,
                 "regen": None,

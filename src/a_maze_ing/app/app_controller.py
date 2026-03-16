@@ -41,7 +41,7 @@ class AppController:
     def press_key_hook(self, keycode: int, params: None) -> None:
         self.key_hook(keycode, params)
 
-    def _propagate_pause_event(self):
+    def _propagate_pause_event(self) -> None:
         for obs in self._pause_event_observers:
             obs.notify_pause_event()
 

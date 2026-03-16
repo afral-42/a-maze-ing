@@ -21,7 +21,7 @@ def format_pydantic_error(pydantic_error: ValidationError) -> str:
 
 def parse_config_file(filename: str) -> dict[str, str | tuple[str, ...]]:
     config: dict[str, str | tuple[str, ...]] = {}
-    line = 0
+    line = ""
     try:
         with open(filename, "r") as f:
             for line in f:
@@ -53,21 +53,9 @@ def compute_config_model(
     except ValidationError as e:
         msg = "\n".join(
             [
-                f"Invalid configuration, found {e.error_count()} input error(s):",
+                f"Invalid configuration, found {e.error_count()} "
+                "input error(s):",
                 format_pydantic_error(e),
             ]
         )
         raise ParsingError(msg)
-
-
-def main() -> None:
-    try:
-        raw_config = parse_config_file("config.txt")
-        config = compute_config_model(raw_config)
-        print(config)
-    except ParsingError:
-        print("Parsing error caught")
-
-
-if __name__ == "__main__":
-    main()
