@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from mazegen.solver.maze_solver import MazeSolver
+from mazegen.solver.maze_solver import MazeSolution
 
 
 @dataclass
@@ -80,7 +80,7 @@ class Heap:
             index = smallest_idx
 
 
-class AStarMazeSolver(MazeSolver):
+class AStarMazeSolver(MazeSolution):
     def _manhattan_distance(self, position: tuple[int, int]) -> int:
         exit_x, exit_y = self.maze.settings.exit
         px, py = position
