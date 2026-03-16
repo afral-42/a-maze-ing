@@ -4,6 +4,7 @@ from mazegen.generator.abstract_grid_generator import AbstractMazeGridGenerator
 from mazegen.generator.dead_ends_breaker import DeadEndBreaker
 from mazegen.generator.kruskal_maze_generator import KruskalMazeGenerator
 from mazegen.generator.maze_initializer import MazeInitializer
+from mazegen.generator.prim_maze_generator import PrimMazeGenerator
 from mazegen.generator.recursive_backtracking import (
     RecursiveBacktrackingGenerator,
 )
@@ -19,6 +20,7 @@ class MazeGenerationError(Exception):
 class MazeGenerationAlgorithm(Enum):
     RECURSIVE_BACKTRACKING = "recursive-backtracking"
     KRUSKAL = "kruskal"
+    PRIM = "prim"
 
     @classmethod
     def get_available_algorithms(cls) -> list[str]:
@@ -63,6 +65,9 @@ class MazeGenerator:
             case MazeGenerationAlgorithm.KRUSKAL:
                 initializer = MazeInitializer(self._settings)
                 return KruskalMazeGenerator(self._settings, initializer)
+            case MazeGenerationAlgorithm.PRIM:
+                initializer = MazeInitializer(self._settings)
+                return PrimMazeGenerator(self._settings, initializer)
             case _:
                 raise MazeGenerationError(
                     f"Algorithm '{algorithm.value}' not implemented."
