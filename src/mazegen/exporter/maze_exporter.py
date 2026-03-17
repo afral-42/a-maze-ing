@@ -10,13 +10,16 @@ class MazeExportError(Exception):
 
 class MazeExporter:
     def export(self, maze: MazeModel, solution: list[tuple[int, int]]) -> None:
-        text = "\n".join(
-            [
-                maze.generate_str_repr(),
-                ",".join(str(coord) for coord in maze.settings.entry),
-                ",".join(str(coord) for coord in maze.settings.exit),
-                MazeSolution.solution_to_str(maze, solution),
-            ]
+        text = (
+            "\n".join(
+                [
+                    maze.generate_str_repr(),
+                    ",".join(str(coord) for coord in maze.settings.entry),
+                    ",".join(str(coord) for coord in maze.settings.exit),
+                    MazeSolution.solution_to_str(maze, solution),
+                ]
+            )
+            + "\n"
         )
         f = Path(maze.settings.output_file)
         try:
