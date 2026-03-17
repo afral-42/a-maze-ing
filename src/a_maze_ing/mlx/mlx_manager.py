@@ -1,8 +1,6 @@
 from types import TracebackType
-from typing import TYPE_CHECKING, Any, Callable, Self
+from typing import Any, Callable, Self
 
-if TYPE_CHECKING:
-    from a_maze_ing.theme.colors import Color
 from a_maze_ing.mlx.mlx_draw import MlxDraw
 from a_maze_ing.mlx.mlx_engine import mlx_engine
 
@@ -94,12 +92,6 @@ class MlxManager:
         )
         self.images_historic[name] = (x, y)
 
-    def draw_square(self, name: str, x: int, y: int, side: int) -> None:
-        if name not in self.images:
-            raise MlxError(f"Image '{name}' not found")
-
-        MlxDraw.square(self.images[name], x, y, side)
-
     def push_image_centered_on_region(
         self,
         name: str,
@@ -140,25 +132,6 @@ class MlxManager:
             return self.images[name]
         except KeyError:
             raise MlxError(f"Image '{name}' not found")
-
-    def draw_text(self, x: int, y: int, string: str, color: Color) -> None:
-        if not self.window:
-            raise MlxError(
-                "No window initialized, please instanciate an image"
-            )
-        MlxDraw.draw_text(
-            self.mlx_ptr, self.window.win_ptr, string, x, y, color
-        )
-
-    def draw_centered_on_x_text(
-        self, y: int, string: str, color: Color
-    ) -> None:
-        if not self.window:
-            raise MlxError(
-                "No window initialized, please instanciate an image"
-            )
-        x = self.window.width // 2 - (len(string) * 9) // 2
-        self.draw_text(x, y, string, color)
 
     def add_key_hook(self, func: Callable[[int, None], None]) -> None:
         if not self.window:

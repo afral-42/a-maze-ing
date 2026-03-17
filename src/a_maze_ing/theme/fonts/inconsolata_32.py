@@ -1,3 +1,5 @@
+# flake8: noqa
+
 from a_maze_ing.mlx.mlx_font import MlxFont
 
 _source = (

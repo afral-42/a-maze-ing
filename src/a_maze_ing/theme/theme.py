@@ -58,7 +58,7 @@ class AppTheme:
                 start=catppuccin_palette.GREEN,
                 end=catppuccin_palette.RED,
                 forty_two=catppuccin_palette.ROSEWATER,
-                solution=Color(255, 255, 255),
+                solution=catppuccin_palette.MAUVE,
                 wall_thickness=1,
                 text=catppuccin_palette.TEXT,
                 font=press_start_2p_24,
@@ -105,11 +105,18 @@ class Theme(Enum):
             font_subtitle=press_start_2p_24,
         ),
     )
+
+    CATPPUCCIN_LATTE = AppTheme.catppuccin("cattpuccin-latte", Palette.Latte)
+
+    CATPPUCCIN_FRAPPE = AppTheme.catppuccin(
+        "cattpuccin-frappe", Palette.Frappe
+    )
+
     CATPPUCCIN_MACCHIATO = AppTheme.catppuccin(
         "cattpuccin-macchiato", Palette.Macchiato
     )
 
-    CATPPUCCIN_LATTE = AppTheme.catppuccin("cattpuccin-latte", Palette.Latte)
+    CATPPUCCIN_MOCHA = AppTheme.catppuccin("cattpuccin-mocha", Palette.Mocha)
 
     @classmethod
     def get_theme(cls, name: str) -> AppTheme:

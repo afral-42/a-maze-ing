@@ -60,12 +60,12 @@ clean:
 lint:
 	@echo "$(E_WAIT) Running flake8..."
 	@printf "$(C_GREY)";
-	@uv run flake8 --isolated --exclude $(VENV_DIR) --color never . || { \
+	@uv run flake8 --isolated --exclude $(VENV_DIR) --color never src || { \
 		printf "$(C_RESET)"; echo "$(E_KO) flake8 failed!!!!"; exit 1; }
 	@printf "$(C_RESET)"
 	@echo "$(E_WAIT) Running mypy..."
 	@printf "$(C_GREY)"; \
-		uv run mypy . $(MYPY_FLAGS) || { \
+		uv run mypy src $(MYPY_FLAGS) || { \
 		printf "$(C_RESET)"; echo "$(E_KO) mypy failed!!!!"; exit 1; }; \
 		printf "$(C_RESET)"
 	@echo "$(E_OK) All good!"

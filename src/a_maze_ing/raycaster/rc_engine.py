@@ -181,7 +181,7 @@ class RayCastingEngine:
             - self._config.half_fov
             - self._config.delta_angle
         )
-        for i in range(self._config.rays_qty):
+        for _ in range(self._config.rays_qty):
             angle = angle + self._config.delta_angle
             depth, wall_type, direction = self._cast_a_ray(
                 self._player.x, self._player.y, angle
