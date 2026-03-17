@@ -36,6 +36,26 @@ Building this tool serves as a practical application for several core computer s
       <em>Maze generation animation</em>
     </td>
   </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="assets/theme_selection.png" width="100%"><br>
+      <em>Customise the maze with your favourite catppuccin flavor!</em>
+    </td>
+    <td align="center" width="50%">
+      <img src="assets/maze_end.png" width="100%"><br>
+      <em>About to exit the maze...</em>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="assets/algo_select.png" width="100%"><br>
+      <em>Generate mazes of different shape by selecting different algorithms</em>
+    </td>
+    <td align="center" width="50%">
+      <img src="assets/imperfect_maze.png" width="100%"><br>
+      <em>Select between different resolution algorithms to find the optimal solution of a maze with multiple paths</em>
+    </td>
+  </tr>
 </table>
 
 ---
