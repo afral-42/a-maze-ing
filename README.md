@@ -3,17 +3,21 @@
 # Project Name: A-Maze-ing
 
 ## Description
-This project is a **maze generation engine** designed to explore fundamental concepts in **Graph Theory** and **Algorithm Design**. The primary goal is to transform an initial grid into a navigable structure by applying procedural generation techniques.
+This project implements a **maze generation engine** that bridges theoretical computer science concepts — **graph theory**, **algorithm design**, **data structures** — with a fully interactive, visually rich application. 
 
-Building this tool serves as a practical application for several core computer science pillars:
+It implements the following theoretical concepts:
 - **Graph Theory:** Implementing "Perfect Mazes," which are technically Spanning Trees (graphs where any two nodes are connected by exactly one path, with no cycles).
 - **Algorithm Design:** Using traversal or partitioning algorithms—such as **Depth-First Search (DFS)**, **Prim’s**, or **Kruskal’s**—to create structured patterns from random states.
 - **Data Structures:** Efficiently managing cell states and adjacencies to optimize generation speed, even for large-scale grids.
+
+It uses the following implementation techniques:
 - **Configuration Management:** Decoupling logic from parameters by using an external configuration file to control the generation behavior.
+- **Object oriented programming**: Custom MVC (Model-View-Controller) architecture structuring the GUI around clear separation of concerns, with dedicated controllers and components for input handling, state management, and rendering.
 - **Graphic programming:**
   - Visual rendering of the maze using **MinilibX** (a minimalist X11 wrapper) including **animated visualization** of the generation process to illustrate algorithm behavior in real time.
   - **Raycasting engine**: A custom-built raycaster for immersive, first-person navigation within the generated structure.
-  - **Command Line Interface (CLI)**: A fully functionnal integrated terminal to execute real-time commands (algorithm swapping, maze regeneration, color palette selection...)
+- **Command Line Interface (CLI)**: A fully functional integrated terminal to execute real-time commands (algorithm swapping, maze regeneration, color palette selection...)
+- **Memory efficient data handling** using numpy arrays and python memoryviews to optimize speed of critical tasks
 
 <table>
   <tr>
