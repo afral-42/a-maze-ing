@@ -3,11 +3,11 @@
 # Project Name: A-Maze-ing
 
 ## Description
-This project implements a **maze generation engine** that bridges theoretical computer science concepts — **graph theory**, **algorithm design**, **data structures** — with a fully interactive, visually rich application. 
+This project implements a **maze generation engine** that bridges theoretical computer science concepts ,  **graph theory**, **algorithm design**, **data structures** ,  with a fully interactive, visually rich application. 
 
 It implements the following theoretical concepts:
 - **Graph Theory:** Implementing "Perfect Mazes," which are technically Spanning Trees (graphs where any two nodes are connected by exactly one path, with no cycles).
-- **Algorithm Design:** Using traversal or partitioning algorithms—such as **Depth-First Search (DFS)**, **Prim’s**, or **Kruskal’s**—to create structured patterns from random states.
+- **Algorithm Design:** Using traversal or partitioning algorithms, such as **Depth-First Search (DFS)**, **Prim’s**, or **Kruskal’s**, to create structured patterns from random states.
 - **Data Structures:** Efficiently managing cell states and adjacencies to optimize generation speed, even for large-scale grids.
 
 It uses the following implementation techniques:
@@ -224,6 +224,54 @@ The procedure runs as follows
 The overall complexity of this algorithm is $O(n log(n))$, where n is the size of the maze (width x height).
 
 
+### Carving the Perfect Maze: Prim's Algorithm
+
+To create a "Perfect Maze" a grid where every cell is reachable but there are absolutely no loops, Graph Theory tells us we need to build a **Spanning Tree**. 
+
+To make the maze look organic and unpredictable, we assign random weights to all the walls (edges) in our grid and compute the **Minimum Spanning Tree (MST)**. To achieve this, we use **Prim's Algorithm**.
+
+#### How the Algorithm Grows the Maze
+
+Prim's algorithm builds the MST step by step, starting from a single point and growing outwards. Here is the exact process used to carve the maze:
+
+1. **Initialization:** We pick a random starting cell and mark it as "visited" (part of the maze).
+2. **The Frontier:** We look at all the walls separating this cell from its unvisited neighbors and consider them our current "frontier."
+3. **The Greedy Choice:** We select the wall on the frontier with the lowest random weight.
+4. **Carving:** We knock down that wall, linking the new cell to our maze. We mark this new cell as visited.
+5. **Expansion:** We add the walls of this newly visited cell to our frontier.
+6. **Repeat:** We continue picking the lowest-weight wall from the entire frontier until every single cell in the grid has been visited.
+
+### The Mathematical Guarantee: The Cut Property
+
+Prim's algorithm relies on a greedy strategy, it always takes the immediate cheapest option. Why doesn't this lead to a suboptimal tree in the long run? The answer lies in a fundamental theorem of graph theory: the **Cut Property**.
+
+To formalize this mathematically, let our maze be a graph $G = (V, E)$, where $V$ represents the vertices (cells) and $E$ represents the edges (walls/paths). A "cut" is a partition of all vertices $V$ into two disjoint subsets: $S$ (the cells already annexed into our maze) and $V \setminus S$ (the unvisited cells).
+
+Let $e_{min} = \{u, v\}$ be the edge connecting a node $u \in S$ to a node $v \in V \setminus S$ with the absolute minimum weight $w$. This is expressed as:
+
+$$w(e_{min}) = \min \{ w(e) \mid e \text{ crosses the cut} \}$$
+
+The Cut Property theorem dictates that this specific edge $e_{min}$ **must** belong to the Minimum Spanning Tree (MST). 
+
+The mathematical proof relies on a contradiction: Imagine a hypothetical MST that *does not* include $e_{min}$. To connect all nodes, this flawed MST must cross the cut using some other edge, let's call it $e'$, where $w(e') > w(e_{min})$. If we remove $e'$ from this tree and replace it with $e_{min}$, we successfully reconnect the two subsets but with a strictly smaller total weight. This proves the initial tree wasn't the "Minimum" Spanning Tree after all. 
+
+Therefore, by consistently selecting $e_{min}$ at every step across the expanding boundary, Prim's algorithm mathematically locks in the optimal final structure without ever needing to backtrack.
+
+#### Under the Hood: The List Implementation
+
+To make this generation process instantaneous, we cannot afford to scan the entire frontier array every time we need to find the lowest-weight wall. Just like our A* implementation, we can rely on a **Min-Heap (Priority Queue)**. However we didn't use a heap because the weights have to be picked randomly.
+
+* **Insertion:** Every time a cell is added to the maze, its surrounding valid walls are pushed into the list.
+* **Extraction:** At each iteration, we simply pop a random element of the list. In a real MST search, because of the heap's structure, this is guaranteed to be the lowest-weight wall on the entire frontier.
+* **Validation:** We check if the wall leads to an unvisited cell. If it does, we carve the path; if both cells are already in the maze, we simply discard the wall and pop the next one.
+
+#### Complexity and Performance
+
+Because Prim's algorithm processes edges through a priority queue, its performance profile is highly efficient and identical to A*:
+
+* **Time Complexity:** $\mathcal{O}(E \log V)$, where $V$ is the number of cells and $E$ is the number of walls. Extracting the minimum weight wall from the heap takes $\mathcal{O}(\log V)$ time.
+* **Space Complexity:** $\mathcal{O}(V)$ in the worst case. The Min-Heap needs to store the frontier walls, and we must maintain a data structure (like a boolean array or hash set) to track which cells have already been visited.
+
 ### Selection Rationale
 [Explain why you chose this specific algorithm over others (e.g., complexity, visual style, efficiency).]
 
@@ -281,6 +329,8 @@ To maintain Dijkstra's absolute mathematical guarantee (the ability to "lock" a 
 
 * **It must be Optimistic (Admissible):** The heuristic must never overestimate the true distance to the exit. **Mathematically, for any node $n$, it must satisfy $h(n) \le h^*(n)$, where $h^*(n)$ is the true minimum cost to reach the target from $n$.** By remaining strictly optimistic, we ensure the algorithm never prematurely discards the true shortest path out of unwarranted pessimism. In fact, the heuristic acts purely as a priority sorter, not a true distance calculator. When the algorithm reaches the target (where the heuristic becomes exactly $0$), it compares its true accumulated cost with the optimistic scores of all other pending paths. Because these remaining scores are strictly optimistic, we are absolutely certain that any other path will end up being strictly longer, guaranteeing we found the optimal route.
 * **It must be Consistent (Monotonic):** The estimated cost must drop no faster than the real cost accumulates between two steps. **Mathematically, it must satisfy the triangle inequality: $h(n) \le c(n, n') + h(n')$, where $c(n, n')$ is the true step cost between a node $n$ and its neighbor $n'$.** This acts as a mathematical shield, guaranteeing that the total score $f(n)$ never decreases as we move forward. Think of it as the equivalent of Dijkstra's positive cost rule. It ensures that a path that currently seems longer to reach a node $n$ doesn't suddenly drop in score to become artificially better than a faster path to $n'$. By forcing the heuristic to decrease proportionally (it cannot plummet abruptly), we maintain a positive evolution of the total costs (since moving has a real cost). This ensures the heuristic never abstracts away the real cost, allowing us to confidently validate and lock a cell knowing no hidden path with a heavy entry cost will suddenly become more beneficial later. This consistency is the secret lock that allows A* to freeze a cell's cost on the very first visit, avoiding infinite recalculations.
+
+
 #### Under the Hood: Implementation
 
 To make this algorithm not just smart, but incredibly fast, the choice of data structures is critical. In this project, A* is implemented using a Min-Heap (Priority Queue).
@@ -310,6 +360,117 @@ Thanks to the Min-Heap implementation, the performance is highly optimized:
 * **Space Complexity:** $\mathcal{O}(V)$. The algorithm needs to store the Open Set (the heap) and the Closed Set (visited nodes mapping) in memory. In the absolute worst-case scenario (a completely open maze with no walls), it might store nearly all cells in memory before reaching the exit.
 
 ---
+
+## Maze Display
+
+### Building the Visual Engine: 2D Rendering with MLX
+
+Generating and solving a maze mathematically is only half the battle; displaying it efficiently is a whole different challenge. For this project, we used **MLX**, a minimalist, low-level graphical wrapper for X11 (often used in C programming, but wrapped for Python here). 
+
+MLX is designed to be as basic as possible. While it allows us to put pixels on a window or map GPU textures to the screen, it forces us to deal with very low-level interfaces. To draw our maze, we had to manipulate `memoryviews`, writing raw bytes directly into 1D image memory addresses. 
+
+Here is how we overcame the technical limitations of MLX to build a robust 2D rendering engine:
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="assets/2d_with_solution.png" width="80%"><br>
+      <em>Scalable 2D rendering with solution</em>
+    </td>
+    <td align="center" width="50%">
+      <img src="assets/custom_fonts.png" width="80%"><br>
+      <em>Welcome screen with custom fonts and console</em>
+    </td>
+  </tr>
+</table>
+
+#### 1. Dynamic Maze Scaling
+A major difficulty in maze rendering is handling unpredictable grid sizes. Displaying a massive 300x300 maze requires a vastly different approach than a simple 10x10 grid. We couldn't hardcode pixel sizes. 
+
+To solve this, we implemented a dynamic auto-scaling formula. Given a fixed window of size $W \times H$ and a maze grid of $N_{cols} \times N_{rows}$, the engine calculates the maximum possible cell size $S_{cell}$ (in pixels) while maintaining a perfect square aspect ratio:
+
+$$S_{cell} = \min\left(\left\lfloor \frac{W}{N_{cols}} \right\rfloor, \left\lfloor \frac{H}{N_{rows}} \right\rfloor\right)$$
+
+This mathematical constraint ensures the maze always fits perfectly within the screen bounds, regardless of its topological complexity.
+
+#### 2. Decentralized "Blind" Cell Rendering
+Rendering intersecting walls on a grid can quickly become a geometric nightmare of overlapping pixels. To elegantly bypass this, we designed a decentralized, "blind" rendering system. 
+
+Every cell is completely independent and unaware of its neighbors. It renders its own boundaries using a simple halving formula. If the desired global wall thickness is $T$, each cell draws an internal border of thickness $t_c$:
+
+$$t_c = \frac{T}{2}$$
+
+When two adjacent cells $A$ and $B$ draw their respective "half-walls" on their shared edge, the rendered pixels perfectly merge to form a single, seamless wall of the correct total thickness ($t_A + t_B = T$). This eliminated complex intersection logic and drastically sped up the rendering process.
+
+#### 3. The `MlxManager` (OOP Architecture)
+Because the Python MLX library is essentially a raw C-function wrapper, putting a pixel on the screen means dealing with 1D memory array pointer arithmetic. To convert a 2D coordinate $(x, y)$ into a 1D memory index, the engine must compute:
+
+$$Index(x, y) = (y \times \text{size\_line}) + \left(x \times \frac{\text{bpp}}{8}\right)$$
+
+*(Where `size_line` is the byte width of the image and `bpp` is bits-per-pixel).*
+
+Exposing this directly to our main code would have resulted in a messy, hard-to-maintain architecture. To protect our application from this low-level engine complexity, we created a dedicated Object-Oriented wrapper: the `MlxManager`. This class acts as a shield, smoothly managing coordinate translations, window creation, image lifecycles, and memory protection.
+
+#### 4. Custom Binary Typography Engine
+One of MLX's biggest limitations is its inability to natively draw strings directly onto images, let alone support different fonts or dynamic font sizes. 
+
+We couldn't settle for this limitation. To solve it, we built our own custom font mapping engine. We exported custom typography as binary files using GIMP. Our engine directly reads these binary fonts and maps them pixel-by-pixel into the MLX image `memoryview`. By mathematically computing the memory offset for each ASCII character $C$ based on the sprite sheet grid, we achieved high-performance custom text rendering without relying on external UI libraries.
+
+#### 5. React-Inspired Component UI & Animations
+Finally, a static maze isn't very engaging. We wanted to see the algorithms come to life!
+By leveraging the MLX main loop and hooking into its event system, we implemented smooth animations for the maze generation and pathfinding processes. Furthermore, to keep the UI scalable and maintainable as the project grew, we designed a **component-based rendering architecture**, heavily inspired by modern frameworks like React. This allowed us to build modular, reusable UI elements that plug seamlessly into the MLX loop.
+
+
+
+### Into the Third Dimension: Raycasting and the DDA Algorithm
+
+While a 2D top-down view is great for debugging and observing pathfinding, we wanted to push the engine further by implementing a first-person 3D perspective. To achieve this within the constraints of our grid-based maze, we implemented a **Raycaster** utilizing the **Digital Differential Analyzer (DDA)** algorithm.
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="assets/raycaster.png" width="80%"><br>
+      <em>Raycasting using DDA Algorithm</em>
+    </td>
+    <td align="center" width="50%">
+      <img src="assets/raycaster2.png" width="80%"><br>
+      <em>Raycasting with entry special color</em>
+    </td>
+  </tr>
+</table>
+
+#### The DDA Algorithm: Trigonometric Precision
+Raycasting works by shooting a ray from the player's position for every vertical stripe (pixel column) of the screen, spread across the player's Field of View (FOV). The computational challenge is finding exactly where each ray hits a wall. Stepping forward by an arbitrary small distance is inefficient and prone to visual glitches (missing thin corners).
+
+Instead, we use **DDA**. Because our maze is a strict mathematical grid, DDA optimizes the search by jumping exactly from one grid-line intersection to the next. In our engine, this is calculated purely through trigonometry. For a ray cast at a specific angle $\alpha$, we compute the scaling factors (delta distances), which represent the length of the ray's hypotenuse required to cross exactly one vertical or horizontal grid cell:
+
+$$\Delta \text{dist}_x = \left| \frac{1}{\cos(\alpha)} \right|$$
+$$\Delta \text{dist}_y = \left| \frac{1}{\sin(\alpha)} \right|$$
+
+By maintaining the accumulated distances to the next $X$ and $Y$ sides and using basic trigonometric steps ($\tan(\alpha)$ to find exact intersections), the algorithm simply steps through the integer grid coordinates $(mapX, mapY)$ until a wall is struck. This guarantees absolute mathematical precision, avoids fisheye distortion (using perpendicular distance correction), and ensures lightning-fast collision detection.
+
+#### Curing the "Fisheye" Distortion
+Finding the collision point is only step one. If we draw the wall heights using the raw Euclidean distance of the ray, the edges of the screen will appear warped and spherical, the infamous **"fisheye" distortion**. This optical illusion happens because rays cast at the extreme edges of our Field of View naturally travel a longer physical distance to hit a straight, flat wall compared to the ray looking dead ahead.
+
+To fix this mathematically, we must project the raw distance onto the camera's perpendicular axis (the flat viewing plane). By multiplying the raw Euclidean distance $D_{raw}$ by the cosine of the difference between the ray's angle $\alpha$ and the player's central viewing angle $\theta$, we obtain the true perpendicular distance:
+
+$$D_{perp} = D_{raw} \times \cos(\alpha - \theta)$$
+
+Using this corrected perpendicular distance guarantees perfectly straight walls, absolute geometric precision, and a flawless 3D perspective.
+
+#### Low-Level Memory Manipulation with NumPy
+Python is notoriously slow for pixel-by-pixel rendering. A standard nested `for` loop computing rays and drawing pixels would reduce our framerate to a crawl. To bypass Python's interpreter overhead, the entire frame buffer is built and manipulated using **NumPy** arrays (`np.array`).
+
+Instead of plotting pixels individually, we compute wall heights and construct vertical stripes directly in memory using vectorized NumPy slicing. The entire screen is calculated as an off-screen matrix in RAM, allowing us to process thousands of pixels simultaneously at C-level speeds.
+
+#### High-Speed Frame Dumping via `int64`
+The final, and often most critical, bottleneck in a Python renderer is the "frame dump", the process of transferring our completed NumPy buffer into the MLX `memoryview` to be drawn on the screen. 
+
+Standard ARGB/RGBA pixels are 32 bits (4 bytes) each. Writing millions of 32-bit integers individually per frame creates a massive bottleneck on the CPU's memory bus. To maximize memory bandwidth, we implemented a low-level pointer optimization: **64-bit memory casting**.
+
+By casting our NumPy pixel buffer and the target MLX memory map as flat arrays of `int64` (8 bytes) instead of `int32` (4 bytes) or `uint8` (1 byte), we force the CPU to write **two pixels per memory instruction cycle**. 
+
+This 64-bit aligned frame dumping effectively cuts the memory transfer time in half. It allows us to blast the entire frame buffer from NumPy into the X11 wrapper instantaneously, ensuring the raycaster maintains a fluid, real-time framerate despite Python's usual graphical limitations.
 
 ## Features
 ### Basic Features
@@ -416,10 +577,30 @@ if __name__ == "__main__":
 - [Fundamentals of Maze Generation - Carnegie Mellon University](https://www.cs.cmu.edu/~112-f22/notes/student-tp-guides/Mazes.pdf)
 - [Maze Generation algorithm - Wikipedia](https://en.wikipedia.org/wiki/Maze_generation_algorithm)
 - [The Buckblog, assorted ramblings - Jamis Buck](https://weblog.jamisbuck.org/2011/2/7/maze-generation-algorithm-recap.html)
+- [Prim's Algorithm](https://www.geeksforgeeks.org/dsa/prims-minimum-spanning-tree-mst-greedy-algo-5/)
 
 #### Graph Theory
 - [Théorie des graphes - Wikipedia](https://fr.wikipedia.org/wiki/Th%C3%A9orie_des_graphes)
+- [Minimum Spanning Tree - Wikipedia](https://en.wikipedia.org/wiki/Minimum_spanning_tree)
+- [MST Search with Prim](https://www.youtube.com/watch?v=20QfaLQPLqQ)
 
+#### Maze Solving Algorithms
+- [Research on the A Star Algorithm](https://www.researchgate.net/publication/370573811_Research_on_the_A_Star_Algorithm_for_Finding_Shortest_Path)
+- [A Search Algorithm](https://www.geeksforgeeks.org/dsa/a-search-algorithm/)
+- [DFS Graph Search](https://en.wikipedia.org/wiki/Depth-first_search)
+- [Problem solving with heuristic](https://ocw.mit.edu/courses/16-410-principles-of-autonomy-and-decision-making-fall-2010/1aeeda66f03c6e6b414438865901cb43_MIT16_410F10_rec09_sol.pdf)
+- [Introduction to heuristic](https://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html)
+- [Heap fundamentals](https://www.youtube.com/watch?v=XycnarZEBvQ)
+
+#### Python Low Level Manipulation
+- [Memoryview in Python](https://www.geeksforgeeks.org/python/memoryview-in-python/)
+- [Numpy arrays introduction](https://numpy.org/doc/stable/reference/generated/numpy.array.html)
+
+#### Display with MLX
+- [MiniLibX unofficial documentation](https://harm-smits.github.io/42docs/libs/minilibx)
+- [Raycasting complete tutorial](https://lodev.org/cgtutor/raycasting.html)
+- [Raycasting mathematic fundamentals](https://github.com/Qpupier/Cub3D/blob/master/Algorithme_Cub3D.pdf)
+- [Raycasting in Python](https://www.youtube.com/watch?v=E18bSJezaUE)
 
 ### AI Usage Disclosure
 [Provide a description of how AI was used, specifying the exact tasks and parts of the project it assisted with.]
