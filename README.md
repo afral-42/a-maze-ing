@@ -3,7 +3,7 @@
 # Project Name: A-Maze-ing
 
 ## Description
-This project implements a **maze generation engine** that bridges theoretical computer science concepts ,  **graph theory**, **algorithm design**, **data structures** ,  with a fully interactive, visually rich application. 
+This project implements a **maze generation engine** that bridges theoretical computer science concepts, **graph theory**, **algorithm design**, **data structures** ,  with a fully interactive, visually rich application. 
 
 It implements the following theoretical concepts:
 - **Graph Theory:** Implementing "Perfect Mazes," which are technically Spanning Trees (graphs where any two nodes are connected by exactly one path, with no cycles).
@@ -150,7 +150,7 @@ Graph theory is not just for maze enthusiasts; it is the invisible backbone of o
 ### Algorithm
 #### Recursive Backtracking (Randomized Depth-First Search)
 
-The recursive backtracking id an adaptation of the Depth-First-Search (DFS) algorithm for traversing a Tree or a Graph data structure. The algorithm starts at the root node and explores as far as possible along each branch before backtracking.
+The recursive backtracking is an adaptation of the Depth-First-Search (DFS) algorithm for traversing a Tree or a Graph data structure. The algorithm starts at the root node and explores as far as possible along each branch before backtracking.
 
 In this adaptation for a maze generation, the maze is modelled as a graph $(V, E)$ where each location in the maze is a vertice $V$ of the graph, and each passage between two adjacent location is an edge $E$. The graph is traversed by visiting each vertice a single time, the next vertice being randomly selected among the adjacent vertices. This allows to build a spanning tree of the maze graph, which can be converted in a perfect maze, each edge being a passage to an adjacent location.
 
@@ -273,7 +273,12 @@ Because Prim's algorithm processes edges through a priority queue, its performan
 * **Space Complexity:** $\mathcal{O}(V)$ in the worst case. The Min-Heap needs to store the frontier walls, and we must maintain a data structure (like a boolean array or hash set) to track which cells have already been visited.
 
 ### Selection Rationale
-[Explain why you chose this specific algorithm over others (e.g., complexity, visual style, efficiency).]
+
+Each algorithm produces mazes with a distinct structural signature. DFS generates long, winding corridors with few dead ends — the result feels like a labyrinth. Prim's produces a much denser pattern of short branches radiating from a central region, giving a more uniform, bushy texture. Kruskal's falls between the two: because it picks edges globally at random, the result is statistically balanced with no directional bias.
+
+The choice is ultimately guided by the intended experience. A puzzle-oriented maze where the solver has to commit to long paths favours DFS. A maze designed to disorient with many short dead ends favours Prim's. Kruskal's is a good neutral default when no particular texture is desired.
+
+Complexity is rarely the deciding factor at the scales this project targets. What differs is the *feel* of the output, which makes algorithm selection here a design decision as much as a technical one.
 
 ---
 
@@ -472,6 +477,73 @@ By casting our NumPy pixel buffer and the target MLX memory map as flat arrays o
 
 This 64-bit aligned frame dumping effectively cuts the memory transfer time in half. It allows us to blast the entire frame buffer from NumPy into the X11 wrapper instantaneously, ensuring the raycaster maintains a fluid, real-time framerate despite Python's usual graphical limitations.
 
+
+## Architecture
+
+The project is split into two packages: `mazegen`, a standalone maze logic library, and `a_maze_ing`, the GUI application built on top of it. The GUI follows a layered MVC structure.
+
+```mermaid
+flowchart TD
+    AppComponent["AppComponent\nFactory · entry point"]:::entry
+
+    subgraph CTRL ["Controller"]
+        AppController["AppController\nFocus state machine · key routing · commands"]:::ctrl
+    end
+
+    subgraph COMP ["Components"]
+        StartComponent["StartComponent"]:::comp
+        ConsoleComponent["ConsoleComponent\nCLI · autocomplete"]:::comp
+        MazeComponent["MazeComponent\nGeneration · solve · export"]:::comp
+    end
+
+    subgraph RENDER ["Rendering  (created on demand)"]
+        MazeMlxRenderer["MazeMlxRenderer"]:::render
+        MazeAnimation["MazeAnimation"]:::render
+        RaycasterStack["RaycasterComponent\n+ Engine + Renderer"]:::render
+    end
+
+    subgraph UTIL ["Core"]
+        MlxManager["MlxManager\nMinilibX · event loop"]:::util
+        mazegen["mazegen\nGenerator · Solver · Exporter"]:::util
+        Theme["Theme · Fonts"]:::util
+    end
+
+    AppComponent -->|"wires everything"| CTRL
+    AppComponent -->|"instantiates"| COMP
+
+    AppController --> StartComponent
+    AppController --> ConsoleComponent
+    AppController --> MazeComponent
+    MlxManager -.->|"key hooks"| AppController
+
+    MazeComponent -->|"on demand"| MazeMlxRenderer
+    MazeComponent -->|"on demand"| MazeAnimation
+    MazeComponent -->|"on demand"| RaycasterStack
+
+    COMP -..->|"uses"| MlxManager
+    COMP -..->|"uses"| mazegen
+    RENDER -..->|"uses"| Theme
+    RENDER -..->|"uses"| MlxManager
+
+    classDef entry  fill:#7c3aed,stroke:#5b21b6,color:#ede9fe
+    classDef ctrl   fill:#4f46e5,stroke:#3730a3,color:#e0e7ff
+    classDef comp   fill:#0d9488,stroke:#0f766e,color:#ccfbf1
+    classDef render fill:#c2410c,stroke:#9a3412,color:#ffedd5
+    classDef util   fill:#374151,stroke:#1f2937,color:#f9fafb
+```
+
+### How it works
+
+The application is bootstrapped by `AppComponent`, which acts as a **factory**: it instantiates all components, registers images and key hooks with `MlxManager`, then yields control to the MinilibX event loop.
+
+From that point, `AppController` drives everything. It implements a **focus state machine** (`WELCOME → CONSOLE → MAZE → RAYCASTER`) with a two-level stack (`_focus` / `_background`) so the console overlay can always dismiss cleanly back to the previous view. Every keystroke is routed here first, then forwarded to whichever component currently owns focus.
+
+The **component layer** holds stateful GUI nodes — each owns a well-defined domain and exposes a narrow interface to the controller. `MazeComponent` is the most involved: it coordinates maze generation, solving, animation and the raycaster, and acts as an **observer** for pause and focus events dispatched by the controller. This observer pattern decouples the controller from component internals — registering a new reactive component requires no change to `AppController`.
+
+**Rendering is intentionally transient.** `MazeMlxRenderer`, `MazeAnimation` and the raycaster stack are created on demand rather than stored. This eliminates stale-reference bugs after regeneration or theme changes, and keeps each render call self-contained.
+
+At the base, `mazegen` is a **framework-agnostic library** — it has zero imports from `a_maze_ing` and can be tested or reused independently. The GUI layer depends on it; it never depends on the GUI.
+
 ## Features
 ### Basic Features
 
@@ -552,27 +624,46 @@ if __name__ == "__main__":
 ## Project Management
 
 ### Team Roles
-[Define the specific roles and responsibilities of each team member.]
+Both team members were equally involved in the project, in both design and implementation. We used the following collaborative working methods:
+- Brainstorming: discussing openly about new ideas, technical choices...
+- Pair programming — collaborative coding to encourage knowledge sharing and mutual understanding.
+- Separate implementation of the same concept and merging into the project keeping the best of each implementation
+- Use of productivity and management tools such as github issues, github pull requests, pre-commit to ensure code formatting consistency between developpers
 
 ### Planning & Evolution
-[Describe your anticipated planning and how it evolved throughout the project duration.]
+We initially planned to complete the project in 2 weeks. However the project started growing fast as our we imagined adding new features and more features inside the features. Before this came out of control, we had to prioritize and decide which idea we would keep and which we would throw away to keep our delay on a reasonable track. As soon as we started working with a list of issues to fix / features to implement, we were able to complete and push the project. For example, we gave up the following ideas:
+- minimap for the raycaster
+- additional algorithms
+- animation for the solver
+
+We had as well due to time constraints to give up the implementation of unit tests that we initially planned to do.
 
 ### Retrospective
-* **What worked well:** [List successful aspects of the collaboration or development.]
-* **Areas for improvement:** [List what could have been handled better.]
+* **What worked well:**
+- We managed to learn things from a large spectrum: theoretical mathematics, graph theory, low level memory management, graphic programming, software architecture, Python language
+- Peer learning worked very well as we explained each other our work at every merge or pull request.
+- Use of project management tools: git branches, github issues and pull requests, use of nomenclature for branches names and commit message, use of python package manager and code formatting and linting tool.
+
+
+* **Areas for improvement:**
+- We should make some room to add unit and functional tests to our future projects.
+- Better communication involving both team members if major refactoring or architecture choice are made to ensure all team memebers have a perfect understanding of the code base at any point of the project.
+- All new feature, not within mandatory scope of the project, shall be rated in terms of priority and time before starting implementing it.
+- Before adding new feature, check if it can be plugged to the current architecture. It it require rework of the architecture, this shall be considered in feature implementation cost.
+
 
 ### Tools Used
 
-[List any specific tools used for version control, debugging, task management, etc.]
-
 - [uv](https://docs.astral.sh/uv/) - package and project manager
 - [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) - Specification for writing structured commit messages
+- [Pre-commit](https://pre-commit.com/) - pre-commits hooks manager
+- [ruff](https://docs.astral.sh/ruff) - linter and formatter
+- [github](https://www.github.com/) - git remote platform
 
 ---
 
 ## Resources
 ### References
-[List classic references: documentation, articles, tutorials, etc.]
 #### Maze Generation Algorithms
 - [Fundamentals of Maze Generation - Carnegie Mellon University](https://www.cs.cmu.edu/~112-f22/notes/student-tp-guides/Mazes.pdf)
 - [Maze Generation algorithm - Wikipedia](https://en.wikipedia.org/wiki/Maze_generation_algorithm)
@@ -603,4 +694,9 @@ if __name__ == "__main__":
 - [Raycasting in Python](https://www.youtube.com/watch?v=E18bSJezaUE)
 
 ### AI Usage Disclosure
-[Provide a description of how AI was used, specifying the exact tasks and parts of the project it assisted with.]
+- Assistance for README.md redaction and review
+- Assistance while brainstorming for design patterns to implement in the application
+- Assistance to help think out of the box when refactring or optimizing code
+- Assistance for understanding concepts
+
+All code has been written by humans for humans.
